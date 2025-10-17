@@ -1,0 +1,57 @@
+/* src/components/Modal/AuthModal/AuthModal.module.css */
+
+.header {
+    margin-bottom: var(--space-lg);
+    font-size: var(--font-size-2xl);
+    font-weight: 700;
+    text-align: center;
+    color: var(--color-primary);
+    margin: 15px;
+}
+
+.form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-md);
+    align-items: center;
+}
+
+.input {
+    width: 100%;
+    padding: 12px 14px;
+    font-size: var(--font-size-md);
+    /* 16px */
+    border: 1px solid var(--color-border);
+    border-radius: var(--border-radius);
+    background-color: var(--color-background);
+    color: var(--color-text-primary);
+    transition: border-color 0.2s;
+}
+
+.input:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.toggleText {
+    margin-top: var(--space-md);
+    text-align: center;
+    font-size: var(--font-size-sm);
+    color: var(--color-secondary);
+    margin:10px;
+}
+
+.toggleLink {
+    color: var(--color-primary);
+    font-weight: 600;
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: inherit;
+    padding: 0 0 0 4px;
+}
+
+.toggleLink:hover {
+    text-decoration: underline;
+}
