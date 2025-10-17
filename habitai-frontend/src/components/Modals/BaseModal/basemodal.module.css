@@ -26,9 +26,10 @@
     padding: var(--space-lg);
     border-radius: var(--border-radius);
     width: 90%;
-    max-width: 500px;
+    max-width: 450px;
     position: relative;
     box-shadow: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
+   
 }
 
 .closeButton {
@@ -38,11 +39,15 @@
     background: none;
     border: none;
     font-size: 1.5rem;
-    color: var(--color-text-secondary);
+    color: var(--color-secondary);
     cursor: pointer;
     line-height: 1;
     padding: 4px;
     display: flex;
     align-items: center;
     justify-content: center;
+}
+input{
+    max-width: 90%;
+    margin: 5px;
 }

@@ -20,6 +20,8 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
         password: '',
     });
 
+    const confirmPassword = '';
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -79,8 +81,18 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     onChange={handleInputChange}
                     required
                 />
-
-                <Button type="submit" fullWidth size="large">
+                {!isLoginView && (
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Confirme sua senha"
+                        className={styles.input}
+                        value={confirmPassword}
+                        onChange={handleInputChange}
+                        required
+                    />
+                )}
+                <Button type="submit" style={{ width: '90%', margin: '10px 0' }}>
                     {isLoginView ? 'Entrar' : 'Registar'}
                 </Button>
             </form>
