@@ -20,11 +20,13 @@ import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "properties")
+@Data
 public class Property {
-
+  
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
