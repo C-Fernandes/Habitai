@@ -4,8 +4,9 @@ import React, { useState, type FormEvent } from 'react';
 import { BaseModal } from '../BaseModal';
 import { Button } from '../../Button';
 import styles from './AuthModal.module.css';
+import { userService } from '../../../services/userService';
+import { toast } from 'sonner';
 
-// 1. Define os tipos para as props que este componente recebe
 type AuthModalProps = {
     isOpen: boolean;
     onRequestClose: () => void;
@@ -13,33 +14,63 @@ type AuthModalProps = {
 
 export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
     const [isLoginView, setIsLoginView] = useState(true);
-
     const [formData, setFormData] = useState({
         name: '',
         email: '',
+        cpf: '',
+        phone: '',
         password: '',
+        confirmPassword: ''
     });
-
-    const confirmPassword = '';
+    const [error, setError] = useState<string | null>(null);
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSubmit = (e: FormEvent) => {
+    const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
+        setError(null); 
+
         if (isLoginView) {
-            console.log('Tentativa de Login:', { email: formData.email, password: formData.password });
+            try {
+                await userService.login(formData.email, formData.password);
+                onRequestClose(); 
+            } catch (error: any) {
+                console.error("Erro de login:", error);
+                setError(error.message || "Email ou senha inválidos.");
+            }
         } else {
-            console.log('Tentativa de Registo:', formData);
+            if (formData.password !== formData.confirmPassword) {
+                setError("As senhas não conferem.");
+                return; 
+            }
+
+            try {
+                const newUser = await userService.register({
+                    name: formData.name,
+                    email: formData.email,
+                    cpf: formData.cpf,
+                    phone: formData.phone,
+                    password: formData.password,
+                    confirmPassword: formData.confirmPassword,
+                });
+
+                toast.success("Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.");
+                onRequestClose(); 
+
+            } catch (error: any) {
+                console.error("Erro no registo:", error);
+                setError(error.message || "Ocorreu um erro ao tentar registar.");
+            }
         }
-        onRequestClose();
     };
 
     const toggleView = () => {
         setIsLoginView(prev => !prev);
-        setFormData({ name: '', email: '', password: '' });
+        setFormData({ name: '', email: '', cpf: '', phone: '', password: '', confirmPassword: '' });
+        setError(null);
     };
 
     return (
@@ -50,6 +81,7 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
             </h2>
 
             <form onSubmit={handleSubmit} className={styles.form}>
+
                 {!isLoginView && (
                     <input
                         type="text"
@@ -72,6 +104,28 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     required
                 />
 
+                {!isLoginView && (
+                    <input
+                        type="text"
+                        name="cpf"
+                        placeholder="CPF"
+                        className={styles.input}
+                        value={formData.cpf}
+                        onChange={handleInputChange}
+                        required
+                    />
+                )}
+
+                {!isLoginView && (
+                    <input
+                        type="tel"
+                        name="phone"
+                        placeholder="Telefone (Opcional)"
+                        className={styles.input}
+                        value={formData.phone}
+                        onChange={handleInputChange}
+                    />
+                )}
                 <input
                     type="password"
                     name="password"
@@ -83,15 +137,18 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                 />
                 {!isLoginView && (
                     <input
-                        type="text"
-                        name="name"
+                        type="password"
+                        name="confirmPassword"
                         placeholder="Confirme sua senha"
                         className={styles.input}
-                        value={confirmPassword}
+                        value={formData.confirmPassword}
                         onChange={handleInputChange}
                         required
                     />
                 )}
+
+                {error && <p className={styles.errorText}>{error}</p>}
+
                 <Button type="submit" style={{ width: '90%', margin: '10px 0' }}>
                     {isLoginView ? 'Entrar' : 'Registar'}
                 </Button>
