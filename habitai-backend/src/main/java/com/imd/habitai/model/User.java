@@ -1,10 +1,15 @@
 package com.imd.habitai.model;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.Setter;
+
 import java.util.List;
 
 @Entity
 @Table(name = "users")
+@Getter
+@Setter
 public class User {
 
     @Id
@@ -18,12 +23,11 @@ public class User {
     private String email;
 
     @Column(nullable = false, unique = true)
-    private String cpf; 
+    private String cpf;
 
     private String phone;
-
-    private String profilePictureUrl;
-    
+    @Column(nullable = false)
+    private String password;
     @OneToMany(mappedBy = "owner")
     private List<Property> ownedProperties;
 
@@ -32,7 +36,7 @@ public class User {
 
     @OneToMany(mappedBy = "tenant")
     private List<Contract> contractsAsTenant;
-    
+
     @OneToMany(mappedBy = "prospect")
     private List<Visit> scheduledVisits;
 
