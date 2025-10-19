@@ -1,6 +1,8 @@
 package com.imd.habitai.mapper;
 
 import com.imd.habitai.dto.PropertyRequestDTO;
+import com.imd.habitai.dto.PropertyResponseDTO;
+import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
 import com.imd.habitai.model.User;
@@ -20,6 +22,12 @@ public interface PropertyMapper {
     @Mapping(target = "inspections", ignore = true)
     @Mapping(target = "visits", ignore = true)
     Property toEntity(PropertyRequestDTO dto);
+
+    PropertyResponseDTO toDTO(Property property);
+
+    PropertyResponseDTO.OwnerDTO toOwnerDTO(User owner);
+
+    PropertyResponseDTO.AddressDTO toAddressDTO(Address address);
 
     @Named("mapOwnerIdToUser")
     default User mapOwnerIdToUser(Long ownerId) {

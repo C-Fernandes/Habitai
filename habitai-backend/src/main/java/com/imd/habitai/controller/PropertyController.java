@@ -1,6 +1,7 @@
 package com.imd.habitai.controller;
 
 import com.imd.habitai.dto.PropertyRequestDTO;
+import com.imd.habitai.dto.PropertyResponseDTO;
 import com.imd.habitai.model.Property;
 import com.imd.habitai.service.PropertyService;
 import org.springframework.http.HttpStatus;
@@ -31,7 +32,7 @@ public class PropertyController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<Property> getPropertyById(@PathVariable Long id) {
+    public ResponseEntity<PropertyResponseDTO> getPropertyById(@PathVariable Long id) {
         return propertyService.getById(id)
             .map(property -> new ResponseEntity<>(property, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

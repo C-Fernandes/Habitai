@@ -1,6 +1,7 @@
 package com.imd.habitai.service;
 
 import com.imd.habitai.dto.PropertyRequestDTO;
+import com.imd.habitai.dto.PropertyResponseDTO;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
@@ -11,7 +12,6 @@ import com.imd.habitai.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 import java.util.Optional;
 
@@ -55,17 +55,16 @@ public class PropertyService {
         return propertyRepository.findAll();
     }
 
-    public Optional<Property> getById(Long id) {
-        return propertyRepository.findById(id);
+    public Optional<PropertyResponseDTO> getById(Long id) {
+        Optional<Property> property = propertyRepository.findById(id);
+        return property.map(propertyMapper::toDTO);
     }
 
-    @Transactional
     public Optional<Property> update(Long id, PropertyRequestDTO property) {
         return null;
         // Ainda fazer
     }
 
-    @Transactional
     public boolean delete(Long id) {
         if (propertyRepository.existsById(id)) {
             propertyRepository.deleteById(id);
