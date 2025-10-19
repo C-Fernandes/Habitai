@@ -2,7 +2,6 @@ package com.imd.habitai.controller;
 
 import com.imd.habitai.dto.PropertyRequestDTO;
 import com.imd.habitai.dto.PropertyResponseDTO;
-import com.imd.habitai.model.Property;
 import com.imd.habitai.service.PropertyService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,14 +19,14 @@ public class PropertyController {
     }
 
     @PostMapping
-    public ResponseEntity<Void> createProperty(@RequestBody PropertyRequestDTO property) {
-        propertyService.create(property);
-        return new ResponseEntity<>(HttpStatus.CREATED);
+    public ResponseEntity<PropertyResponseDTO> createProperty(@RequestBody PropertyRequestDTO property) {
+        PropertyResponseDTO createdProperty = propertyService.create(property);
+        return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
 
     @GetMapping
-    public ResponseEntity<List<Property>> getAllProperties() {
-        List<Property> properties = propertyService.getAll();
+    public ResponseEntity<List<PropertyResponseDTO>> getAllProperties() {
+        List<PropertyResponseDTO> properties = propertyService.getAll();
         return new ResponseEntity<>(properties, HttpStatus.OK);
     }
 
@@ -39,7 +38,7 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<Property> updateProperty(@PathVariable Long id, @RequestBody PropertyRequestDTO property) {
+    public ResponseEntity<PropertyResponseDTO> updateProperty(@PathVariable Long id, @RequestBody PropertyRequestDTO property) {
         return propertyService.update(id, property)
             .map(updatedProperty -> new ResponseEntity<>(updatedProperty, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
@@ -47,10 +46,7 @@ public class PropertyController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProperty(@PathVariable Long id) {
-        if (propertyService.delete(id)) {
-            return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        } else {
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
+        if (propertyService.delete(id)) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
     }
 }

@@ -14,6 +14,7 @@ import jakarta.persistence.EntityNotFoundException;
 import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PropertyService {
@@ -35,7 +36,7 @@ public class PropertyService {
     }
 
 
-    public Property create(PropertyRequestDTO propertyDTO) {
+    public PropertyResponseDTO create(PropertyRequestDTO propertyDTO) {
         Property property = propertyMapper.toEntity(propertyDTO);
         User owner = userRepository.findById(property.getOwner().getId())
             .orElseThrow(() -> new EntityNotFoundException("Usuário (proprietário) com ID " + property.getOwner().getId() + " não encontrado."));
@@ -48,11 +49,14 @@ public class PropertyService {
         }
         property.setAmenities(amenities);
 
-        return propertyRepository.save(property);
+        propertyRepository.save(property);
+        return propertyMapper.toDTO(property);
     }
 
-    public List<Property> getAll() {
-        return propertyRepository.findAll();
+    public List<PropertyResponseDTO> getAll() {
+        return propertyRepository.findAll().stream()
+            .map(propertyMapper::toDTO)
+            .collect(Collectors.toList());
     }
 
     public Optional<PropertyResponseDTO> getById(Long id) {
@@ -60,9 +64,24 @@ public class PropertyService {
         return property.map(propertyMapper::toDTO);
     }
 
-    public Optional<Property> update(Long id, PropertyRequestDTO property) {
-        return null;
-        // Ainda fazer
+    public Optional<PropertyResponseDTO> update(Long id, PropertyRequestDTO propertyDTO) {
+        return propertyRepository.findById(id).map(existingProperty -> {
+            Property updatedProperty = propertyMapper.toEntity(propertyDTO);
+            updatedProperty.setId(id);
+
+            User owner = userRepository.findById(propertyDTO.ownerId())
+                .orElseThrow(() -> new EntityNotFoundException("Usuário (proprietário) com ID " + propertyDTO.ownerId() + " não encontrado."));
+            updatedProperty.setOwner(owner);
+
+            List<Amenity> amenities = amenityRepository.findAllById(propertyDTO.amenityIds());
+            if (amenities.size() != propertyDTO.amenityIds().size()) {
+                throw new EntityNotFoundException("Uma ou mais comodidades não foram encontradas.");
+            }
+            updatedProperty.setAmenities(amenities);
+
+            propertyRepository.save(updatedProperty);
+            return propertyMapper.toDTO(updatedProperty);
+        });
     }
 
     public boolean delete(Long id) {
