@@ -3,6 +3,7 @@ package com.imd.habitai.controller;
 import com.imd.habitai.dto.PropertyRequestDTO;
 import com.imd.habitai.dto.PropertyResponseDTO;
 import com.imd.habitai.service.PropertyService;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,7 +20,8 @@ public class PropertyController {
     }
 
     @PostMapping
-    public ResponseEntity<PropertyResponseDTO> createProperty(@RequestBody PropertyRequestDTO property) {
+    public ResponseEntity<PropertyResponseDTO> createProperty(
+        @Valid @RequestBody PropertyRequestDTO property) {
         PropertyResponseDTO createdProperty = propertyService.create(property);
         return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
     }
@@ -38,7 +40,9 @@ public class PropertyController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<PropertyResponseDTO> updateProperty(@PathVariable Long id, @RequestBody PropertyRequestDTO property) {
+    public ResponseEntity<PropertyResponseDTO> updateProperty(
+        @PathVariable Long id, 
+        @Valid @RequestBody PropertyRequestDTO property) {
         return propertyService.update(id, property)
             .map(updatedProperty -> new ResponseEntity<>(updatedProperty, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
