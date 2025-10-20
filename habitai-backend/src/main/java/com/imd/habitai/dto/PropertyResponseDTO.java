@@ -1,0 +1,45 @@
+package com.imd.habitai.dto;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+public record PropertyResponseDTO(
+    Long id,
+    String title,
+    String description,
+    BigDecimal rentalPrice,
+    int bedrooms,
+    int bathrooms,
+    int garageSpaces,
+    double totalArea,
+    
+    AddressDTO address,
+    
+    OwnerDTO owner, 
+    
+    List<AmenityDTO> amenities 
+) {
+    public record OwnerDTO(
+        Long id,
+        String name,
+        String profilePictureUrl,
+        String phone,
+        String email
+    ) {}
+
+    public record AddressDTO(
+        Long id,
+        String street,
+        String city,
+        String state,
+        String cep,
+        String number,
+        String complement,
+        String neighborhood
+    ) {}
+
+    public record AmenityDTO(
+        Long id,
+        String name
+    ) {}
+}
