@@ -1,7 +1,7 @@
 package com.imd.habitai.controller;
 
-import com.imd.habitai.dto.PropertyRequestDTO;
-import com.imd.habitai.dto.PropertyResponseDTO;
+import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.imd.habitai.dto.response.PropertyResponseDTO;
 import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

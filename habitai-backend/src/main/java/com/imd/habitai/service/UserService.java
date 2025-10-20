@@ -2,20 +2,19 @@ package com.imd.habitai.service;
 
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
 import com.imd.habitai.error.BusinessException;
-import com.imd.habitai.error.EntityNotFound;
 import com.imd.habitai.model.User;
 import com.imd.habitai.repository.UserRepository;
+
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
 public class UserService {
     private final UserRepository userRepository;
 
-    @Autowired
     public UserService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
@@ -26,7 +25,7 @@ public class UserService {
 
     public User getById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFound("Usuário não encontrado"));
+                .orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
     }
 
     public User update(Long id, User userData) {
@@ -42,20 +41,8 @@ public class UserService {
     }
 
     public User create(User user, String confirmPassword) {
-        if (!StringUtils.hasText(user.getPassword())) {
-            throw new IllegalArgumentException("A senha não pode ser nula ou vazia.");
-        }
         if (!user.getPassword().equals(confirmPassword)) {
             throw new IllegalArgumentException("As senhas não conferem.");
-        }
-        if (!StringUtils.hasText(user.getName())) {
-            throw new IllegalArgumentException("O nome é obrigatório.");
-        }
-        if (!StringUtils.hasText(user.getEmail())) {
-            throw new IllegalArgumentException("O email é obrigatório.");
-        }
-        if (!StringUtils.hasText(user.getCpf())) {
-            throw new IllegalArgumentException("O CPF é obrigatório.");
         }
         if (userRepository.existsByEmail(user.getEmail())) {
             throw new BusinessException("O email informado já está em uso.");

@@ -1,7 +1,7 @@
 package com.imd.habitai.service;
 
-import com.imd.habitai.dto.PropertyRequestDTO;
-import com.imd.habitai.dto.PropertyResponseDTO;
+import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.imd.habitai.dto.response.PropertyResponseDTO;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;

@@ -1,4 +1,4 @@
-package com.imd.habitai.dto;
+package com.imd.habitai.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;

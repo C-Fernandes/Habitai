@@ -19,15 +19,17 @@ import com.imd.habitai.mapper.UserMapper;
 import com.imd.habitai.model.User;
 import com.imd.habitai.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService,UserMapper userMapper) {
         this.userService = userService;
-        this.userMapper = new UserMapper();
+        this.userMapper = userMapper;
     }
 
     @GetMapping("/{id}")
@@ -47,7 +49,10 @@ public class UserController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserResponse> update(@PathVariable Long id, @RequestBody UserRegisterRequest updateRequest) {
+    public ResponseEntity<UserResponse> update(
+        @PathVariable Long id, 
+        @Valid @RequestBody UserRegisterRequest updateRequest
+    ) {
         User userData = userMapper.toEntity(updateRequest);
         User updatedUser = userService.update(id, userData);
         UserResponse responseDTO = userMapper.toResponse(updatedUser);
@@ -55,8 +60,8 @@ public class UserController {
     }
 
     @PostMapping
-    private ResponseEntity<UserResponse> create(@RequestBody UserRegisterRequest userRequest) {
-        User user = userService.create(userMapper.toEntity(userRequest), userRequest.getConfirmPassword());
+    private ResponseEntity<UserResponse> create(@Valid @RequestBody UserRegisterRequest userRequest) {
+        User user = userService.create(userMapper.toEntity(userRequest), userRequest.confirmPassword());
         return new ResponseEntity<>(userMapper.toResponse(user), HttpStatus.CREATED);
     }
 }

@@ -1,30 +1,22 @@
 package com.imd.habitai.mapper;
 
-import org.springframework.stereotype.Component;
+import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
 
 import com.imd.habitai.dto.request.UserRegisterRequest;
 import com.imd.habitai.dto.response.UserResponse;
 import com.imd.habitai.model.User;
 
-@Component
-public class UserMapper {
-    public User toEntity(UserRegisterRequest dto) {
-        User user = new User();
-        user.setName(dto.getName());
-        user.setEmail(dto.getEmail());
-        user.setCpf(dto.getCpf());
-        user.setPhone(dto.getPhone());
-        user.setPassword(dto.getPassword());
+@Mapper(componentModel = "spring")
+public interface UserMapper {
+    
+    @Mapping(target = "id", ignore = true)
+    @Mapping(target = "ownedProperties", ignore = true)
+    @Mapping(target = "contractsAsOwner", ignore = true)
+    @Mapping(target = "contractsAsTenant", ignore = true)
+    @Mapping(target = "scheduledVisits", ignore = true)
+    @Mapping(target = "accompaniedVisits", ignore = true)
+    public User toEntity(UserRegisterRequest dto);
 
-        return user;
-    }
-
-    public UserResponse toResponse(User user) {
-        UserResponse response = new UserResponse();
-        response.setName(user.getName());
-        response.setEmail(user.getEmail());
-        response.setPhone(user.getPhone());
-
-        return response;
-    }
+    public UserResponse toResponse(User user);
 }

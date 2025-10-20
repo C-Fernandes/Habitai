@@ -1,4 +1,4 @@
-package com.imd.habitai.exception;
+package com.imd.habitai.advice;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.time.Instant;
