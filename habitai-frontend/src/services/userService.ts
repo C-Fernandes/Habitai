@@ -1,3 +1,4 @@
+import type { AuthUser } from '../context/AuthContext';
 import type { LoginCredentials, User, UserRegisterData } from '../types';
 import { apiClient } from './apiClient';
 const url = '/users'; // Adicionei o prefixo '/api' que definimos no backend
@@ -15,9 +16,9 @@ export const userService = {
     getById: (id: number): Promise<User> => {
         return apiClient.get<User>(`${url}/${id}`);
     },
-    login: (email: string, password: string): Promise<User> => {
+    login: (email: string, password: string): Promise<AuthUser> => {
         const credentials = { email, password };
-        return apiClient.post<User>(`${url}/login`, credentials);
+        return apiClient.post<AuthUser>(`${url}/login`, credentials);
 
     },
     update: (id: number, data: User): Promise<User> => {

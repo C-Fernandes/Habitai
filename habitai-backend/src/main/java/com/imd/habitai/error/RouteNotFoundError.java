@@ -2,8 +2,8 @@ package com.imd.habitai.error;
 
 import org.springframework.http.HttpStatus;
 
-public class RouteNotFound extends HttpError {
-    public RouteNotFound() {
+public class RouteNotFoundError extends HttpError {
+    public RouteNotFoundError() {
         super("A rota solicitada não foi encontrada.", HttpStatus.NOT_FOUND);
     }
 }
