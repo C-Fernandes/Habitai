@@ -4,6 +4,7 @@ import { WelcomePage } from './pages/WelcomePage'
 import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './auth/ProtectedRoute'
+import { UserPage } from './pages/UserPage/UserPage'
 
 function App() {
 
@@ -13,9 +14,10 @@ function App() {
       <Toaster />
       <AuthProvider>
         <Routes>
+          <Route path='/' element={<WelcomePage />} />
           <Route element={<ProtectedRoute />}>
-            <Route path='/' element={<WelcomePage />} />
-            </Route>
+            <Route path='/me' element={<UserPage />} />
+          </Route>
         </Routes>
       </AuthProvider>
     </BrowserRouter>
