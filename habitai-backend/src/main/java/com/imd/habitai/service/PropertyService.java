@@ -1,7 +1,7 @@
 package com.imd.habitai.service;
 
 import com.imd.habitai.dto.request.PropertyRequestDTO;
-import com.imd.habitai.dto.response.PropertyResponseDTO;
+import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
@@ -36,7 +36,7 @@ public class PropertyService {
     }
 
 
-    public PropertyResponseDTO create(PropertyRequestDTO propertyDTO) {
+    public PropertyResponse create(PropertyRequestDTO propertyDTO) {
         Property property = propertyMapper.toEntity(propertyDTO);
         User owner = userRepository.findById(property.getOwner().getId())
             .orElseThrow(() -> new EntityNotFoundException("Usuário (proprietário) com ID " + property.getOwner().getId() + " não encontrado."));
@@ -53,18 +53,18 @@ public class PropertyService {
         return propertyMapper.toDTO(property);
     }
 
-    public List<PropertyResponseDTO> getAll() {
+    public List<PropertyResponse> getAll() {
         return propertyRepository.findAll().stream()
             .map(propertyMapper::toDTO)
             .collect(Collectors.toList());
     }
 
-    public Optional<PropertyResponseDTO> getById(Long id) {
+    public Optional<PropertyResponse> getById(Long id) {
         Optional<Property> property = propertyRepository.findById(id);
         return property.map(propertyMapper::toDTO);
     }
 
-    public Optional<PropertyResponseDTO> update(Long id, PropertyRequestDTO propertyDTO) {
+    public Optional<PropertyResponse> update(Long id, PropertyRequestDTO propertyDTO) {
         return propertyRepository.findById(id).map(existingProperty -> {
             Property updatedProperty = propertyMapper.toEntity(propertyDTO);
             updatedProperty.setId(id);

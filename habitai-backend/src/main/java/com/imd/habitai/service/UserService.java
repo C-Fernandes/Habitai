@@ -57,6 +57,8 @@ public class UserService {
     }
 
     public User login(String email, String password) {
+        System.out.println(email);
+        System.out.println(password);
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new InvalidCredentialsError("Email ou senha inválidos."));
         if (user.getPassword().equals(password)) {

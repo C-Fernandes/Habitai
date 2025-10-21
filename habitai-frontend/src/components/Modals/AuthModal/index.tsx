@@ -1,11 +1,12 @@
 // src/components/Modal/AuthModal/index.tsx
 
-import React, { useState, type FormEvent } from 'react';
+import React, { use, useState, type FormEvent } from 'react';
 import { BaseModal } from '../BaseModal';
 import { Button } from '../../Button';
 import styles from './AuthModal.module.css';
 import { userService } from '../../../services/userService';
 import { toast } from 'sonner';
+import { useAuth } from '../../../context/AuthContext';
 
 type AuthModalProps = {
     isOpen: boolean;
@@ -14,6 +15,7 @@ type AuthModalProps = {
 
 export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
     const [isLoginView, setIsLoginView] = useState(true);
+    const {login} =useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -35,7 +37,7 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
 
         if (isLoginView) {
             try {
-                await userService.login(formData.email, formData.password);
+                await login(formData.email, formData.password);
                 onRequestClose(); 
             } catch (error: any) {
                 console.error("Erro de login:", error);
