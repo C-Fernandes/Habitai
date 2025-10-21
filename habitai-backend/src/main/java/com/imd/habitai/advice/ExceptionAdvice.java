@@ -12,8 +12,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.NoHandlerFoundException;
 
 import com.imd.habitai.error.HttpError;
+<<<<<<< Updated upstream
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
+=======
+import com.imd.habitai.error.MethodNotAllowedError;
+import com.imd.habitai.error.RouteNotFoundError;
+>>>>>>> Stashed changes
 
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
@@ -54,6 +59,7 @@ public class ExceptionAdvice {
         return new ResponseEntity<>(errorResponse, HttpStatus.BAD_REQUEST);
     }
 
+<<<<<<< Updated upstream
     @ExceptionHandler(EntityNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ResponseEntity<ApiErrorResponse> handleEntityNotFoundException(
@@ -68,6 +74,22 @@ public class ExceptionAdvice {
         );
 
         return new ResponseEntity<>(errorResponse, HttpStatus.NOT_FOUND);
+=======
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<Map<String, Object>> handleHandlerNotFound() {
+        RouteNotFoundError error = new RouteNotFoundError();
+        return ResponseEntity
+                .status(error.getStatus())
+                .body(error.getError());
+    }
+
+    @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
+    public ResponseEntity<Map<String, Object>> handleHandlerMethodNotAllowed() {
+        MethodNotAllowedError error = new MethodNotAllowedError();
+        return ResponseEntity
+                .status(error.getStatus())
+                .body(error.getError());
+>>>>>>> Stashed changes
     }
 
     @ExceptionHandler(IllegalArgumentException.class)

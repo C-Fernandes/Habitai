@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.imd.habitai.dto.request.UserLoginRequest;
 import com.imd.habitai.dto.request.UserRegisterRequest;
 import com.imd.habitai.dto.response.UserResponse;
 import com.imd.habitai.mapper.UserMapper;
@@ -63,5 +64,12 @@ public class UserController {
     private ResponseEntity<UserResponse> create(@Valid @RequestBody UserRegisterRequest userRequest) {
         User user = userService.create(userMapper.toEntity(userRequest), userRequest.confirmPassword());
         return new ResponseEntity<>(userMapper.toResponse(user), HttpStatus.CREATED);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<UserResponse> login(@RequestBody UserLoginRequest loginRequest) {
+        User user = userService.login(loginRequest.getEmail(), loginRequest.getPassword());
+        UserResponse responseDTO = userMapper.toResponse(user);
+        return ResponseEntity.ok(responseDTO);
     }
 }
