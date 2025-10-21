@@ -28,4 +28,8 @@ export const userService = {
     delete: (id: number): Promise<void> => {
         return apiClient.delete(`${url}/${id}`);
     },
+    getProfile: async (email: string): Promise<User> => {
+        const response = await apiClient.get<User>(`/users/me?email=${email}`);
+        return response;
+    },
 };

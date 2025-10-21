@@ -1,0 +1,51 @@
+.container {
+    padding: 2rem;
+    max-width: 32rem;
+    margin-left: auto;
+    margin-right: auto;
+    background-color: var(--color-background);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+    border-radius: var(--border-radius);
+    margin-top: 2rem;
+}
+
+.heading {
+    font-size: 1.5rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    color: var(--color-primary);
+}
+
+.infoGroup {
+    display: flex;
+    gap: 0.5rem;
+    margin-bottom: 0.5rem;
+}
+
+.infoLabel {
+    font-weight: bold;
+    color: var(--color-secondary);
+    width: 6rem;
+}
+
+.infoValue {
+    color: var(--color-primary);
+}
+
+.logoutContainer {
+    margin-top: 2rem;
+    text-align: center;
+}
+
+.loadingMessage {
+    text-align: center;
+    padding: 2rem;
+    color: #3b82f6;
+}
+
+.errorMessage {
+    text-align: center;
+    padding: 2rem;
+    color: var(--color-error);
+    font-weight: bold;
+}
