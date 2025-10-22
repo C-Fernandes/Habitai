@@ -10,7 +10,8 @@ import { useNavigate } from 'react-router-dom';
 
 function NavBar() {
     const navigate = useNavigate();
-    const { user } = useAuth(); const isLoggedIn = !!user;
+    const { user } = useAuth();
+    const isLoggedIn = !!user;
     const [isModalOpen, setIsModalOpen] = useState(false);
     return (
         <>
@@ -30,7 +31,7 @@ function NavBar() {
                             <span onClick={() => navigate('/me')}
                                 className={styles.userNameContainer}>
                                 <div className={styles.userIcon} >{user.name.charAt(0)}</div>
-                                <div className={styles.userName}>Olá, {user.name.split(' ')[1]}</div>
+                                <div className={styles.userName}>Olá, {user.name.split(' ').slice(0, 2).join(' ')}</div>
                             </span>
                         </>
                     ) : (
