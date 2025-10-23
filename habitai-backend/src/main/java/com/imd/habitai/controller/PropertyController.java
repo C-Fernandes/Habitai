@@ -1,12 +1,16 @@
 package com.imd.habitai.controller;
 
-import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.imd.habitai.dto.request.PropertyRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 
 @RestController
@@ -14,16 +18,28 @@ import java.util.List;
 public class PropertyController {
 
     private final PropertyService propertyService;
+    private final ObjectMapper objectMapper;
 
-    public PropertyController(PropertyService propertyService) {
+    public PropertyController(PropertyService propertyService, ObjectMapper objectMapper) {
         this.propertyService = propertyService;
+        this.objectMapper = objectMapper;
     }
 
-    @PostMapping
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PropertyResponse> createProperty(
-        @Valid @RequestBody PropertyRequestDTO property) {
-        PropertyResponse createdProperty = propertyService.create(property);
-        return new ResponseEntity<>(createdProperty, HttpStatus.CREATED);
+            @RequestPart("property") String propertyJson,
+            @RequestPart("images") List<MultipartFile> images
+    ) {
+
+        PropertyRequest createDTO;
+        try {
+            createDTO = objectMapper.readValue(propertyJson, PropertyRequest.class);
+        } catch (Exception e) {
+            throw new IllegalArgumentException("JSON da propriedade malformado: " + e.getMessage());
+        }
+
+        PropertyResponse newProperty = propertyService.create(createDTO, images);
+        return new ResponseEntity<>(newProperty, HttpStatus.CREATED);
     }
 
     @GetMapping
@@ -42,7 +58,7 @@ public class PropertyController {
     @PutMapping("/{id}")
     public ResponseEntity<PropertyResponse> updateProperty(
         @PathVariable Long id, 
-        @Valid @RequestBody PropertyRequestDTO property) {
+        @Valid @RequestBody PropertyRequest property) {
         return propertyService.update(id, property)
             .map(updatedProperty -> new ResponseEntity<>(updatedProperty, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));

@@ -1,6 +1,6 @@
 package com.imd.habitai.mapper;
 
-import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.imd.habitai.dto.request.PropertyRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
@@ -21,7 +21,7 @@ public interface PropertyMapper {
     @Mapping(target = "contracts", ignore = true)
     @Mapping(target = "inspections", ignore = true)
     @Mapping(target = "visits", ignore = true)
-    Property toEntity(PropertyRequestDTO dto);
+    Property toEntity(PropertyRequest dto);
 
     PropertyResponse toDTO(Property property);
 

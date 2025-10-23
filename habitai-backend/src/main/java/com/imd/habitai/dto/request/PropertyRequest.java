@@ -12,7 +12,7 @@ import jakarta.validation.constraints.Size;
 import java.math.BigDecimal;
 import java.util.List;
 
-public record PropertyRequestDTO(
+public record PropertyRequest(
     @NotBlank(message = "O título não pode estar em branco.")
     @Size(min = 4, max = 120, message = "O título deve ter entre 5 e 120 caracteres.")
     String title,
@@ -44,7 +44,7 @@ public record PropertyRequestDTO(
     Address address,
     
     @NotNull(message = "O ID do proprietário é obrigatório.")
-    Long ownerId, 
+    Long ownerId,
     
     List<Long> amenityIds
 ) {

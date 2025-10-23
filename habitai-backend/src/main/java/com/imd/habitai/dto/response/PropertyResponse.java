@@ -15,7 +15,9 @@ public record PropertyResponse(
     
     AddressDTO address,
     
-    OwnerDTO owner, 
+    OwnerDTO owner,
+
+    List<String> imagePaths,
     
     List<AmenityDTO> amenities 
 ) {
