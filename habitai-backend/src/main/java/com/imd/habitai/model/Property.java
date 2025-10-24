@@ -2,8 +2,6 @@ package com.imd.habitai.model;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
-
 
 import jakarta.persistence.*;
 import lombok.Data;
@@ -31,11 +29,8 @@ public class Property {
     private int garageSpaces;
     private double totalArea;
 
-    @ElementCollection
-    @CollectionTable(name = "property_image_paths",
-            joinColumns = @JoinColumn(name = "property_id"))
-    @Column(name = "image_path")
-    private List<String> imagePaths;
+    @OneToMany(mappedBy = "property", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<Image> images;
 
 
     @OneToOne(cascade = CascadeType.ALL)

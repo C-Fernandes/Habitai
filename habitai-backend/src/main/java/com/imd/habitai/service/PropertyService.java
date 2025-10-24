@@ -32,6 +32,7 @@ public class PropertyService {
     private final UserRepository userRepository;
     private final AmenityRepository amenityRepository;
     private final PropertyMapper propertyMapper;
+    private final ImageService imageService;
     private final Path rootUploadLocation = Paths.get("habitai-backend","uploads", "properties");
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList(
             "image/jpeg",
@@ -39,15 +40,16 @@ public class PropertyService {
     );
 
     public PropertyService(
-        PropertyRepository propertyRepository, 
-        UserRepository userRepository, 
-        PropertyMapper propertyMapper,
-        AmenityRepository amenityRepository
+            PropertyRepository propertyRepository,
+            UserRepository userRepository,
+            PropertyMapper propertyMapper,
+            AmenityRepository amenityRepository, ImageService imageService
     ) {
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
         this.propertyMapper = propertyMapper;
         this.amenityRepository = amenityRepository;
+        this.imageService = imageService;
     }
 
     @PostConstruct
@@ -73,11 +75,14 @@ public class PropertyService {
         }
         property.setAmenities(amenities);
 
-        List<String> savedImagesPaths = saveImages(images, property.getOwner().getId());
-        property.setImagePaths(savedImagesPaths);
+        Property finalProperty = propertyRepository.save(property);
+        if(!images.isEmpty()) {
+            finalProperty.setImages(imageService.addImagesToProperty(finalProperty.getId(), images));
+        }
+        Property result = propertyRepository.findById(finalProperty.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Imóvel com ID " + finalProperty.getId() + " não encontrado ao tentar salvar suas imagens."));
 
-        propertyRepository.save(property);
-        return propertyMapper.toDTO(property);
+        return propertyMapper.toDTO(result);
     }
 
     public List<PropertyResponse> getAll() {

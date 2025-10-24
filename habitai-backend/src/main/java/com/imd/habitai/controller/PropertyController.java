@@ -18,27 +18,17 @@ import java.util.List;
 public class PropertyController {
 
     private final PropertyService propertyService;
-    private final ObjectMapper objectMapper;
 
     public PropertyController(PropertyService propertyService, ObjectMapper objectMapper) {
         this.propertyService = propertyService;
-        this.objectMapper = objectMapper;
     }
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PropertyResponse> createProperty(
-            @RequestPart("property") String propertyJson,
+            @Valid @RequestPart("property") PropertyRequest propertyDTO,
             @RequestPart("images") List<MultipartFile> images
     ) {
-
-        PropertyRequest createDTO;
-        try {
-            createDTO = objectMapper.readValue(propertyJson, PropertyRequest.class);
-        } catch (Exception e) {
-            throw new IllegalArgumentException("JSON da propriedade malformado: " + e.getMessage());
-        }
-
-        PropertyResponse newProperty = propertyService.create(createDTO, images);
+        PropertyResponse newProperty = propertyService.create(propertyDTO, images);
         return new ResponseEntity<>(newProperty, HttpStatus.CREATED);
     }
 

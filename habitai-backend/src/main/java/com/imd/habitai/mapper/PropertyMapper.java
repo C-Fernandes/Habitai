@@ -12,7 +12,7 @@ import org.mapstruct.Named;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ImageMapper.class)
 public interface PropertyMapper {
 
     @Mapping(source = "ownerId", target = "owner", qualifiedByName = "mapOwnerIdToUser")
