@@ -3,7 +3,6 @@ package com.imd.habitai.mapper;
 import com.imd.habitai.dto.response.ImageResponse;
 import com.imd.habitai.model.Image;
 import com.imd.habitai.model.Property;
-import com.imd.habitai.model.User;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;

@@ -1,7 +1,8 @@
 package com.imd.habitai.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.imd.habitai.dto.request.PropertyRequest;
+import com.imd.habitai.dto.request.PropertyCreateRequest;
+import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
@@ -25,7 +26,7 @@ public class PropertyController {
 
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<PropertyResponse> createProperty(
-            @Valid @RequestPart("property") PropertyRequest propertyDTO,
+            @Valid @RequestPart("property") PropertyCreateRequest propertyDTO,
             @RequestPart("images") List<MultipartFile> images
     ) {
         PropertyResponse newProperty = propertyService.create(propertyDTO, images);
@@ -48,7 +49,7 @@ public class PropertyController {
     @PutMapping("/{id}")
     public ResponseEntity<PropertyResponse> updateProperty(
         @PathVariable Long id, 
-        @Valid @RequestBody PropertyRequest property) {
+        @Valid @RequestBody PropertyUpdateRequest property) {
         return propertyService.update(id, property)
             .map(updatedProperty -> new ResponseEntity<>(updatedProperty, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
