@@ -1,6 +1,6 @@
 package com.imd.habitai.mapper;
 
-import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.imd.habitai.dto.request.PropertyCreateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
@@ -12,7 +12,7 @@ import org.mapstruct.Named;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Mapper(componentModel = "spring")
+@Mapper(componentModel = "spring", uses = ImageMapper.class)
 public interface PropertyMapper {
 
     @Mapping(source = "ownerId", target = "owner", qualifiedByName = "mapOwnerIdToUser")
@@ -21,7 +21,7 @@ public interface PropertyMapper {
     @Mapping(target = "contracts", ignore = true)
     @Mapping(target = "inspections", ignore = true)
     @Mapping(target = "visits", ignore = true)
-    Property toEntity(PropertyRequestDTO dto);
+    Property toEntity(PropertyCreateRequest dto);
 
     PropertyResponse toDTO(Property property);
 

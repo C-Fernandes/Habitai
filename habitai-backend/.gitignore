@@ -33,3 +33,4 @@ build/
 .vscode/
 
 /src/main/resources/secret.properties
+/uploads

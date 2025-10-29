@@ -15,14 +15,15 @@ public record PropertyResponse(
     
     AddressDTO address,
     
-    OwnerDTO owner, 
+    OwnerDTO owner,
+
+    List<ImageResponse> images,
     
     List<AmenityDTO> amenities 
 ) {
     public record OwnerDTO(
         Long id,
         String name,
-        String profilePictureUrl,
         String phone,
         String email
     ) {}

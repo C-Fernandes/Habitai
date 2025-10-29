@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.imd.habitai.dto.request.UserLoginRequest;
@@ -28,7 +29,7 @@ public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
 
-    public UserController(UserService userService,UserMapper userMapper) {
+    public UserController(UserService userService, UserMapper userMapper) {
         this.userService = userService;
         this.userMapper = userMapper;
     }
@@ -51,9 +52,8 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(
-        @PathVariable Long id, 
-        @Valid @RequestBody UserRegisterRequest updateRequest
-    ) {
+            @PathVariable Long id,
+            @Valid @RequestBody UserRegisterRequest updateRequest) {
         User userData = userMapper.toEntity(updateRequest);
         User updatedUser = userService.update(id, userData);
         UserResponse responseDTO = userMapper.toResponse(updatedUser);
@@ -69,8 +69,17 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<UserResponse> login(@RequestBody UserLoginRequest loginRequest) {
         User user = userService.login(loginRequest.email(), loginRequest.password());
-        
+
         UserResponse responseDTO = userMapper.toResponse(user);
         return ResponseEntity.ok(responseDTO);
     }
+
+    @GetMapping("/me")
+    public ResponseEntity<UserResponse> getMe(@RequestParam String email) {
+
+        User user = userService.getMe(email);
+
+        return ResponseEntity.ok(userMapper.toResponse(user));
+    }
+
 }

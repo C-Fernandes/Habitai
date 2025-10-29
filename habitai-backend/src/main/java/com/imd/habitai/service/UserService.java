@@ -67,4 +67,8 @@ public class UserService {
             throw new InvalidCredentialsError("Email ou senha inválidos.");
         }
     }
+
+    public User getMe(String email){
+return userRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundError("Usuário não encontrado"));
+    }
 }

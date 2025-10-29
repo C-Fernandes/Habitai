@@ -1,11 +1,11 @@
-
 .navbar {
   display: flex;
-  justify-content: space-between; 
+  justify-content: space-between;
   align-items: center;
-padding: 0 10px;box-sizing: border-box;
+  padding: 0 10px;
+  box-sizing: border-box;
   border-bottom: 1px solid var(--color-border);
-  height: 80px; 
+  height: 80px;
   width: 100vw;
 }
 
@@ -17,16 +17,17 @@ padding: 0 10px;box-sizing: border-box;
 }
 
 .logoIcon {
-  font-size: 2.5rem; 
+  font-size: 2.5rem;
   color: var(--color-primary);
   background-color: var(--color-primary);
   color: white;
-margin: 3px;
+  margin: 3px;
   padding: 5px;
   border-radius: var(--border-radius);
 }
+
 .logoText {
-  margin:  0 0 0 2px;
+  margin: 0 0 0 2px;
   display: flex;
   flex-direction: column;
   line-height: 1.2;
@@ -51,10 +52,44 @@ margin: 3px;
   flex-shrink: 0;
 }
 
-.userNameDisplay{
+.userNameContainer {
+  border: 0;
+  border-radius: 25px;
   color: var(--color-secondary);
+  margin: 0 !important;
+  display: flex;
+  transition: max-width 0.5s ease-in-out, border-color 0.5s ease;
+  cursor: pointer;
+  max-width: 40px;
 }
 
+.userNameContainer:hover {
+  max-width: 500px;
+  border: 1px var(--color-secondary) solid;
+  margin: 2px 8px 2px 2px;
+}
 
+.userIcon {
+  border-radius: 25px;
+  min-height: 100%;
+  width: 35px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background-color: var(--color-primary);
+  color: white;
+  flex-shrink: 0;
+  font-weight: bold;
+}
 
+.userName {
+  opacity: 0;
+  padding: 5px 10px 5px 5px;
+  white-space: nowrap;
+  transition: opacity 0.2s 0.1s;
+}
 
+.userNameContainer:hover .userName {
+  opacity: 1;
+  transition: opacity 0.3s 0.2s;
+}

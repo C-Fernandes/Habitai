@@ -1,6 +1,7 @@
 package com.imd.habitai.service;
 
-import com.imd.habitai.dto.request.PropertyRequestDTO;
+import com.imd.habitai.dto.request.PropertyCreateRequest;
+import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Amenity;
@@ -12,6 +13,8 @@ import com.imd.habitai.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -22,21 +25,22 @@ public class PropertyService {
     private final UserRepository userRepository;
     private final AmenityRepository amenityRepository;
     private final PropertyMapper propertyMapper;
+    private final ImageService imageService;
 
     public PropertyService(
-        PropertyRepository propertyRepository, 
-        UserRepository userRepository, 
-        PropertyMapper propertyMapper,
-        AmenityRepository amenityRepository
+            PropertyRepository propertyRepository,
+            UserRepository userRepository,
+            PropertyMapper propertyMapper,
+            AmenityRepository amenityRepository, ImageService imageService
     ) {
         this.propertyRepository = propertyRepository;
         this.userRepository = userRepository;
         this.propertyMapper = propertyMapper;
         this.amenityRepository = amenityRepository;
+        this.imageService = imageService;
     }
 
-
-    public PropertyResponse create(PropertyRequestDTO propertyDTO) {
+    public PropertyResponse create(PropertyCreateRequest propertyDTO, List<MultipartFile> images) {
         Property property = propertyMapper.toEntity(propertyDTO);
         User owner = userRepository.findById(property.getOwner().getId())
             .orElseThrow(() -> new EntityNotFoundException("Usuário (proprietário) com ID " + property.getOwner().getId() + " não encontrado."));
@@ -49,8 +53,14 @@ public class PropertyService {
         }
         property.setAmenities(amenities);
 
-        propertyRepository.save(property);
-        return propertyMapper.toDTO(property);
+        Property finalProperty = propertyRepository.save(property);
+        if(!images.isEmpty()) {
+            finalProperty.setImages(imageService.addImagesToProperty(finalProperty.getId(), images));
+        }
+        Property result = propertyRepository.findById(finalProperty.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Imóvel com ID " + finalProperty.getId() + " não encontrado ao tentar salvar suas imagens."));
+
+        return propertyMapper.toDTO(result);
     }
 
     public List<PropertyResponse> getAll() {
@@ -64,23 +74,44 @@ public class PropertyService {
         return property.map(propertyMapper::toDTO);
     }
 
-    public Optional<PropertyResponse> update(Long id, PropertyRequestDTO propertyDTO) {
+    public Optional<PropertyResponse> update(Long id, PropertyUpdateRequest propertyDTO) {
         return propertyRepository.findById(id).map(existingProperty -> {
-            Property updatedProperty = propertyMapper.toEntity(propertyDTO);
-            updatedProperty.setId(id);
-
-            User owner = userRepository.findById(propertyDTO.ownerId())
-                .orElseThrow(() -> new EntityNotFoundException("Usuário (proprietário) com ID " + propertyDTO.ownerId() + " não encontrado."));
-            updatedProperty.setOwner(owner);
-
-            List<Amenity> amenities = amenityRepository.findAllById(propertyDTO.amenityIds());
-            if (amenities.size() != propertyDTO.amenityIds().size()) {
-                throw new EntityNotFoundException("Uma ou mais comodidades não foram encontradas.");
+            if (propertyDTO.title() != null) {
+                existingProperty.setTitle(propertyDTO.title());
             }
-            updatedProperty.setAmenities(amenities);
+            if (propertyDTO.description() != null) {
+                existingProperty.setDescription(propertyDTO.description());
+            }
+            if (propertyDTO.rentalPrice() != null) {
+                existingProperty.setRentalPrice(propertyDTO.rentalPrice());
+            }
+            if (propertyDTO.bedrooms() != null) {
+                existingProperty.setBedrooms(propertyDTO.bedrooms());
+            }
+            if (propertyDTO.bathrooms() != null) {
+                existingProperty.setBathrooms(propertyDTO.bathrooms());
+            }
+            if (propertyDTO.garageSpaces() != null) {
+                existingProperty.setGarageSpaces(propertyDTO.garageSpaces());
+            }
+            if (propertyDTO.totalArea() != null) {
+                existingProperty.setTotalArea(propertyDTO.totalArea());
+            }
+            if (propertyDTO.address() != null) {
+                existingProperty.setAddress(propertyDTO.address());
+            }
 
-            propertyRepository.save(updatedProperty);
-            return propertyMapper.toDTO(updatedProperty);
+            if (propertyDTO.amenityIds() != null) {
+                List<Amenity> amenities = amenityRepository.findAllById(propertyDTO.amenityIds());
+                if (amenities.size() != propertyDTO.amenityIds().size()) {
+                    throw new EntityNotFoundException("Uma ou mais comodidades não foram encontradas.");
+                }
+                existingProperty.setAmenities(amenities);
+            }
+
+            Property savedProperty = propertyRepository.save(existingProperty);
+            
+            return propertyMapper.toDTO(savedProperty);
         });
     }
 
