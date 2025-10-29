@@ -6,6 +6,10 @@ import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -34,9 +38,13 @@ public class PropertyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PropertyResponse>> getAllProperties() {
-        List<PropertyResponse> properties = propertyService.getAll();
-        return new ResponseEntity<>(properties, HttpStatus.OK);
+    public ResponseEntity<Page<PropertyResponse>> getAllProperties(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "6") int size
+    ) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<PropertyResponse> propertyPage = propertyService.getAll(pageable);
+        return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

@@ -12,6 +12,8 @@ import com.imd.habitai.repository.PropertyRepository;
 import com.imd.habitai.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -63,10 +65,9 @@ public class PropertyService {
         return propertyMapper.toDTO(result);
     }
 
-    public List<PropertyResponse> getAll() {
-        return propertyRepository.findAll().stream()
-            .map(propertyMapper::toDTO)
-            .collect(Collectors.toList());
+    public Page<PropertyResponse> getAll(Pageable pageable) {
+        Page<Property> propertyPage = propertyRepository.findAll(pageable);
+        return propertyPage.map(propertyMapper::toDTO);
     }
 
     public Optional<PropertyResponse> getById(Long id) {

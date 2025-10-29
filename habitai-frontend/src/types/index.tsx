@@ -53,6 +53,13 @@ export type Property = {
   amenities: Amenity[];
 };
 
+export type PaginatedProperties = {
+  content: Property[];
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+};
+
 export type Amenity = {
   id: number;
   name: string;
