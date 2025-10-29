@@ -12,15 +12,3 @@
   margin-bottom: 24px;
   color: black;
 }
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.footer {
-  text-align: center;
-  margin-top: 32px;
-  padding: 16px;
-}

@@ -56,9 +56,18 @@
 
 .large {
     font-size: 1.125rem;
+    background-color: black;
     padding: 0.8em 1.6em;
 }
 
 .fullWidth {
-    width: 100%;
+  background-color: var(--color-primary);
+  border-radius: var(--border-radius, 8px);
+  padding: 14px 32px;
+  font-weight: 600;
+  
+  display: block;
+  width: 100%;
+  max-width: 400px;
+  margin: 16px auto;
 }
