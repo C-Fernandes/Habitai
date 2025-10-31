@@ -19,3 +19,32 @@
   margin-top: 32px;
   padding: 16px;
 }
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  margin-bottom: 32px;
+  padding: 16px;
+  background-color: var(--color-surface, #F9FAFB);
+  border-radius: var(--border-radius, 8px);
+  border: 1px solid var(--color-border, #E5E7EB);
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 150px;
+  padding: 10px 14px;
+  font-size: var(--font-size-sm, 0.875rem);
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+}
+
+.filterInput[type=number]::-webkit-inner-spin-button, 
+.filterInput[type=number]::-webkit-outer-spin-button { 
+  -webkit-appearance: none; 
+  margin: 0; 
+}
+.filterInput[type=number] {
+  -moz-appearance: textfield;
+}
