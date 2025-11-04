@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import styles from './navbar.module.css';
 
 import { FaHome } from 'react-icons/fa';

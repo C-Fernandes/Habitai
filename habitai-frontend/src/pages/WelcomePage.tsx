@@ -2,8 +2,8 @@ import { useEffect, useState } from "react";
 import { apiClient } from "../services/apiClient";
 import type { Property } from "../types";
 import styles from './welcomepage.module.css';
-import { PropertyCard } from "../components/PropertyCard";
 import NavBar from "../components/NavBar";
+import {PropertyCard} from "../components/PropertyCard";
 
 export function WelcomePage() {
     const [properties, setProperties] = useState<Property[]>([]);
@@ -15,7 +15,7 @@ export function WelcomePage() {
             try {
                 setIsLoading(true);
                 setError(null);
-                
+
                 const data = await apiClient.get<Property[]>('/properties');
                 setProperties(data);
 

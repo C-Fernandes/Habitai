@@ -5,6 +5,7 @@ import { Toaster } from 'sonner'
 import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { UserPage } from './pages/UserPage/UserPage'
+import {PropertyDetailsPage} from "./pages/PropertyDetailsPage/PropertyDetailsPage.tsx";
 
 function App() {
 
@@ -15,7 +16,8 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path='/' element={<WelcomePage />} />
-          <Route element={<ProtectedRoute />}>
+          <Route path='/properties/:id' element={<PropertyDetailsPage />} />
+            <Route element={<ProtectedRoute />}>
             <Route path='/me' element={<UserPage />} />
           </Route>
         </Routes>

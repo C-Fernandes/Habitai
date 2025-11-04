@@ -1,0 +1,15 @@
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 24px;
+    padding: 40px 20px;
+    background-color: #f9fafb;
+}
+
+.loading,
+.noResults {
+    text-align: center;
+    color: #1f2937;
+    margin: 40px 0;
+    font-size: 1.1rem;
+}
