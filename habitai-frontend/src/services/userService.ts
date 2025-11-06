@@ -1,7 +1,7 @@
 import type { AuthUser } from '../context/AuthContext';
-import type { LoginCredentials, User, UserRegisterData } from '../types';
+import type { User, UserRegisterData } from '../types';
 import { apiClient } from './apiClient';
-const url = '/users'; // Adicionei o prefixo '/api' que definimos no backend
+const url = '/users'; 
 
 export const userService = {
 
@@ -13,7 +13,7 @@ export const userService = {
         return apiClient.get<User[]>(url);
     },
 
-    getById: (id: number): Promise<User> => {
+    getById: (id: string): Promise<User> => {
         return apiClient.get<User>(`${url}/${id}`);
     },
     login: (email: string, password: string): Promise<AuthUser> => {
@@ -21,15 +21,15 @@ export const userService = {
         return apiClient.post<AuthUser>(`${url}/login`, credentials);
 
     },
-    update: (id: number, data: User): Promise<User> => {
+    update: (id: string, data: User): Promise<User> => {
         return apiClient.put<User>(`${url}/${id}`, data);
     },
 
-    delete: (id: number): Promise<void> => {
+    delete: (id: string): Promise<void> => {
         return apiClient.delete(`${url}/${id}`);
     },
-    getProfile: async (email: string): Promise<User> => {
-        const response = await apiClient.get<User>(`/users/me?email=${email}`);
+    getProfile: async (id: string): Promise<User> => {
+        const response = await apiClient.get<User>(`/users/me?id=${id}`);
         return response;
     },
 };

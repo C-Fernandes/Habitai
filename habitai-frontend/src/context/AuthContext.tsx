@@ -1,7 +1,7 @@
-import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
-import { apiClient } from "../services/apiClient";
-import type { User } from "../types";
+import { createContext, use, useContext, useEffect, useState, type ReactNode } from "react";
 import { userService } from "../services/userService";
+import { toast } from "sonner";
+import { ensureError } from "../utils/errorUtils";
 
 export type AuthUser = {
     id: string;
@@ -20,33 +20,40 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    useEffect(() => {
-        const storedUser = localStorage.getItem("loggedInUser");
-
-        if (storedUser) {
-            try {
-                const userData: AuthUser = JSON.parse(storedUser);
-                setUser(userData);
-            } catch (error) {
-                console.error("Erro ao analisar dados do usuário no localStorage", error);
-                localStorage.removeItem("loggedInUser");
-            }
-        }
-        setIsLoading(false);
-    }, []);
-
-    const login = async (email: string, senha: string): Promise<AuthUser> => {
-        const response = await userService.login(email, senha);
-        const user: AuthUser = response;
-        console.log("Usuario logado");
-        localStorage.setItem('loggedInUser', JSON.stringify(user));
-        setUser(user);
-        return user;
-    };
     const logout = () => {
         localStorage.removeItem("loggedInUser");
         setUser(null);
     };
+    useEffect(() => {
+        const validateSession = async () => {
+            const storedUser = localStorage.getItem("loggedInUser");
+
+            if (storedUser) {
+                try {
+                    const userData: AuthUser = JSON.parse(storedUser);
+                    await userService.getProfile(userData.id);
+                    setUser(userData);
+                } catch (error) {
+                    toast.error(ensureError(error).message);
+                    console.error("Falha ao validar sessão, deslogando:", error);
+                    logout();
+                }
+            }
+            setIsLoading(false);
+        };
+        validateSession();
+    }, []);
+
+    const login = async (email: string, senha: string): Promise<AuthUser> => {
+
+        const response = await userService.login(email, senha);
+        const user: AuthUser = response;
+        console.log(user); console.log("Usuario logado");
+        localStorage.setItem('loggedInUser', JSON.stringify(user));
+        setUser(user);
+        return user;
+    };
+
     const value: AuthContextType = {
         user,
         login,

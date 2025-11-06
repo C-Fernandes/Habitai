@@ -1,21 +1,33 @@
 // src/components/Modal/AuthModal/index.tsx
 
-import React, { use, useState, type FormEvent } from 'react';
+import React, { useEffect, useState, type FormEvent } from 'react';
 import { BaseModal } from '../BaseModal';
 import { Button } from '../../Button';
-import styles from './AuthModal.module.css';
+import styles from './usermodal.module.css';
 import { userService } from '../../../services/userService';
 import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
+import type { User } from '../../../types';
+import { ensureError } from '../../../utils/errorUtils';
 
 type AuthModalProps = {
     isOpen: boolean;
     onRequestClose: () => void;
+    user?: User;
 };
+type ViewState = 'login' | 'register' | 'update';
 
-export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
-    const [isLoginView, setIsLoginView] = useState(true);
-    const {login} =useAuth();
+const emptyForm = {
+    name: '',
+    email: '',
+    cpf: '',
+    phone: '',
+    password: '',
+    confirmPassword: ''
+};
+export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
+    const [view, setView] = useState<ViewState>('login');
+    const { login } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -26,6 +38,27 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
     });
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        if (isOpen) {
+            if (user) {
+                setView('update');
+                setFormData({
+                    name: user.name || '',
+                    email: user.email || '',
+                    cpf: user.cpf || '',
+                    phone: user.phone || '',
+                    password: '',
+                    confirmPassword: ''
+                });
+            } else {
+                setView('login');
+                setFormData(emptyForm);
+            }
+            setError(null);
+        }
+    }, [isOpen, user]);
+
+
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
@@ -33,20 +66,40 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setError(null); 
+        setError(null);
 
-        if (isLoginView) {
+        if (view === 'update' && user) {
             try {
-                await login(formData.email, formData.password);
-                onRequestClose(); 
-            } catch (error: any) {
-                console.error("Erro de login:", error);
-                setError(error.message || "Email ou senha inválidos.");
+                const updateData = {
+                    id: user.id,
+                    name: formData.name,
+                    phone: formData.phone,
+                    cpf: formData.cpf,
+                    email: formData.email,
+                    password: formData.password ? formData.password : "",
+                    confirmPassword: formData.confirmPassword ? formData.confirmPassword : "",
+                };
+                await userService.update(user.id, updateData);
+
+                toast.success("Perfil atualizado com sucesso!");
+                onRequestClose();
+            } catch (error) {
+                toast.error(ensureError(error).message);
             }
-        } else {
+        }
+        else if (view === 'login') {
+            try {
+                const loggedInUser = await login(formData.email, formData.password);
+                toast.success(`Bem vindo ${loggedInUser.name}!`);
+                onRequestClose();
+            } catch (error) {
+                toast.error(ensureError(error).message);
+            }
+        }
+        else if (view === 'register') {
             if (formData.password !== formData.confirmPassword) {
                 setError("As senhas não conferem.");
-                return; 
+                return;
             }
 
             try {
@@ -59,32 +112,43 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     confirmPassword: formData.confirmPassword,
                 });
 
-                toast.success("Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.");
-                onRequestClose(); 
+                toast.success(`Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.`);
+                onRequestClose();
 
-            } catch (error: any) {
-                console.error("Erro no registo:", error);
-                setError(error.message || "Ocorreu um erro ao tentar registar.");
+            } catch (error) {
+                setError(ensureError(error).message);
             }
         }
     };
 
     const toggleView = () => {
-        setIsLoginView(prev => !prev);
-        setFormData({ name: '', email: '', cpf: '', phone: '', password: '', confirmPassword: '' });
+        setView(prev => (prev === 'login' ? 'register' : 'login'));
+        setFormData(emptyForm);
         setError(null);
     };
+
+    const getTitle = () => {
+        if (view === 'login') return 'Entrar na sua Conta';
+        if (view === 'register') return 'Criar Conta';
+        return 'Atualizar Perfil';
+    };
+    const getButtonText = () => {
+        if (view === 'login') return 'Entrar';
+        if (view === 'register') return 'Registar';
+        return 'Atualizar';
+    };
+    const showFullForm = view === 'register' || view === 'update';
 
     return (
         <BaseModal isOpen={isOpen} onRequestClose={onRequestClose}>
 
             <h2 className={styles.header}>
-                {isLoginView ? 'Entrar na sua Conta' : 'Criar Conta'}
+                {getTitle()}
             </h2>
 
             <form onSubmit={handleSubmit} className={styles.form}>
 
-                {!isLoginView && (
+                {showFullForm && (
                     <input
                         type="text"
                         name="name"
@@ -106,7 +170,7 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     required
                 />
 
-                {!isLoginView && (
+                {showFullForm && (
                     <input
                         type="text"
                         name="cpf"
@@ -118,7 +182,8 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     />
                 )}
 
-                {!isLoginView && (
+                {/* 7. CORRIGIDO: Usa 'showFullForm' */}
+                {showFullForm && (
                     <input
                         type="tel"
                         name="phone"
@@ -137,7 +202,7 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                     onChange={handleInputChange}
                     required
                 />
-                {!isLoginView && (
+                {(view === 'register' || view === 'update') && (
                     <input
                         type="password"
                         name="confirmPassword"
@@ -145,21 +210,21 @@ export function AuthModal({ isOpen, onRequestClose }: AuthModalProps) {
                         className={styles.input}
                         value={formData.confirmPassword}
                         onChange={handleInputChange}
-                        required
+                        required={view === 'register' || !!formData.password}
                     />
                 )}
 
                 {error && <p className={styles.errorText}>{error}</p>}
 
                 <Button type="submit" style={{ width: '90%', margin: '10px 0' }}>
-                    {isLoginView ? 'Entrar' : 'Registar'}
+                    {getButtonText()}
                 </Button>
             </form>
 
             <p className={styles.toggleText}>
-                {isLoginView ? 'Não tem uma conta?' : 'Já tem uma conta?'}
+                {view === "login" ? 'Não tem uma conta?' : 'Já tem uma conta?'}
                 <button onClick={toggleView} className={styles.toggleLink}>
-                    {isLoginView ? ' Registe-se' : ' Faça login'}
+                    {view === "login" ? ' Registe-se' : ' Faça login'}
                 </button>
             </p>
         </BaseModal>

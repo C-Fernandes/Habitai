@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import { apiClient } from "../services/apiClient";
-import type { Property } from "../types";
+import { apiClient } from "../../services/apiClient";
+import type { Property } from "../../types";
 import styles from './welcomepage.module.css';
-import NavBar from "../components/NavBar";
-import {PropertyCard} from "../components/PropertyCard";
+import NavBar from "../../components/NavBar";
+import {PropertyCard} from "../../components/PropertyCard";
 
 export function WelcomePage() {
     const [properties, setProperties] = useState<Property[]>([]);
