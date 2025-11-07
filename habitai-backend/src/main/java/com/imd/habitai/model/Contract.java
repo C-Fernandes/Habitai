@@ -48,8 +48,8 @@ public class Contract {
     private User tenant;
 
     @ManyToOne
-    @JoinColumn(name = "agent_id", nullable = false)
-    private User agent;
+    @JoinColumn(name = "owner_id", nullable = false)
+    private User owner;
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
     private List<Payment> payments;

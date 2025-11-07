@@ -43,6 +43,6 @@ public class Visit {
     private User prospect;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id") 
-    private User agent;
+    @JoinColumn(name = "owner_id") 
+    private User owner;
 }

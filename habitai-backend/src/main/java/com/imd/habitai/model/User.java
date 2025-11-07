@@ -38,6 +38,6 @@ public class User {
     @OneToMany(mappedBy = "prospect")
     private List<Visit> scheduledVisits;
 
-    @OneToMany(mappedBy = "agent")
+    @OneToMany(mappedBy = "owner")
     private List<Visit> accompaniedVisits;
 }
