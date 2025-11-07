@@ -6,12 +6,18 @@ import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @RestController
@@ -34,9 +40,15 @@ public class PropertyController {
     }
 
     @GetMapping
-    public ResponseEntity<List<PropertyResponse>> getAllProperties() {
-        List<PropertyResponse> properties = propertyService.getAll();
-        return new ResponseEntity<>(properties, HttpStatus.OK);
+    public ResponseEntity<Page<PropertyResponse>> getAllProperties(
+            @RequestParam(required = false) String city,
+            @RequestParam(required = false) String state,
+            @RequestParam(required = false) BigDecimal maxPrice,
+            @RequestParam(required = false) BigDecimal minPrice,
+            @PageableDefault(size = 9, page = 0) Pageable pageable
+    ) {
+        Page<PropertyResponse> propertyPage = propertyService.getAll(city, state, maxPrice, minPrice, pageable);
+        return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 
     @GetMapping("/{id}")

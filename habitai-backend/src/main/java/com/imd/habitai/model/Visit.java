@@ -32,7 +32,7 @@ public class Visit {
     private VisitStatus status;
 
     @Lob
-    private String notes;
+    private String message;
 
  @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
@@ -43,6 +43,62 @@ public class Visit {
     private User prospect;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id") 
-    private User owner;
+    @JoinColumn(name = "agent_id") 
+    private User agent;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public LocalDateTime getDateTime() {
+        return dateTime;
+    }
+
+    public void setDateTime(LocalDateTime dateTime) {
+        this.dateTime = dateTime;
+    }
+
+    public VisitStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(VisitStatus status) {
+        this.status = status;
+    }
+
+    public Property getProperty() {
+        return property;
+    }
+
+    public void setProperty(Property property) {
+        this.property = property;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public User getProspect() {
+        return prospect;
+    }
+
+    public void setProspect(User prospect) {
+        this.prospect = prospect;
+    }
+
+    public User getAgent() {
+        return agent;
+    }
+
+    public void setAgent(User agent) {
+        this.agent = agent;
+    }
 }

@@ -10,11 +10,18 @@ import com.imd.habitai.model.User;
 import com.imd.habitai.repository.AmenityRepository;
 import com.imd.habitai.repository.PropertyRepository;
 import com.imd.habitai.repository.UserRepository;
+import com.imd.habitai.repository.specification.PropertySpecification;
+
 import jakarta.persistence.EntityNotFoundException;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -40,6 +47,7 @@ public class PropertyService {
         this.imageService = imageService;
     }
 
+    @Transactional
     public PropertyResponse create(PropertyCreateRequest propertyDTO, List<MultipartFile> images) {
         Property property = propertyMapper.toEntity(propertyDTO);
         User owner = userRepository.findById(property.getOwner().getId())
@@ -62,18 +70,26 @@ public class PropertyService {
 
         return propertyMapper.toDTO(result);
     }
-
-    public List<PropertyResponse> getAll() {
-        return propertyRepository.findAll().stream()
-            .map(propertyMapper::toDTO)
-            .collect(Collectors.toList());
+    @Transactional(readOnly = true)
+    public Page<PropertyResponse> getAll(
+        String city, 
+        String state, 
+        BigDecimal maxPrice,
+        BigDecimal minPrice,
+        Pageable pageable
+    ) {
+        Specification<Property> spec = PropertySpecification.filterBy(city, state, maxPrice, minPrice);
+        Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
+        return propertyPage.map(propertyMapper::toDTO);
     }
 
+    @Transactional(readOnly = true)
     public Optional<PropertyResponse> getById(Long id) {
         Optional<Property> property = propertyRepository.findById(id);
         return property.map(propertyMapper::toDTO);
     }
 
+    @Transactional
     public Optional<PropertyResponse> update(Long id, PropertyUpdateRequest propertyDTO) {
         return propertyRepository.findById(id).map(existingProperty -> {
             if (propertyDTO.title() != null) {
@@ -115,6 +131,7 @@ public class PropertyService {
         });
     }
 
+    @Transactional
     public boolean delete(Long id) {
         if (propertyRepository.existsById(id)) {
             propertyRepository.deleteById(id);
