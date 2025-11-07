@@ -20,26 +20,6 @@
   padding: 16px;
 }
 
-.filterBar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  margin-bottom: 32px;
-  padding: 16px;
-  background-color: var(--color-surface, #F9FAFB);
-  border-radius: var(--border-radius, 8px);
-  border: 1px solid var(--color-border, #E5E7EB);
-}
-
-.filterInput {
-  flex: 1;
-  min-width: 150px;
-  padding: 10px 14px;
-  font-size: var(--font-size-sm, 0.875rem);
-  border: 1px solid var(--color-border, #E5E7EB);
-  border-radius: var(--border-radius, 8px);
-}
-
 .filterInput[type=number]::-webkit-inner-spin-button, 
 .filterInput[type=number]::-webkit-outer-spin-button { 
   -webkit-appearance: none; 
@@ -47,4 +27,128 @@
 }
 .filterInput[type=number] {
   -moz-appearance: textfield;
+}
+
+.filterInput {
+  flex: 1;
+  min-width: 150px; 
+  width: 100%;
+}
+
+.filterInput,
+.filterButton,
+.filterSearchButton {
+  color: #1F2937;
+  height: 42px; 
+  padding: 10px 14px;
+  font-size: var(--font-size-sm, 0.875rem);
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+  background-color: var(--color-background, #FFFFFF);
+  box-sizing: border-box;
+}
+
+.filterBar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 32px;
+  padding: 16px;
+  background-color: var(--color-surface, #F9FAFB);
+  border-radius: var(--border-radius, 8px);
+  border: 1px solid var(--color-border, #E5E7EB);
+  
+  align-items: flex-end;
+}
+
+.filterPriceWrapper {
+  position: relative; 
+  flex-grow: 0;
+  flex-shrink: 0;
+}
+
+.filterButton {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+  color: var(--color-primary, #1F2937);
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  white-space: nowrap;
+}
+
+.filterButtonPlaceholder {
+  color: #9CA3AF; 
+}
+
+.filterButton:hover {
+  background-color: var(--color-surface, #F9FAFB);
+}
+
+.arrowIcon {
+  font-size: 0.7rem;
+  color: var(--color-secondary, #6B7280);
+}
+
+.priceDropdown {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  width: 300px; 
+  background-color: var(--color-background, #FFFFFF);
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+  z-index: 10;
+  margin-top: 8px; 
+}
+
+.dropdownLabel {
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 700;
+  color: var(--color-secondary, #6B7280);
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+
+.inputLabel {
+  display: block;
+  font-size: var(--font-size-xs, 0.75rem);
+  font-weight: 500;
+  color: var(--color-primary, #1F2937);
+  margin-bottom: 4px;
+}
+
+.priceDropdownInputs {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.applyPriceButton {
+  width: 100%;
+  padding: 8px;
+  font-size: var(--font-size-sm, 0.875rem);
+}
+
+.filterSearchButton {
+  flex-grow: 0;
+  flex-shrink: 0;
+  
+  color: var(--color-primary, #1F2937);
+  font-weight: 600;
+  
+  margin: 0;
+  box-shadow: none;
+  transform: none;
+}
+
+.filterSearchButton:hover:not(:disabled) {
+  background-color: var(--color-surface, #F9FAFB);
+  border-color: #d1d5db;
+  transform: none;
 }

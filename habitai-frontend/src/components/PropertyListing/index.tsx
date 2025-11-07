@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useState, useRef } from "react";
 import { apiClient } from "../../services/apiClient";
 import { PropertyCard } from "../PropertyCard";
 import { Button } from "../Button";
@@ -13,6 +13,16 @@ interface FilterState {
     maxPrice: string;
 }
 
+const unFormatPriceInput = (value: string): string => {
+    return value.replace(/\./g, '');
+};
+
+const formatPriceInput = (value: string): string => {
+    const rawValue = value.replace(/\D/g, '');
+    if (!rawValue) return '';
+    return rawValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+};
+
 export function PropertyListing() {
     const [properties, setProperties] = useState<Property[]>([]);
     const [currentPage, setCurrentPage] = useState(0); 
@@ -25,7 +35,13 @@ export function PropertyListing() {
         minPrice: '',
         maxPrice: ''
     });
+    const [tempPriceInputs, setTempPriceInputs] = useState({
+        minPrice: '',
+        maxPrice: ''
+    });
     const [activeFilters, setActiveFilters] = useState<FilterState>(filterInputs);
+    const [isPriceDropdownOpen, setIsPriceDropdownOpen] = useState(false);
+    const priceDropdownRef = useRef<HTMLDivElement>(null);
 
     const fetchPropertiesPage = useCallback(async (
         pageToLoad: number,
@@ -40,8 +56,8 @@ export function PropertyListing() {
         params.append('size', String(PAGE_SIZE));
         if (filters.city) params.append('city', filters.city);
         if (filters.state) params.append('state', filters.state);
-        if (filters.minPrice) params.append('minPrice', filters.minPrice);
-        if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+        if (filters.minPrice) params.append('minPrice', unFormatPriceInput(filters.minPrice));
+        if (filters.maxPrice) params.append('maxPrice', unFormatPriceInput(filters.maxPrice));
 
         try {
             const endpoint = `/properties?${params.toString()}`; 
@@ -62,6 +78,18 @@ export function PropertyListing() {
         } finally {
             setIsLoading(false);
         }
+    }, []);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (priceDropdownRef.current && !priceDropdownRef.current.contains(event.target as Node)) {
+                setIsPriceDropdownOpen(false);
+            }
+        }
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
     }, []);
 
     useEffect(() => {
@@ -109,12 +137,66 @@ export function PropertyListing() {
 
     const handleFilterChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFilterInputs(prev => ({ ...prev, [name]: value }));
+        if (name === "minPrice" || name === "maxPrice") {
+            const formattedValue = formatPriceInput(value);
+            setTempPriceInputs(prev => ({ ...prev, [name]: formattedValue }));
+        } else {
+            setFilterInputs(prev => ({ ...prev, [name]: value }));
+        }
+    };
+
+const handleApplyPriceFilter = () => {
+        const minStr = unFormatPriceInput(tempPriceInputs.minPrice);
+        const maxStr = unFormatPriceInput(tempPriceInputs.maxPrice);
+
+        let min = parseFloat(minStr) || 0;
+        let max = parseFloat(maxStr) || 0;
+
+        if (min >= 50000) min = 49999;
+        if (max >= 50000) max = 49999;
+        if (max > 0 && min > max) {
+            max = 49999;
+        }
+
+        const finalMinStr = min === 0 ? '' : formatPriceInput(String(min));
+        const finalMaxStr = max === 0 ? '' : formatPriceInput(String(max));
+        
+        setFilterInputs(prev => ({
+            ...prev,
+            minPrice: finalMinStr,
+            maxPrice: finalMaxStr
+        }));
+        
+        setTempPriceInputs({
+            minPrice: finalMinStr,
+            maxPrice: finalMaxStr
+        });
+        setIsPriceDropdownOpen(false);
     };
 
     const handleSearch = () => {
         if (!isLoading) fetchPropertiesPage(0, filterInputs, true);
     };
+
+    const getPriceButtonText = () => {
+        const { minPrice, maxPrice } = filterInputs;
+        if (minPrice && maxPrice) return `R$ ${minPrice} - R$ ${maxPrice}`;
+        if (minPrice) return `A partir de R$ ${minPrice}`;
+        if (maxPrice) return `Até R$ ${maxPrice}`;
+        return "Preço";
+    };
+
+    const togglePriceDropdown = () => {
+        if (!isPriceDropdownOpen) {
+            setTempPriceInputs({
+                minPrice: filterInputs.minPrice,
+                maxPrice: filterInputs.maxPrice
+            });
+        }
+        setIsPriceDropdownOpen(prev => !prev);
+    };
+
+
 
     return (
         <> 
@@ -136,23 +218,64 @@ export function PropertyListing() {
                     onChange={handleFilterChange}
                     className={styles.filterInput}
                 />
-                <input
-                    type="number"
-                    name="minPrice"
-                    placeholder="Preço Mín."
-                    value={filterInputs.minPrice}
-                    onChange={handleFilterChange}
-                    className={styles.filterInput}
-                />
-                <input
-                    type="number"
-                    name="maxPrice"
-                    placeholder="Preço Máx."
-                    value={filterInputs.maxPrice}
-                    onChange={handleFilterChange}
-                    className={styles.filterInput}
-                />
-                <Button onClick={handleSearch} disabled={isLoading}>
+
+                <div className={styles.filterPriceWrapper} ref={priceDropdownRef}>
+                    <button
+                        type="button"
+                        className={styles.filterButton}
+                        onClick={togglePriceDropdown}
+                    >
+                        {getPriceButtonText()}
+                        <span className={styles.arrowIcon}>▼</span>
+                    </button>
+                    
+                    {isPriceDropdownOpen && (
+                        <div className={styles.priceDropdown}>
+                            <p className={styles.dropdownLabel}>Faixa de Preço</p>
+                            
+                            <div className={styles.priceDropdownInputs}>
+                                <div>
+                                    <label htmlFor="minPrice" className={styles.inputLabel}>
+                                        Preço Mín.
+                                    </label>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        id="minPrice"
+                                        name="minPrice"
+                                        placeholder="R$"
+                                        value={tempPriceInputs.minPrice}
+                                        onChange={handleFilterChange}
+                                        className={styles.filterInput}
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="maxPrice" className={styles.inputLabel}>
+                                        Preço Máx.
+                                    </label>
+                                    <input
+                                        type="text"
+                                        inputMode="numeric"
+                                        id="maxPrice"
+                                        name="maxPrice"
+                                        placeholder="R$"
+                                        value={tempPriceInputs.maxPrice}
+                                        onChange={handleFilterChange}
+                                        className={styles.filterInput}
+                                    />
+                                </div>
+                            </div>
+                            
+                            <Button 
+                                onClick={handleApplyPriceFilter} 
+                                className={styles.applyPriceButton}
+                            >
+                                Aplicar
+                            </Button>
+                        </div>
+                    )}
+                </div>
+                <Button onClick={handleSearch} disabled={isLoading} className={styles.filterSearchButton}>
                     Buscar
                 </Button>
             </div>
@@ -165,8 +288,8 @@ export function PropertyListing() {
 
             <div className={styles.footer}>
                 {!isLoading && hasNextPage && (
-                    <Button variant='fullWidth' onClick={handleLoadMore}>
-                        Ver Mais
+                    <Button onClick={handleLoadMore}>
+                        Ver Mais Imóveis
                     </Button>
                 )}
             </div>
