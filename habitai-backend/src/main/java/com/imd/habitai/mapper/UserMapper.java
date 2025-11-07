@@ -15,7 +15,6 @@ public interface UserMapper {
     @Mapping(target = "contractsAsOwner", ignore = true)
     @Mapping(target = "contractsAsTenant", ignore = true)
     @Mapping(target = "scheduledVisits", ignore = true)
-    @Mapping(target = "accompaniedVisits", ignore = true)
     public User toEntity(UserRegisterRequest dto);
 
     public UserResponse toResponse(User user);
