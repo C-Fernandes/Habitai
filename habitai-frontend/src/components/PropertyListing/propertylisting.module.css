@@ -57,8 +57,7 @@
   background-color: var(--color-surface, #F9FAFB);
   border-radius: var(--border-radius, 8px);
   border: 1px solid var(--color-border, #E5E7EB);
-  
-  align-items: flex-end;
+  align-items: center;
 }
 
 .filterPriceWrapper {
