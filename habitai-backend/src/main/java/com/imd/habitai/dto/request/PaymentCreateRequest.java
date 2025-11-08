@@ -24,5 +24,8 @@ public record PaymentCreateRequest(
     BigDecimal amountPaid,
 
     @NotNull(message = "O status de pagamento é obrigatório.")
-    PaymentStatus status 
+    PaymentStatus status,
+
+    @NotNull(message = "O id do Contrato é obrigatório.")
+    Long idContract
 ) {}

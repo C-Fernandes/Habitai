@@ -30,10 +30,10 @@ public class PaymentService {
         this.contractRepository = contractRepository;
     }
 
-    public PaymentResponse create(PaymentCreateRequest request, Long idContrato){
+    public PaymentResponse create(PaymentCreateRequest request){
         Payment payment = paymentMapper.toEntity(request);
-        Contract contract = contractRepository.findById(idContrato)
-            .orElseThrow(() -> new EntityNotFoundException("Contrato com ID " + idContrato + " não encontrado."));
+        Contract contract = contractRepository.findById(request.idContract())
+            .orElseThrow(() -> new EntityNotFoundException("Contrato com ID " + request.idContract() + " não encontrado."));
 
         payment.setContract(contract);
 
