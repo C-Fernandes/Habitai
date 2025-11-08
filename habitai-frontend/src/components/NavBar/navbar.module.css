@@ -6,7 +6,7 @@
   box-sizing: border-box;
   border-bottom: 1px solid var(--color-border);
   height: 80px;
-  width: 100vw;
+  width: 100%;
 }
 
 .logoContainer {
@@ -53,20 +53,20 @@
 }
 
 .userNameContainer {
-  border: 0;
+  border: 1px solid transparent;
+  margin: 2px 8px 2px 2px;
   border-radius: 25px;
   color: var(--color-secondary);
-  margin: 0 !important;
   display: flex;
-  transition: max-width 0.5s ease-in-out, border-color 0.5s ease;
   cursor: pointer;
-  max-width: 40px;
+  overflow: hidden;
+  transition: max-width 0.5s ease-in-out, border-color 0.5s ease;
+  max-width: 40px; 
 }
 
 .userNameContainer:hover {
+  border-color: var(--color-secondary);
   max-width: 500px;
-  border: 1px var(--color-secondary) solid;
-  margin: 2px 8px 2px 2px;
 }
 
 .userIcon {
@@ -83,13 +83,17 @@
 }
 
 .userName {
+  max-width: 0;
+  overflow: hidden;
   opacity: 0;
-  padding: 5px 10px 5px 5px;
+  padding: 5px 0 5px 0;
   white-space: nowrap;
-  transition: opacity 0.2s 0.1s;
+  transition: opacity 0.3s 0.2s, max-width 0.5s ease-in-out, padding 0.5s ease-in-out;
 }
 
 .userNameContainer:hover .userName {
   opacity: 1;
-  transition: opacity 0.3s 0.2s;
+  max-width: 300px;
+  padding: 5px 10px 5px 5px;
+  transition: opacity 0.3s 0.2s, max-width 0.5s ease-in-out, padding 0.5s ease-in-out;
 }

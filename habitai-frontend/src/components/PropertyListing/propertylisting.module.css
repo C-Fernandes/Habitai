@@ -132,6 +132,7 @@
 .applyPriceButton {
   width: 100%;
   padding: 8px;
+  border-radius: 8px;
   font-size: var(--font-size-sm, 0.875rem);
 }
 
