@@ -1,7 +1,6 @@
 package com.imd.habitai.controller;
 
 import java.util.List;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -41,15 +40,15 @@ public class ContractController {
         return new ResponseEntity<>(newContract, HttpStatus.CREATED);
     }
 
-    @GetMapping("/byOwner/{id}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable Long id){
-        List<ContractResponse> contractsResponse = contractService.findAllByOwner(id);
+    @GetMapping("/byOwner/{cpf}")
+    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable String cpf){
+        List<ContractResponse> contractsResponse = contractService.findAllByOwner(cpf);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/byTenant/{id}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable Long id){
-        List<ContractResponse> contractsResponse = contractService.findAllByTenant(id);
+    @GetMapping("/byTenant/{cpf}")
+    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable String cpf){
+        List<ContractResponse> contractsResponse = contractService.findAllByTenant(cpf);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }
 
