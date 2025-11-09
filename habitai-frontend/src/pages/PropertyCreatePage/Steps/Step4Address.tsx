@@ -13,7 +13,15 @@ export function Step4Address({ formData, handleAddressChange, handleChange, isCe
 
         <div className={styles.formGroup}>
             <label htmlFor="cep">CEP</label>
-            <input type="text" id="cep" name="cep" value={formData.address.cep} onChange={handleAddressChange} maxLength={9} />
+            <input 
+                type="text" 
+                id="cep" 
+                name="cep" 
+                value={formData.address.cep} 
+                onChange={handleAddressChange} 
+                maxLength={9} 
+                placeholder="00000-000" 
+            />
             {isCepLoading && <small>Buscando...</small>}
             {cepError && <small className={styles.errorText}>{cepError}</small>}
         </div>

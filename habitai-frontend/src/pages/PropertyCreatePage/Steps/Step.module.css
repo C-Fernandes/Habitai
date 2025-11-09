@@ -112,3 +112,11 @@
 .priceInput {
   -moz-appearance: textfield;
 }
+
+.errorText {
+  color: var(--color-error, #EF4444); 
+  font-size: var(--font-size-sm, 0.875rem); 
+  display: block; 
+  margin-top: 8px; 
+  font-weight: 500;
+}

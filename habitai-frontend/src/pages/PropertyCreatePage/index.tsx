@@ -31,6 +31,12 @@ const initialState = {
 
 const TOTAL_STEPS = 5;
 
+const formatCep = (value: string): string => {
+    const cleanValue = value.replace(/\D/g, '');
+    const limitedValue = cleanValue.slice(0, 8);
+    return limitedValue.replace(/^(\d{5})(\d)/, '$1-$2');
+};
+
 export function PropertyCreatePage() {
     const { user } = useAuth();
     const navigate = useNavigate();
@@ -54,14 +60,23 @@ export function PropertyCreatePage() {
             try {
                 const data = await viaCepClient.get(cep);
                 setFormData(prev => ({
-                ...prev,
-                address: { ...prev.address, street: data.logradouro,
-                    neighborhood: data.bairro, city: data.localidade,
-                    state: data.uf, complement: data.complemento,
-                },
+                    ...prev,
+                    address: { ...prev.address, street: data.logradouro,
+                        neighborhood: data.bairro, city: data.localidade,
+                        state: data.estado, complement: data.complemento,
+                    },
                 }));
                 document.getElementsByName("number")[0]?.focus();
-            } catch (err: any) { setCepError(err.message); } 
+            } catch (err: any) { 
+                setCepError(err.message);
+                setFormData(prev => ({
+                    ...prev,
+                    address: { ...prev.address, street: "",
+                        neighborhood: "", city: "",
+                        state: "", complement: "",
+                    },
+                }));
+            } 
             finally { setIsCepLoading(false); }
         };
         fetchAddress();
@@ -71,10 +86,32 @@ export function PropertyCreatePage() {
         const { name, value } = e.target;
         setFormData(prev => ({ ...prev, [name]: value }));
     };
+
     const handleAddressChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, address: { ...prev.address, [name]: value }}));
+
+        if (name === "cep") {
+        const formattedCep = formatCep(value);
+        
+        setFormData(prev => ({
+            ...prev,
+            address: {
+            ...prev.address,
+            cep: formattedCep,
+            },
+        }));
+
+        } else {
+            setFormData(prev => ({
+                ...prev,
+                address: {
+                ...prev.address,
+                [name]: value,
+                },
+            }));
+        }
     };
+
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         if (e.target.files) {
         setImageFiles(Array.from(e.target.files));
