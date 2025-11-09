@@ -15,6 +15,7 @@ export function Step4Address({ formData, handleAddressChange, handleChange, isCe
                 onChange={handleChange} 
                 rows={7}
                 maxLength={1000}
+                placeholder='Escreva aqui informações adicionais que podem ajudar a atrair inquilinos.'
             />
         </div>
 

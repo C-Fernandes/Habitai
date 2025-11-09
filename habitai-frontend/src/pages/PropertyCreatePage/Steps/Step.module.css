@@ -48,6 +48,15 @@
   color: black;
   background-color: #ffffff;
   resize: none;
+  font-family: inherit;
+}
+.formGroup input::placeholder,
+.formGroup textarea::placeholder,
+.mainInput::placeholder,
+.priceInput::placeholder {
+  font-family: inherit;
+  opacity: 1;
+  color: #6a6a6b7e;
 }
 .formGrid {
   display: grid;
@@ -96,6 +105,11 @@
   font-weight: 600;
   max-width: none;
   width: 100%;
+  color: var(--color-primary);
+  background-color: #ffffff;
+}
+.priceInput::placeholder {
+  color: #6a6a6b7e;
 }
 .priceInput:focus {
   outline: none;
