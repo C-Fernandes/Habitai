@@ -6,6 +6,7 @@ import NavBar from "../../components/NavBar";
 import DeleteVisitModal from "../../components/Modals/DeleteVisitModal/index";
 import EditVisitModal from "../../components/Modals/EditVisitModal/index";
 import OwnerVisitActionModal from "../../components/Modals/OwnerVisitActionModal/index";
+import {VisitsCalendar} from "../../components/VisitsCalendar/index";
 
 interface Visit {
     id: number;
@@ -76,7 +77,12 @@ export default function VisitsPage() {
             <NavBar />
             <div className={styles.container}>
                 <h2 className={styles.title}>Minhas Visitas</h2>
-
+                <div className={styles.calendarContainer}>
+                    <VisitsCalendar
+                        visitsDates={visits.map(v => v.dateTime.split('T')[0])}
+                        onSelectDate={(date) => console.log("Selecionou", date)}
+                    />
+                </div>
                 <div className={styles.tabs}>
                     <button
                         className={`${styles.tabButton} ${activeTab === "myVisits" ? styles.active : ""}`}
