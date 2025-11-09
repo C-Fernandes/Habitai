@@ -1,0 +1,23 @@
+import styles from './Step.module.css';
+
+export function Step5Price({ formData, handleChange }) {
+  return (
+    <div className={styles.stepContainer}>
+      <h2 className={styles.headline}>Quase lá! Quanto custa por mês?</h2>
+      <p className={styles.subheadline}>Defina o valor do aluguel (sem taxas).</p>
+      <div className={styles.priceInputWrapper}>
+        <span className={styles.priceSymbol}>R$</span>
+        <input
+          type="number"
+          id="rentalPrice"
+          name="rentalPrice"
+          value={formData.rentalPrice}
+          onChange={handleChange}
+          placeholder="2.500"
+          className={styles.priceInput}
+          autoFocus
+        />
+      </div>
+    </div>
+  );
+}

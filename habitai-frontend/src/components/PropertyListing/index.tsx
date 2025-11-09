@@ -2,6 +2,7 @@ import { useCallback, useEffect, useState, useRef } from "react";
 import { apiClient } from "../../services/apiClient";
 import { PropertyCard } from "../PropertyCard";
 import { Button } from "../Button";
+import { SlArrowDown } from "react-icons/sl";
 import styles from './propertylisting.module.css'; 
 import type { PaginatedProperties, Property } from "../../types";
 
@@ -226,7 +227,7 @@ const handleApplyPriceFilter = () => {
                         onClick={togglePriceDropdown}
                     >
                         {getPriceButtonText()}
-                        <span className={styles.arrowIcon}>▼</span>
+                        <span className={styles.arrowIcon}><SlArrowDown/></span>
                     </button>
                     
                     {isPriceDropdownOpen && (

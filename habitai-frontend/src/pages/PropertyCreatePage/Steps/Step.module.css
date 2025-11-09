@@ -1,0 +1,96 @@
+.stepContainer {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.headline {
+  font-size: 2rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  line-height: 1.2;
+}
+
+.subheadline {
+  font-size: 1.1rem;
+  color: var(--color-secondary);
+  margin-top: -16px;
+}
+
+.formGroup { display: flex;
+  flex-direction: column; 
+  gap: 8px; 
+}
+
+.formGroup label { 
+  font-weight: 500; 
+  font-size: 0.9rem;
+  color: black;
+}
+
+.formGroup input[type="text"],
+.formGroup input[type="number"],
+.formGroup textarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+  font-size: 1rem;
+  background-color: #9a9090;  
+}
+.formGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 20px;
+}
+
+/* Etapa 1 - Título */
+.mainInput {
+  padding: 16px;
+  font-size: 1.2rem;
+  border: 2px solid var(--color-border, #E5E7EB);
+}
+.mainInput:focus {
+  border-color: var(--color-primary, #1F2937);
+  outline: none;
+}
+
+/* Etapa 2 - Fotos */
+.uploadBox { /* ... (estilos para a caixa de upload) ... */ }
+.fileInput { /* ... (esconde o input padrão) ... */ }
+.fileLabel { /* ... (estiliza o label para parecer um botão) ... */ }
+.infoText { font-size: 0.9rem; color: #888; text-align: center; }
+.imagePreviewContainer { margin-top: 16px; }
+.imageGrid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
+.previewImage { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; }
+
+/* Etapa 5 - Preço */
+.priceInputWrapper {
+  display: flex;
+  align-items: center;
+  border: 2px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+  width: fit-content; /* Encolhe para o tamanho do input */
+}
+.priceSymbol {
+  font-size: 1.5rem;
+  font-weight: 600;
+  padding-left: 16px;
+  color: var(--color-secondary);
+}
+.priceInput {
+  border: none;
+  padding: 16px;
+  font-size: 1.5rem;
+  font-weight: 600;
+  max-width: 200px;
+}
+.priceInput:focus {
+  outline: none;
+}
