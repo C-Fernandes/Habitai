@@ -3,7 +3,6 @@ package com.imd.habitai.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import com.imd.habitai.model.Payment;
 
@@ -26,8 +25,8 @@ public record ContractUpdateRequest(
     Integer paymentDueDay,
 
     Long propertyId, 
-    UUID tenantId, 
-    UUID ownerId,
+    Long tenantId,
+    Long ownerId,
     List<Payment> payments
 ) 
 {}

@@ -31,22 +31,25 @@ public class VisitService {
     }
 
     @Transactional
-    public VisitResponseDTO createVisit(VisitRequestDTO dto, User loggedUser) {
-        Property property = propertyRepository.findById(dto.getPropertyId())
+    public VisitResponseDTO createVisit(VisitRequestDTO dto) {
+        Property property = propertyRepository.findByIdWithOwner(dto.getPropertyId())
                 .orElseThrow(() -> new RuntimeException("Property not found"));
+
+        User user = userRepository.findById(dto.getUserId())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        User propertyUser = userRepository.findById(property.getOwner().getId())
+                .orElseThrow(() -> new RuntimeException("Property owner not found"));
+
+        property.getOwner().getId();
 
         Visit visit = new Visit();
         visit.setProperty(property);
-        visit.setProspect(loggedUser);
+        visit.setPropertyUser(propertyUser);
+        visit.setUser(user);
         visit.setDateTime(dto.getDateTime());
         visit.setMessage(dto.getMessage());
         visit.setStatus(VisitStatus.SCHEDULED);
-
-        if (dto.getAgentId() != null) {
-            User agent = userRepository.findById(dto.getAgentId())
-                    .orElseThrow(() -> new RuntimeException("Agent not found"));
-            visit.setAgent(agent);
-        }
 
         visit = visitRepository.save(visit);
 
@@ -75,15 +78,16 @@ public class VisitService {
         return mapToResponse(visit);
     }
 
-    private VisitResponseDTO mapToResponse(Visit visit) {
+    public VisitResponseDTO mapToResponse(Visit visit) {
         VisitResponseDTO dto = new VisitResponseDTO();
         dto.setId(visit.getId());
-        dto.setPropertyId(visit.getProperty().getId());
-        dto.setProspectId(visit.getProspect().getId());
-        dto.setAgentId(visit.getAgent() != null ? visit.getAgent().getId() : null);
         dto.setDateTime(visit.getDateTime());
-        dto.setMessage(visit.getMessage());
         dto.setStatus(visit.getStatus());
+        dto.setMessage(visit.getMessage());
+        dto.setPropertyId(visit.getProperty().getId());
+        dto.setPropertyUserId(visit.getPropertyUser().getId());
+        dto.setUser(visit.getUser());
         return dto;
     }
+
 }

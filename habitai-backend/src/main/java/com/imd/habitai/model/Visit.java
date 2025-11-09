@@ -34,17 +34,17 @@ public class Visit {
     @Lob
     private String message;
 
- @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "property_id", nullable = false)
     private Property property;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "prospect_id", nullable = false)
-    private User prospect;
+    @JoinColumn(name = "property_user_id")
+    private User propertyUser;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "agent_id") 
-    private User agent;
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public Long getId() {
         return id;
@@ -86,19 +86,19 @@ public class Visit {
         this.message = message;
     }
 
-    public User getProspect() {
-        return prospect;
+    public User getPropertyUser() {
+        return propertyUser;
     }
 
-    public void setProspect(User prospect) {
-        this.prospect = prospect;
+    public void setPropertyUser(User propertyUser) {
+        this.propertyUser = propertyUser;
     }
 
-    public User getAgent() {
-        return agent;
+    public User getUser() {
+        return user;
     }
 
-    public void setAgent(User agent) {
-        this.agent = agent;
+    public void setUser(User user) {
+        this.user = user;
     }
 }

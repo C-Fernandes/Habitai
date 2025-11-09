@@ -1,7 +1,6 @@
 package com.imd.habitai.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -62,7 +61,7 @@ public class ContractService {
     }
 
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByOwner(UUID idOwner){
+    public List<ContractResponse> findAllByOwner(Long idOwner){
         User owner = userRepository.findById(idOwner).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idOwner+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByOwner(owner);
 
@@ -70,7 +69,7 @@ public class ContractService {
     }
 
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByTenant(UUID idTenant){
+    public List<ContractResponse> findAllByTenant(Long idTenant){
         User tenant = userRepository.findById(idTenant).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idTenant+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByTenant(tenant);
 
