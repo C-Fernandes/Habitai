@@ -13,7 +13,7 @@ export function Step1Title({ formData, handleChange }) {
         onChange={handleChange}
         placeholder="Ex: Apartamento 3 quartos em Lagoa Nova"
         className={styles.mainInput}
-        autoFocus // Foca automaticamente
+        autoFocus
       />
     </div>
   );

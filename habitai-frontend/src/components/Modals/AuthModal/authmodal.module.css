@@ -26,6 +26,8 @@
     background-color: var(--color-background);
     color: var(--color-primary);
     transition: border-color 0.2s;
+    max-width: 90%;
+    margin: 5px;
 }
 
 .input:focus {

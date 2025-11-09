@@ -1,4 +1,5 @@
 .stepContainer {
+  margin-top: 75px;
   display: flex;
   flex-direction: column;
   gap: 24px;
@@ -36,13 +37,16 @@
 
 .formGroup input[type="text"],
 .formGroup input[type="number"],
+.mainInput,
+.priceInputWrapper,
 .formGroup textarea {
   width: 100%;
   padding: 12px 14px;
-  border: 1px solid var(--color-border, #E5E7EB);
-  border-radius: var(--border-radius, 8px);
+  border: 1px solid #5454547e;
+  border-radius: 8px;
   font-size: 1rem;
-  background-color: #9a9090;  
+  color: black;
+  background-color: #ffffff;  
 }
 .formGrid {
   display: grid;
@@ -50,33 +54,33 @@
   gap: 20px;
 }
 
-/* Etapa 1 - Título */
 .mainInput {
   padding: 16px;
   font-size: 1.2rem;
-  border: 2px solid var(--color-border, #E5E7EB);
+  border-radius: 8px;
+  color: black;
+  border: 2px solid #5454547e;
+}
+.mainInput::placeholder {
+  color: #6a6a6b7e;
 }
 .mainInput:focus {
-  border-color: var(--color-primary, #1F2937);
+  border-color: var(--color-primary);
   outline: none;
 }
 
-/* Etapa 2 - Fotos */
-.uploadBox { /* ... (estilos para a caixa de upload) ... */ }
-.fileInput { /* ... (esconde o input padrão) ... */ }
-.fileLabel { /* ... (estiliza o label para parecer um botão) ... */ }
+.uploadBox
+.fileInput
+.fileLabel
 .infoText { font-size: 0.9rem; color: #888; text-align: center; }
 .imagePreviewContainer { margin-top: 16px; }
 .imageGrid { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 10px; }
 .previewImage { width: 100px; height: 100px; object-fit: cover; border-radius: 4px; }
 
-/* Etapa 5 - Preço */
 .priceInputWrapper {
   display: flex;
   align-items: center;
   border: 2px solid var(--color-border, #E5E7EB);
-  border-radius: var(--border-radius, 8px);
-  width: fit-content; /* Encolhe para o tamanho do input */
 }
 .priceSymbol {
   font-size: 1.5rem;
@@ -89,8 +93,22 @@
   padding: 16px;
   font-size: 1.5rem;
   font-weight: 600;
-  max-width: 200px;
+  max-width: none;
+  width: 100%;
 }
 .priceInput:focus {
   outline: none;
+}
+
+.formGroup input[type=number]::-webkit-inner-spin-button, 
+.formGroup input[type=number]::-webkit-outer-spin-button,
+.priceInput::-webkit-inner-spin-button,
+.priceInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.formGroup input[type=number],
+.priceInput {
+  -moz-appearance: textfield;
 }

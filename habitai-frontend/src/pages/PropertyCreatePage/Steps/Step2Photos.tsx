@@ -20,7 +20,6 @@ export function Step2Photos({ imageFiles, onChange }) {
         </label>
         <p className={styles.infoText}>Formatos permitidos: JPG, PNG. Limite de 10 fotos.</p>
       </div>
-      {/* Preview das imagens selecionadas */}
       <div className={styles.imagePreviewContainer}>
         {imageFiles.length > 0 && (
           <p>{imageFiles.length} foto(s) selecionada(s):</p>

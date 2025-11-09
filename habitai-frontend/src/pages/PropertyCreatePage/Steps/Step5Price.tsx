@@ -16,6 +16,7 @@ export function Step5Price({ formData, handleChange }) {
           placeholder="2.500"
           className={styles.priceInput}
           autoFocus
+          min="0"
         />
       </div>
     </div>
