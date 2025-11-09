@@ -64,12 +64,60 @@ public class VisitService {
     }
 
     @Transactional
-    public VisitResponseDTO confirmVisit(Long visitId, User owner) {
+    public VisitResponseDTO confirmVisit(Long visitId) {
         Visit visit = visitRepository.findById(visitId)
                 .orElseThrow(() -> new RuntimeException("Visit not found"));
 
-        if (!visit.getProperty().getOwner().getId().equals(owner.getId())) {
-            throw new RuntimeException("You are not allowed to confirm this visit");
+        visit.setStatus(VisitStatus.CONFIRMED);
+        visitRepository.save(visit);
+
+        return mapToResponse(visit);
+    }
+
+    @Transactional
+    public VisitResponseDTO updateVisit(Long id, VisitRequestDTO dto) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        if (visit.getStatus() == VisitStatus.CANCELED) {
+            throw new RuntimeException("Cannot edit a cancelled visit");
+        }
+
+        visit.setDateTime(dto.getDateTime());
+        visit.setMessage(dto.getMessage());
+        visit.setStatus(VisitStatus.SCHEDULED);
+
+        return mapToResponse(visitRepository.save(visit));
+    }
+
+    @Transactional
+    public void deleteVisit(Long id) {
+        Visit visit = visitRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+        visit.setStatus(VisitStatus.CANCELED);
+        visitRepository.save(visit);
+    }
+
+    public List<VisitResponseDTO> getActiveVisitsByUserPropertyId(Long propertyUserId) {
+        return visitRepository.findAllByPropertyUserId(propertyUserId).stream()
+                .filter(visit -> visit.getStatus() != VisitStatus.CANCELED
+                        && visit.getStatus() != VisitStatus.REJECTED)
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+
+    public List<VisitResponseDTO> getActiveVisitsByUserId(Long userId) {
+        return visitRepository.findAllByUserId(userId).stream()
+                .map(this::mapToResponse)
+                .collect(Collectors.toList());
+    }
+    @Transactional
+    public VisitResponseDTO confirmVisit(Long visitId, Long ownerId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        if (!visit.getProperty().getOwner().getId().equals(ownerId)) {
+            throw new RuntimeException("Você não tem permissão para confirmar esta visita");
         }
 
         visit.setStatus(VisitStatus.CONFIRMED);
@@ -78,16 +126,36 @@ public class VisitService {
         return mapToResponse(visit);
     }
 
-    public VisitResponseDTO mapToResponse(Visit visit) {
-        VisitResponseDTO dto = new VisitResponseDTO();
-        dto.setId(visit.getId());
-        dto.setDateTime(visit.getDateTime());
-        dto.setStatus(visit.getStatus());
-        dto.setMessage(visit.getMessage());
-        dto.setPropertyId(visit.getProperty().getId());
-        dto.setPropertyUserId(visit.getPropertyUser().getId());
-        dto.setUser(visit.getUser());
-        return dto;
+    @Transactional
+    public VisitResponseDTO rejectVisit(Long visitId) {
+        Visit visit = visitRepository.findById(visitId)
+                .orElseThrow(() -> new RuntimeException("Visit not found"));
+
+        visit.setStatus(VisitStatus.REJECTED);
+        visitRepository.save(visit);
+
+        return mapToResponse(visit);
     }
 
+    private VisitResponseDTO mapToResponse(Visit visit) {
+        VisitResponseDTO dto = new VisitResponseDTO();
+
+        dto.setId(visit.getId());
+        dto.setPropertyId(visit.getProperty().getId());
+        dto.setDateTime(visit.getDateTime());
+        dto.setMessage(visit.getMessage());
+        dto.setStatus(visit.getStatus());
+
+        if (visit.getUser() != null) {
+            dto.setUserId(visit.getUser().getId());
+            dto.setUserName(visit.getUser().getName());
+        }
+
+        if (visit.getPropertyUser() != null) {
+            dto.setPropertyUserId(visit.getPropertyUser().getId());
+            dto.setPropertyUserName(visit.getPropertyUser().getName());
+        }
+
+        return dto;
+    }
 }

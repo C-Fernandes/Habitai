@@ -2,7 +2,6 @@ package com.imd.habitai.dto.response;
 import java.time.LocalDateTime;
 
 import com.imd.habitai.enums.VisitStatus;
-import com.imd.habitai.model.User;
 
 public class VisitResponseDTO {
     private Long id;
@@ -10,8 +9,10 @@ public class VisitResponseDTO {
     private VisitStatus status;
     private Long propertyId;
     private Long propertyUserId;
+    private String propertyUserName;
     private String message;
-    private User user;
+    private Long userId;
+    private String userName;
 
     // getters e setters
     public Long getId() { return id; }
@@ -29,14 +30,31 @@ public class VisitResponseDTO {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public User getUser() { return user; }
-    public void setUser(User user) { this.user = user; }
-
     public Long getPropertyUserId() {
         return propertyUserId;
     }
-
     public void setPropertyUserId(Long propertyUserId) {
         this.propertyUserId = propertyUserId;
+    }
+
+    public String getPropertyUserName() {
+        return propertyUserName;
+    }
+
+    public void setPropertyUserName(String propertyUserName) {
+        this.propertyUserName = propertyUserName;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+    public Long getUserId() {
+        return userId;
+    }
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }
