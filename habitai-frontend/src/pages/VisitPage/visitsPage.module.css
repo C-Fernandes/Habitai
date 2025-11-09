@@ -16,6 +16,7 @@
     justify-content: center;
     gap: 1rem;
     margin-bottom: 2rem;
+    margin-top: 2rem;
 }
 
 .tabButton {
@@ -183,4 +184,17 @@
     display: flex;
     gap: 8px;
     margin-top: 8px;
+}
+
+.visitsPageWrapper {
+    display: flex;
+    gap: 24px;
+}
+
+.calendarContainer {
+    flex: 0 0 300px; /* largura fixa do calendário */
+}
+
+.visitsListContainer {
+    flex: 1;
 }
