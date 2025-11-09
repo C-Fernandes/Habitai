@@ -135,3 +135,81 @@
   margin-top: 8px; 
   font-weight: 500;
 }
+
+.imageDropzone {
+  width: 100%;
+  border: 2px dashed var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius, 8px);
+  padding: 40px 20px;
+  text-align: center;
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+  
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 200px;
+}
+
+.imageDropzone:hover {
+  border-color: var(--color-primary, #1F2937);
+  background-color: var(--color-surface, #F9FAFB);
+}
+
+.fileInput {
+  display: none;
+}
+
+.dropzoneLabel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  cursor: pointer;
+  width: 100%;
+  height: 100%;
+}
+
+.dropzoneIcon {
+  color: var(--color-secondary, #6B7280);
+}
+
+.dropzoneText {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--color-primary, #1F2937);
+  margin: 0;
+}
+
+.dropzoneHint {
+  font-size: 0.9rem;
+  color: var(--color-secondary, #6B7280);
+  margin: 0;
+}
+
+.imagePreviewContainer {
+  margin-top: 24px;
+}
+
+.previewCount {
+  font-weight: 500;
+  color: var(--color-primary);
+  margin-bottom: 12px;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  gap: 10px;
+}
+
+.previewImage {
+  width: 100px;
+  height: 100px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid var(--color-border, #E5E7EB);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+}
