@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ProtectedRoute } from './auth/ProtectedRoute'
 import { UserPage } from './pages/UserPage/index.tsx'
 import { PropertyDetailsPage } from "./pages/PropertyDetailsPage/PropertyDetailsPage.tsx";
+import VisitsPage from "./pages/VisitPage";
 
 function App() {
 
@@ -19,6 +20,7 @@ function App() {
           <Route path='/properties/:id' element={<PropertyDetailsPage />} />
           <Route element={<ProtectedRoute />}>
             <Route path='/me' element={<UserPage />} />
+            <Route path='/visits' element={<VisitsPage />} />
           </Route>
         </Routes>
       </AuthProvider>

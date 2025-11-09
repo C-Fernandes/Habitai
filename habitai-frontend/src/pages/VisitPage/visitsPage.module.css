@@ -1,0 +1,186 @@
+.container {
+    max-width: 900px;
+    margin: 2rem auto;
+    padding: 1rem;
+}
+
+.title {
+    text-align: center;
+    margin-bottom: 1rem;
+    color: #333;
+    font-weight: 600;
+}
+
+.tabs {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    margin-bottom: 2rem;
+}
+
+.tabButton {
+    padding: 0.6rem 1.2rem;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    background: #f5f5f5;
+    cursor: pointer;
+    font-weight: 500;
+    transition: 0.2s ease;
+}
+
+.tabButton:hover {
+    background: #eaeaea;
+    color: #1F2937;
+}
+
+.active {
+    background: #1F2937;
+    color: #fff;
+    border-color: #1F2937;
+}
+
+.list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.card {
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 1rem;
+    background: #fff;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+    transition: transform 0.2s ease;
+}
+
+.card:hover {
+    transform: scale(1.01);
+    background-color: #f5f5f5;
+}
+
+.cardHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.5rem;
+}
+
+.cardBody p {
+    margin: 0.25rem 0;
+    color: #444;
+}
+
+.status {
+    padding: 4px 10px;
+    border-radius: 12px;
+    font-size: 0.8rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: white;
+}
+
+.confirmed {
+    background-color: #28a745; /* verde */
+}
+
+.scheduled {
+    background-color: #ffa600; /* azul */
+}
+
+.rejected {
+    background-color: #dc3545; /* vermelho */
+}
+
+.canceled {
+    background-color: #6c757d; /* cinza */
+}
+
+
+.error {
+    color: red;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.empty {
+    text-align: center;
+    color: #777;
+    margin-top: 1rem;
+}
+
+.cardActions {
+    display: flex;
+    justify-content: flex-end; /* posiciona os botões à direita */
+    gap: 10px;
+    margin-top: 12px;
+}
+
+.editBtn,
+.deleteBtn {
+    padding: 8px 14px;
+    border: none;
+    border-radius: 6px;
+    font-size: 0.9rem;
+    cursor: pointer;
+    transition: background 0.2s ease, transform 0.1s ease;
+}
+
+.editBtn {
+    background-color: #007bff;
+    color: white;
+}
+
+.editBtn:hover {
+    background-color: #0056b3;
+    transform: scale(1.05);
+}
+
+.deleteBtn {
+    background-color: #dc3545;
+    color: white;
+}
+
+.deleteBtn:hover {
+    background-color: #b02a37;
+    transform: scale(1.05);
+}
+
+/* Botão Confirmar */
+.confirmBtn {
+    background-color: #28a745; /* verde */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.confirmBtn:hover {
+    background-color: #218838; /* verde mais escuro ao passar o mouse */
+}
+
+/* Botão Rejeitar */
+.rejectBtn {
+    background-color: #dc3545; /* vermelho */
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.2s ease;
+}
+
+.rejectBtn:hover {
+    background-color: #c82333; /* vermelho mais escuro ao passar o mouse */
+}
+
+/* Espaçamento entre os botões */
+.cardActions {
+    display: flex;
+    gap: 8px;
+    margin-top: 8px;
+}

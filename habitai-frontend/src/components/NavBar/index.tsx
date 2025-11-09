@@ -24,6 +24,17 @@ function NavBar() {
                     </div>
                 </a>
 
+                {isLoggedIn && (
+                    <nav className={styles.navLinks}>
+                        <span
+                            className={styles.navLink}
+                            onClick={() => navigate('/visits')}
+                        >
+                            Minhas Visitas
+                        </span>
+                    </nav>
+                )}
+
                 <div className={styles.actionsContainer}>
 
                     {isLoggedIn ? (
