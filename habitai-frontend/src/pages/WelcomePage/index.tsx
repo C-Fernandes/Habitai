@@ -1,6 +1,7 @@
+
 import styles from './welcomepage.module.css';
-import NavBar from "../components/NavBar";
-import { PropertyListing } from '../components/PropertyListing';
+import NavBar from "../../components/NavBar";
+import { PropertyListing } from "../../components/PropertyListing";
 
 export function WelcomePage() {
     return (

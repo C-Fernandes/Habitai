@@ -1,9 +1,10 @@
 export type User = {
-    id: number;
+    id: string;
     name: string;
     email: string;
     phone: string | null;
     cpf: string;
+    password: string;
 };
 
 export type UserRegisterData = {

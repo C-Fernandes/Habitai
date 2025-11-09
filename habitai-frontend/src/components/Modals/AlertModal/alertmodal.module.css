@@ -1,0 +1,86 @@
+.alertContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 24px;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+.iconWrapper {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+.alertIcon {
+    font-size: 2.5rem;
+    color: #FFF;
+}
+
+/* --- Variantes de Cor --- */
+.iconWrapper.danger {
+    background-color: #FEE2E2;
+    /* Fundo vermelho claro */
+}
+
+.iconWrapper.danger .alertIcon {
+    color: #E53E3E;
+    /* Ícone vermelho */
+}
+
+.iconWrapper.warning {
+    background-color: #FEF3C7;
+    /* Fundo amarelo claro */
+}
+
+.iconWrapper.warning .alertIcon {
+    color: #D97706;
+    /* Ícone amarelo/laranja */
+}
+
+.iconWrapper.info {
+    background-color: #DBEAFE;
+}
+
+.iconWrapper.info .alertIcon {
+    color: #3B82F6;
+}
+
+
+.alertTitle {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--color-primary);
+}
+
+.alertMessage {
+    font-size: 1rem;
+    color: var(--color-primary);
+    margin-bottom: 24px;
+    line-height: 1.5;
+}
+
+.alertButtons {
+    display: flex;
+    gap: 16px;
+    width: 100%;
+    justify-content: center;
+}
+
+.dangerButton {
+    background-color: #E53E3E !important;
+    color: #FFF !important;
+    border-color: #E53E3E !important;
+}
+
+.dangerButton:hover {
+    background-color: #C53030 !important;
+    border-color: #C53030 !important;
+}

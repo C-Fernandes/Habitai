@@ -4,6 +4,7 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 
 import com.imd.habitai.dto.request.UserRegisterRequest;
+import com.imd.habitai.dto.response.UserAuthResponse;
 import com.imd.habitai.dto.response.UserResponse;
 import com.imd.habitai.model.User;
 
@@ -18,4 +19,6 @@ public interface UserMapper {
     public User toEntity(UserRegisterRequest dto);
 
     public UserResponse toResponse(User user);
+
+    public UserAuthResponse toAuthResponse(User user);
 }

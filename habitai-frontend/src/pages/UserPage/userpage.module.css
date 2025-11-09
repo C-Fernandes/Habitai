@@ -1,6 +1,6 @@
 .container {
     padding: 2rem;
-    max-width: 32rem;
+    max-width: 60%;
     margin-left: auto;
     margin-right: auto;
     background-color: var(--color-background);
@@ -9,17 +9,56 @@
     margin-top: 2rem;
 }
 
-.heading {
-    font-size: 1.5rem;
+.headingContainer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 1rem;
     color: var(--color-primary);
+}
+
+.headingContainer h2 {
+    padding: 0 0 0 2rem;
+}
+
+.heading {
+    display: flex;
+    align-items: center;
+    width: 70%;
 }
 
 .infoGroup {
     display: flex;
     gap: 0.5rem;
     margin-bottom: 0.5rem;
+}
+
+.iconContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.profileIcon {
+    width: 3rem;
+
+}
+
+.deleteIcon,
+.editIcon {
+    padding: 2px;
+    margin: 1px;
+    width: 1.8rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
+}
+
+.deleteIcon:hover,
+.editIcon:hover {
+    transform: scale(1.15);
 }
 
 .infoLabel {

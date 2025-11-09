@@ -1,13 +1,14 @@
 package com.imd.habitai.dto.response;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import com.imd.habitai.enums.VisitStatus;
 
 public class VisitResponseDTO {
     private Long id;
     private Long propertyId;
-    private Long prospectId;
-    private Long agentId;
+    private UUID prospectId;
+    private UUID agentId;
     private LocalDateTime dateTime;
     private VisitStatus status;
     private String message;
@@ -19,11 +20,11 @@ public class VisitResponseDTO {
     public Long getPropertyId() { return propertyId; }
     public void setPropertyId(Long propertyId) { this.propertyId = propertyId; }
 
-    public Long getProspectId() { return prospectId; }
-    public void setProspectId(Long prospectId) { this.prospectId = prospectId; }
+    public UUID getProspectId() { return prospectId; }
+    public void setProspectId(UUID prospectId) { this.prospectId = prospectId; }
 
-    public Long getAgentId() { return agentId; }
-    public void setAgentId(Long agentId) { this.agentId = agentId; }
+    public UUID getAgentId() { return agentId; }
+    public void setAgentId(UUID agentId) { this.agentId = agentId; }
 
     public LocalDateTime getDateTime() { return dateTime; }
     public void setDateTime(LocalDateTime dateTime) { this.dateTime = dateTime; }

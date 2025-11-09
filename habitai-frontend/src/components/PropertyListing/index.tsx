@@ -236,7 +236,7 @@ const handleApplyPriceFilter = () => {
                             <div className={styles.priceDropdownInputs}>
                                 <div>
                                     <label htmlFor="minPrice" className={styles.inputLabel}>
-                                        Preço Mín.
+                                        Mínimo
                                     </label>
                                     <input
                                         type="text"
@@ -251,7 +251,7 @@ const handleApplyPriceFilter = () => {
                                 </div>
                                 <div>
                                     <label htmlFor="maxPrice" className={styles.inputLabel}>
-                                        Preço Máx.
+                                        Máximo
                                     </label>
                                     <input
                                         type="text"

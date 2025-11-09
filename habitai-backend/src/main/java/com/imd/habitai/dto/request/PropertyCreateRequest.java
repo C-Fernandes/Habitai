@@ -11,6 +11,7 @@ import jakarta.validation.constraints.Size;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.UUID;
 
 public record PropertyCreateRequest(
     @NotBlank(message = "O título não pode estar em branco.")
@@ -44,7 +45,7 @@ public record PropertyCreateRequest(
     Address address,
     
     @NotNull(message = "O ID do proprietário é obrigatório.")
-    Long ownerId,
+    UUID ownerId,
     
     List<Long> amenityIds
 ) {
