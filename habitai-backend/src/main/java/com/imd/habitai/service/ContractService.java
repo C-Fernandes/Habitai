@@ -1,7 +1,6 @@
 package com.imd.habitai.service;
 
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,8 +46,8 @@ public class ContractService {
         Contract contract = contractMapper.toEntity(contractRequest);
         List<Payment> payments = paymentMapper.toEntityList(contractRequest.payments());
         
-        User tenant = userRepository.findById(contractRequest.tenantId()).orElseThrow(() -> new EntityNotFoundException("Usuário (inquilino) com ID " + contractRequest.tenantId() + " não encontrado."));
-        User owner = userRepository.findById(contractRequest.ownerId()).orElseThrow(() -> new EntityNotFoundException("Usuário (dono do contrato) com ID " + contractRequest.ownerId() + " não encontrado."));
+        User tenant = userRepository.findByCpfAndIsActiveTrue(contractRequest.tenantCpf()).orElseThrow(() -> new EntityNotFoundException("Usuário (inquilino) com CPF " + contractRequest.tenantCpf() + " não encontrado."));
+        User owner = userRepository.findByCpfAndIsActiveTrue(contractRequest.ownerCpf()).orElseThrow(() -> new EntityNotFoundException("Usuário (dono do contrato) com CPF " + contractRequest.ownerCpf() + " não encontrado."));
         Property property = propertyRepository.findById(contractRequest.propertyId()).orElseThrow(() -> new EntityNotFoundException("Propriedade com ID " + contractRequest.propertyId() + " não encontrada."));
         
         contract.setPayments(payments);
@@ -61,16 +60,16 @@ public class ContractService {
     }
 
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByOwner(Long idOwner){
-        User owner = userRepository.findById(idOwner).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idOwner+") não encontrado."));
+    public List<ContractResponse> findAllByOwner(String ownerCpf){
+        User owner = userRepository.findByCpfAndIsActiveTrue(ownerCpf).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+ownerCpf+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByOwner(owner);
 
         return contractMapper.toListResponses(contracts);
     }
 
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByTenant(Long idTenant){
-        User tenant = userRepository.findById(idTenant).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idTenant+") não encontrado."));
+    public List<ContractResponse> findAllByTenant(String tenantCpf){
+        User tenant = userRepository.findByCpfAndIsActiveTrue(tenantCpf).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+tenantCpf+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByTenant(tenant);
 
         return contractMapper.toListResponses(contracts);
@@ -109,15 +108,15 @@ public class ContractService {
             existingContract.setProperty(property);
         }
 
-        if (updateRequest.tenantId() != null) {
-            User tenant = userRepository.findById(updateRequest.tenantId())
-                .orElseThrow(() -> new EntityNotFoundException("Inquilino com ID ("+updateRequest.tenantId()+") não foi encontrado."));
+        if (updateRequest.tenantCpf() != null) {
+            User tenant = userRepository.findByCpfAndIsActiveTrue(updateRequest.tenantCpf())
+                .orElseThrow(() -> new EntityNotFoundException("Inquilino com CPF ("+updateRequest.tenantCpf()+") não foi encontrado."));
             existingContract.setTenant(tenant);
         }
 
-        if (updateRequest.ownerId() != null) {
-            User owner = userRepository.findById(updateRequest.ownerId())
-                .orElseThrow(() -> new EntityNotFoundException("Proprietário com ID ("+updateRequest.ownerId()+") não foi encontrado."));
+        if (updateRequest.ownerCpf() != null) {
+            User owner = userRepository.findByCpfAndIsActiveTrue(updateRequest.ownerCpf())
+                .orElseThrow(() -> new EntityNotFoundException("Proprietário com CPF ("+updateRequest.ownerCpf()+") não foi encontrado."));
             existingContract.setOwner(owner);
         }
 

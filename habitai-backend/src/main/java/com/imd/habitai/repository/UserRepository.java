@@ -22,6 +22,12 @@ public interface UserRepository  extends JpaRepository<User, Long>{
     Optional<User> findByEmailAndIsActiveTrue(String email);
 
     /**
+     * Busca um usuário pelo CPF, mas SOMENTE se ele estiver ativo.
+     * (Para getByCpf)
+     */
+    Optional<User> findByCpfAndIsActiveTrue(String cpf);
+
+    /**
      * Busca um usuário pelo ID, mas SOMENTE se ele estiver ativo.
      * (Para getById, getMe, update)
      */

@@ -44,6 +44,23 @@
   color: var(--color-secondary);
 }
 
+.tabs_container {
+  display: flex;
+  gap: 20px;
+  position: absolute;
+  left: 50%;
+  transform: translateX(-50%);
+}
+.tab a {
+    text-decoration: none;
+    color: var(--color-secondary);
+    padding: 10px 15px;
+    transition: color 0.3s;
+}
+.tab a:hover {
+    color: var(--color-primary);
+}
+
 .actionsContainer {
   margin: 5px;
   display: flex;

@@ -52,6 +52,7 @@ export type Property = {
   address: Address;
   owner: Owner;
   amenities: Amenity[];
+  contracts: Contract[];
 };
 
 export type PaginatedProperties = {
@@ -71,4 +72,44 @@ export type Owner = {
   name: string;
   phone: string;
   email: string;
+}
+
+
+
+export type ContractUser = {
+  name: string;
+  phone: string;
+  email: string;
+  cpf: string;
+}
+export type ContractProperty = {
+  id: number;
+  title: string;
+  rentalPrice: number;
+  neighborhood: string;
+  city: string;
+  state: string;
+};
+
+export type Contract = {
+  id: number;
+  startDate: string;
+  endDate: string;
+  monthlyPrice: number;
+  paymentDueDay: number;
+  property: ContractProperty;
+  tenant: ContractUser;
+  owner: ContractUser;
+  payments: Payment[];
+}
+
+export type PaymentStatus = 'PENDING' | 'PAID' | 'OVERDUE' | 'CANCELED';
+
+export type Payment = {
+  id: number;
+  dueDate: string;
+  paymentDate?: string; 
+  amountDue: number;
+  amountPaid?: number;
+  status: PaymentStatus;
 }

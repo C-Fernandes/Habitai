@@ -5,21 +5,17 @@
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
+  max-width: 350px;
 }
 
 .card:hover {
   transform: translateY(-5px);
 }
 
-.image {
-  width: 100%;
-  height: 220px;
-  object-fit: cover;
-}
-
 .content {
   padding: 16px;
 }
+
 
 .title {
   font-size: 1.25rem;
@@ -34,20 +30,7 @@
   margin-bottom: 12px;
 }
 
-.price {
-  font-size: 1.15rem;
-  font-weight: 700;
-  color: #00796b;
-  margin-bottom: 12px;
-}
-
-.price span {
-  font-size: 0.9rem;
-  font-weight: 400;
-  color: #666;
-}
-
-.features {
+.contrDetails {
   display: flex;
   gap: 16px;
   font-size: 0.9rem;
