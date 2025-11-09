@@ -5,6 +5,7 @@ import { useAuth } from '../../context/AuthContext';
 import { apiClient } from '../../services/apiClient';
 import { viaCepClient } from '../../services/viaCepClient';
 import { Button } from '../../components/Button';
+import { FaArrowLeft } from "react-icons/fa";
 import styles from './propertyCreatePage.module.css';
 
 import { Step1Title } from './Steps/Step1Title';
@@ -35,6 +36,12 @@ const formatCep = (value: string): string => {
     const cleanValue = value.replace(/\D/g, '');
     const limitedValue = cleanValue.slice(0, 8);
     return limitedValue.replace(/^(\d{5})(\d)/, '$1-$2');
+};
+
+const formatAsCurrency = (value: string): string => {
+    const cleanValue = value.replace(/\D/g, '');
+    if (!cleanValue) return '';
+    return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 };
 
 export function PropertyCreatePage() {
@@ -84,6 +91,11 @@ export function PropertyCreatePage() {
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
+        if (name === "rentalPrice") {
+            const formattedValue = formatAsCurrency(value);
+            setFormData(prev => ({ ...prev, [name]: formattedValue }));
+            return;
+        }
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
@@ -91,15 +103,15 @@ export function PropertyCreatePage() {
         const { name, value } = e.target;
 
         if (name === "cep") {
-        const formattedCep = formatCep(value);
-        
-        setFormData(prev => ({
-            ...prev,
-            address: {
-            ...prev.address,
-            cep: formattedCep,
-            },
-        }));
+            const formattedCep = formatCep(value);
+            
+            setFormData(prev => ({
+                ...prev,
+                address: {
+                ...prev.address,
+                cep: formattedCep,
+                },
+            }));
 
         } else {
             setFormData(prev => ({
@@ -153,6 +165,22 @@ export function PropertyCreatePage() {
                 return; 
             }
         }
+
+        if (step === 4) {
+            const cleanCep = formData.address.cep.replace(/\D/g, '');
+            if (cleanCep.length !== 8) {
+                toast.error("Por favor, digite um CEP válido com 8 dígitos.");
+                return;
+            }
+            if(cepError){
+                toast.error("O CEP informado não é válido.");
+                return;
+            }
+            if(!formData.address.number.trim()){
+                toast.error("O número do imóvel é obrigatório.")
+                return;
+            }
+        }
         setStep(prev => Math.min(prev + 1, TOTAL_STEPS));
     };
 
@@ -179,7 +207,7 @@ export function PropertyCreatePage() {
             const propertyDTO = {
                 ...formData,
                 ownerId: user.id,
-                rentalPrice: parseFloat(formData.rentalPrice) || 0,
+                rentalPrice: parseFloat(formData.rentalPrice.replace(/\./g, '')) || 0,
                 bedrooms: parseInt(formData.bedrooms) || 0,
                 bathrooms: parseInt(formData.bathrooms) || 0,
                 garageSpaces: parseInt(formData.garageSpaces) || 0,
@@ -238,16 +266,15 @@ export function PropertyCreatePage() {
                 </form>
             
                 <footer className={styles.navigation}>
-                    {step > 1 ? (
-                        <Button 
-                            type="button" 
-                            onClick={prevStep}
-                            disabled={step === 1 || isSubmitting}
-                            className={styles.backButton}
-                        >
-                            Voltar
-                        </Button>
-                    ) : <div/>}
+                    <Button 
+                        type="button" 
+                        onClick={prevStep}
+                        disabled={step === 1 || isSubmitting}
+                        className={styles.backButton}
+                    >
+                        <FaArrowLeft size={16}/>
+                        <span>Voltar</span>
+                    </Button>
 
                     {step < TOTAL_STEPS ? (
                         <Button type="button" onClick={nextStep} disabled={isSubmitting}>

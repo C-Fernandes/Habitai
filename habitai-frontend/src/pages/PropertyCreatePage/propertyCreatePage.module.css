@@ -3,7 +3,7 @@
   max-width: 800px;
   margin: 0 auto;
   padding: 24px;
-  padding-bottom: 120px; /* Espaço para a barra de navegação fixa */
+  padding-bottom: 120px;
 }
 
 .progressBar {
@@ -17,39 +17,50 @@
 
 .progressFill {
   height: 100%;
-  width: 0%; /* Controlado pelo 'style' inline */
+  width: 0%;
   background-color: var(--color-primary, #1F2937);
   transition: width 0.4s ease-in-out;
 }
 
 .stepContent {
-  /* O formulário em si */
   width: 100%;
 }
 
 .navigation {
-  position: fixed; /* Fixa no rodapé */
+  position: fixed;
   bottom: 0;
   left: 0;
   width: 100%;
   padding: 24px;
   background-color: var(--color-background, #FFFFFF);
   border-top: 1px solid var(--color-border, #E5E7EB);
-  
-  /* Alinha os botões */
   display: flex;
   justify-content: space-between;
   align-items: center;
-  box-sizing: border-box; /* Garante que o padding não estoure */
+  box-sizing: border-box; 
 }
 
 .backButton {
-  /* Estilo customizado para o botão "Voltar" (ex: transparente) */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   background-color: transparent;
   color: var(--color-secondary, #6B7280);
   border: none;
   box-shadow: none;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
-.backButton:hover {
+
+.backButton:hover:not(:disabled) {
   background-color: var(--color-surface, #F9FAFB);
+  border-color: var(--color-secondary, #6B7280);
+  color: var(--color-primary, #1F2937);
+  transform: none;
+}
+
+.backButton:disabled {
+  background-color: transparent;
+  opacity: 0;
 }

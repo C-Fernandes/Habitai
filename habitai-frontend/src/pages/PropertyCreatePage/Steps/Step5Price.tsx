@@ -8,7 +8,8 @@ export function Step5Price({ formData, handleChange }) {
       <div className={styles.priceInputWrapper}>
         <span className={styles.priceSymbol}>R$</span>
         <input
-          type="number"
+          type="text"
+          inputMode="numeric"
           id="rentalPrice"
           name="rentalPrice"
           value={formData.rentalPrice}
