@@ -12,7 +12,6 @@ import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.Positive;
 
 public record ContractUpdateRequest(
-    Long id,
     LocalDate startDate,
 
     @Future(message = "A data de finalização deve ser uma data futura.")
@@ -23,7 +22,7 @@ public record ContractUpdateRequest(
 
     @Min(value = 1, message = "O dia de pagamento não pode ser menor que 1.")
     @Max(value = 31, message = "O dia de pagamento não pode ser maior que 31.")
-    int paymentDueDay,
+    Integer paymentDueDay,
 
     Long propertyId, 
     Long tenantId, 

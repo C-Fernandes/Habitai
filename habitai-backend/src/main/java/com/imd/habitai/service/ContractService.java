@@ -1,19 +1,22 @@
 package com.imd.habitai.service;
 
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.crossstore.ChangeSetPersister.NotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.imd.habitai.dto.request.ContractCreateRequest;
+import com.imd.habitai.dto.request.ContractUpdateRequest;
 import com.imd.habitai.dto.response.ContractResponse;
 import com.imd.habitai.mapper.ContractMapper;
 import com.imd.habitai.mapper.PaymentMapper;
 import com.imd.habitai.model.Contract;
 import com.imd.habitai.model.Payment;
+import com.imd.habitai.model.Property;
 import com.imd.habitai.model.User;
 import com.imd.habitai.repository.ContractRepository;
+import com.imd.habitai.repository.PropertyRepository;
 import com.imd.habitai.repository.UserRepository;
 
 import jakarta.persistence.EntityNotFoundException;
@@ -25,32 +28,115 @@ public class ContractService {
     private final ContractMapper contractMapper;
     private final PaymentMapper paymentMapper;
     private final UserRepository userRepository;
+    private final PropertyRepository propertyRepository;
 
     public ContractService(
         ContractRepository repository,
         ContractMapper contractMapper,
         UserRepository userRepository,
-        PaymentMapper paymentMapper
+        PaymentMapper paymentMapper,
+        PropertyRepository propertyRepository
     ){
         this.contractRepository = repository;
         this.contractMapper = contractMapper;
         this.userRepository = userRepository;
         this.paymentMapper = paymentMapper;
+        this.propertyRepository = propertyRepository;
     }
 
-    public ContractResponse create(ContractCreateRequest contractDTO) throws NotFoundException{
-        Contract contract = contractMapper.toEntity(contractDTO);
-        List<Payment> payments = paymentMapper.toEntityList(contractDTO.payments());
+    public ContractResponse create(ContractCreateRequest contractRequest){
+        Contract contract = contractMapper.toEntity(contractRequest);
+        List<Payment> payments = paymentMapper.toEntityList(contractRequest.payments());
         
-        User tenant = userRepository.findById(contractDTO.tenantId()).orElseThrow(() -> new EntityNotFoundException("Usuário (inquilino) com ID " + contractDTO.tenantId() + " não encontrado."));
-        User owner = userRepository.findById(contractDTO.ownerId()).orElseThrow(() -> new EntityNotFoundException("Usuário (dono do contrato) com ID " + contractDTO.ownerId() + " não encontrado."));
+        User tenant = userRepository.findById(contractRequest.tenantId()).orElseThrow(() -> new EntityNotFoundException("Usuário (inquilino) com ID " + contractRequest.tenantId() + " não encontrado."));
+        User owner = userRepository.findById(contractRequest.ownerId()).orElseThrow(() -> new EntityNotFoundException("Usuário (dono do contrato) com ID " + contractRequest.ownerId() + " não encontrado."));
+        Property property = propertyRepository.findById(contractRequest.propertyId()).orElseThrow(() -> new EntityNotFoundException("Propriedade com ID " + contractRequest.propertyId() + " não encontrada."));
         
         contract.setPayments(payments);
         contract.setTenant(tenant);
         contract.setOwner(owner);
+        contract.setProperty(property);
 
         Contract savedContract = contractRepository.save(contract);
-        return contractMapper.toDTO(savedContract);
+        return contractMapper.toResponse(savedContract);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContractResponse> findAllByOwner(Long idOwner){
+        User owner = userRepository.findById(idOwner).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idOwner+") não encontrado."));
+        List<Contract> contracts = contractRepository.findAllByOwner(owner);
+
+        return contractMapper.toListResponses(contracts);
+    }
+
+    @Transactional(readOnly = true)
+    public List<ContractResponse> findAllByTenant(Long idTenant){
+        User tenant = userRepository.findById(idTenant).orElseThrow(()-> new EntityNotFoundException("Usuário de ID ("+idTenant+") não encontrado."));
+        List<Contract> contracts = contractRepository.findAllByTenant(tenant);
+
+        return contractMapper.toListResponses(contracts);
+    } 
+
+    public List<ContractResponse> findAllByProperty(Long idProperty){
+        Property property = propertyRepository.findById(idProperty).orElseThrow(()-> new EntityNotFoundException("Propriedade de ID ("+idProperty+") não encontrada."));
+        List<Contract> contracts = contractRepository.findAllByProperty(property);
+
+        return contractMapper.toListResponses(contracts);
+    } 
+
+    public ContractResponse update(Long id, ContractUpdateRequest updateRequest){
+        Contract existingContract = contractRepository.findById(id)
+            .orElseThrow(()-> new EntityNotFoundException("Contrato com ID ("+id+") não foi encontrado."));
+        
+        if (updateRequest.startDate() != null) {
+            existingContract.setStartDate(updateRequest.startDate());
+        }
+        
+        if (updateRequest.endDate() != null) {
+            existingContract.setEndDate(updateRequest.endDate());
+        }
+        
+        if (updateRequest.monthlyPrice() != null) {
+            existingContract.setMonthlyPrice(updateRequest.monthlyPrice());
+        }
+
+        if (updateRequest.paymentDueDay() != null) { 
+            existingContract.setPaymentDueDay(updateRequest.paymentDueDay());
+        }
+    
+        if (updateRequest.propertyId() != null) {
+            Property property = propertyRepository.findById(updateRequest.propertyId())
+                .orElseThrow(() -> new EntityNotFoundException("Propriedade com ID ("+updateRequest.propertyId()+") não foi encontrada."));
+            existingContract.setProperty(property);
+        }
+
+        if (updateRequest.tenantId() != null) {
+            User tenant = userRepository.findById(updateRequest.tenantId())
+                .orElseThrow(() -> new EntityNotFoundException("Inquilino com ID ("+updateRequest.tenantId()+") não foi encontrado."));
+            existingContract.setTenant(tenant);
+        }
+
+        if (updateRequest.ownerId() != null) {
+            User owner = userRepository.findById(updateRequest.ownerId())
+                .orElseThrow(() -> new EntityNotFoundException("Proprietário com ID ("+updateRequest.ownerId()+") não foi encontrado."));
+            existingContract.setOwner(owner);
+        }
+
+        if (updateRequest.payments() != null && !updateRequest.payments().isEmpty()) {
+            existingContract.setPayments(updateRequest.payments());
+        }
+  
+        Contract updatedContract = contractRepository.save(existingContract);
+
+        return contractMapper.toResponse(updatedContract);
+    }
+
+    public boolean delete(Long id){
+        if (contractRepository.existsById(id)) {
+            contractRepository.deleteById(id);
+            return true;
+        }
+        return false;
     }
 
 }

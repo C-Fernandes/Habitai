@@ -1,5 +1,7 @@
 package com.imd.habitai.mapper;
 
+import java.util.List;
+
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import com.imd.habitai.dto.request.ContractCreateRequest;
@@ -19,5 +21,11 @@ public interface ContractMapper {
     @Mapping(target = "payments", ignore = true)
     public Contract toEntity(ContractCreateRequest dto); 
 
-    public ContractResponse toDTO(Contract contract);
+    @Mapping(target = "propertyId", source = "property.id")
+    @Mapping(target = "tenantId", source = "tenant.id")
+    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "payments", source = "payments")
+    public ContractResponse toResponse(Contract contract);
+    
+    public List<ContractResponse> toListResponses(List<Contract> contracts);
 }
