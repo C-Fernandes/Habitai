@@ -8,7 +8,14 @@ export function Step4Address({ formData, handleAddressChange, handleChange, isCe
         
         <div className={styles.formGroup}>
             <label htmlFor="description">Descreva o imóvel</label>
-            <textarea id="description" name="description" value={formData.description} onChange={handleChange} rows={5} />
+            <textarea 
+                id="description" 
+                name="description" 
+                value={formData.description} 
+                onChange={handleChange} 
+                rows={7}
+                maxLength={1000}
+            />
         </div>
 
         <div className={styles.formGroup}>

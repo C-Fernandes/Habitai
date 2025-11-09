@@ -46,7 +46,8 @@
   border-radius: 8px;
   font-size: 1rem;
   color: black;
-  background-color: #ffffff;  
+  background-color: #ffffff;
+  resize: none;
 }
 .formGrid {
   display: grid;
