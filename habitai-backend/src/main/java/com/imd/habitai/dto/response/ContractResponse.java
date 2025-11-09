@@ -3,6 +3,7 @@ package com.imd.habitai.dto.response;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public record ContractResponse( 
     Long id,
@@ -11,8 +12,8 @@ public record ContractResponse(
     BigDecimal monthlyPrice,
     Integer paymentDueDay,
     Long propertyId, 
-    Long tenantId, 
-    Long ownerId,
+    UUID tenantId, 
+    UUID ownerId,
     List<PaymentResponse> payments
 )
 {}
