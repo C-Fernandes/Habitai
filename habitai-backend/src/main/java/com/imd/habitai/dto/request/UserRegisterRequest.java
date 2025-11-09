@@ -17,16 +17,13 @@ public record UserRegisterRequest (
     @Email(message = "O email informado é inválido.")
     String email,
 
-    @NotBlank(message = "O CPF não pode estar em branco.")
-    @Size(min = 11, max = 14, message = "O CPF deve ter entre 11 e 14 caracteres.")
-    @CPF(message = "O CPF informado é inválido.")
+   @NotBlank(message = "O CPF não pode estar em branco.")
+    @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos.")
+    @CPF(message = "O CPF informado é inválido.") 
     String cpf,
 
     @NotBlank(message = "O telefone não pode estar em branco.")
-    @Size(min = 10, max = 15, message = "O telefone deve ter entre 10 e 15 caracteres.")
-    @Pattern(
-        regexp = "^\\d{10,11}$", 
-        message = "O número de telefone deve conter apenas dígitos (10 para fixo, 11 para celular) no formato 84900000000, por exemplo.")
+    @Size(min = 10, max = 15, message = "O telefone deve ter 10 ou 14 dígitos.")
     String phone,
 
     @NotBlank(message = "A senha não pode estar em branco.")

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.Data;
 
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 
 @Entity
@@ -14,7 +13,7 @@ public class User {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
-    private  UUID id;
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -26,6 +25,9 @@ public class User {
     private String cpf;
 
     private String phone;
+
+    @Column(nullable = false)
+    private boolean isActive = true;
     @Column(nullable = false)
     private String password;
     @OneToMany(mappedBy = "owner")
@@ -40,6 +42,4 @@ public class User {
     @OneToMany(mappedBy = "prospect")
     private List<Visit> scheduledVisits;
 
-
-    
 }

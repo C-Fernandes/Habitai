@@ -8,14 +8,17 @@ import type { User } from "../../types";
 
 
 import styles from './userpage.module.css';
-import { FaRegEdit } from "react-icons/fa";
 import { UserModal } from "../../components/Modals/UserModal";
+import { SquarePen, Trash, User as UserIcon } from "lucide-react";
+import { AlertModal } from "../../components/Modals/AlertModal";
+import { toast } from "sonner";
 export function UserPage() {
     const { logout, user } = useAuth();
     const [userProfile, setUserProfile] = useState<User | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [isUserModalOpen, setIsUserModalOpen] = useState(false);
+    const [isDeactivateModalOpen, setIsDeactivateModalOpen] = useState(false);
 
     const handleOpenEditModal = async () => {
         if (!user?.id) {
@@ -33,6 +36,37 @@ export function UserPage() {
 
     const handleCloseEditModal = () => {
         setIsUserModalOpen(false);
+    };
+
+
+    const handleOpenDeactivateModal = () => {
+        setIsDeactivateModalOpen(true);
+    };
+
+    const handleCloseDeactivateModal = () => {
+        setIsDeactivateModalOpen(false);
+    };
+
+    const handleDeactivateAccount = async () => {
+        setError(null);
+        if (!user?.id) {
+            setError("Não foi possível identificar o usuário para desativar a conta.");
+            handleCloseDeactivateModal();
+            return;
+        }
+        try {
+            await userService.deactivateAccount(user?.id);
+
+            handleCloseDeactivateModal();
+            logout();
+
+            toast.success("Conta desativada com sucesso.")
+
+        } catch (err: any) {
+            console.error("Erro ao desativar conta:", err);
+            setError(err.message || "Falha ao desativar sua conta. Tente novamente.");
+            handleCloseDeactivateModal();
+        }
     };
     useEffect(() => {
 
@@ -84,10 +118,16 @@ export function UserPage() {
             <div className={styles.container}>
                 <div className={styles.headingContainer}>
                     <div className={styles.heading}>
-                        <FiUser className={styles.profileIcon} />
-                        <h2>Bem-vindo, {userProfile?.name}</h2>
+                        <UserIcon className={styles.profileIcon} />
+                        <h2>{userProfile?.name}</h2>
                     </div>
-                    <FaRegEdit className={styles.editIcon} onClick={() => handleOpenEditModal()} />
+                    <div className={styles.iconContainer}>
+                        <SquarePen className={styles.editIcon} onClick={() => handleOpenEditModal()} />
+                        <Trash
+                            className={styles.deleteIcon}
+                            onClick={handleOpenDeactivateModal}
+                        />
+                    </div>
                 </div>
                 <div className={styles.infoGroup}>
                     <p className={styles.infoLabel}>Email:</p>
@@ -110,6 +150,21 @@ export function UserPage() {
                 </div>
             </div>
             <UserModal isOpen={isUserModalOpen} onRequestClose={handleCloseEditModal} user={userProfile} />
+            <AlertModal
+                isOpen={isDeactivateModalOpen}
+                onRequestClose={handleCloseDeactivateModal}
+                onConfirm={handleDeactivateAccount}
+                title="Desativar Conta"
+                confirmButtonText="Sim, Desativar"
+                variant="danger"
+            >
+                <p>
+                    Tem certeza que deseja desativar sua conta?
+                    Não será possivel fazer login ou reativar a conta novamente.
+                    Esta ação não pode ser desfeita.
+
+                </p>
+            </AlertModal>
         </>
     );
 

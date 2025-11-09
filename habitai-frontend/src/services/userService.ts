@@ -1,7 +1,7 @@
 import type { AuthUser } from '../context/AuthContext';
 import type { User, UserRegisterData } from '../types';
 import { apiClient } from './apiClient';
-const url = '/users'; 
+const url = '/users';
 
 export const userService = {
 
@@ -31,5 +31,7 @@ export const userService = {
     getProfile: async (id: string): Promise<User> => {
         const response = await apiClient.get<User>(`/users/me?id=${id}`);
         return response;
+    }, deactivateAccount: (id: string): Promise<void> => {
+        return apiClient.delete(`${url}/me?id=${id}`);
     },
 };

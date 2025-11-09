@@ -9,6 +9,7 @@ import { toast } from 'sonner';
 import { useAuth } from '../../../context/AuthContext';
 import type { User } from '../../../types';
 import { ensureError } from '../../../utils/errorUtils';
+import { maskCPF, maskPhone } from '../../../utils/userUtils';
 
 type AuthModalProps = {
     isOpen: boolean;
@@ -36,7 +37,8 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
         password: '',
         confirmPassword: ''
     });
-    const [error, setError] = useState<string | null>(null);
+    const [genericError, setGenericError] = useState<string | null>(null);
+    const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
 
     useEffect(() => {
         if (isOpen) {
@@ -54,19 +56,34 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                 setView('login');
                 setFormData(emptyForm);
             }
-            setError(null);
+            setGenericError(null);
+            setFieldErrors({});
         }
     }, [isOpen, user]);
 
 
     const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
-        setFormData(prev => ({ ...prev, [name]: value }));
+        let maskedValue = value;
+        if (name === 'cpf') {
+            maskedValue = maskCPF(value);
+        } else if (name === 'phone') {
+            maskedValue = maskPhone(value);
+        }
+        setFormData(prev => ({ ...prev, [name]: maskedValue }));
+
+        if (fieldErrors[name]) {
+            setFieldErrors(prevErrors => ({
+                ...prevErrors,
+                [name]: ''
+            }));
+        }
     };
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
-        setError(null);
+        setGenericError(null);
+        setFieldErrors({});
 
         if (view === 'update' && user) {
             try {
@@ -83,8 +100,25 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
 
                 toast.success("Perfil atualizado com sucesso!");
                 onRequestClose();
-            } catch (error) {
-                toast.error(ensureError(error).message);
+            } catch (rawError) {
+                if (
+                    rawError &&
+                    typeof rawError === 'object' &&
+                    'validationErrors' in rawError &&
+                    (rawError as any).validationErrors
+                ) {
+                    setFieldErrors((rawError as any).validationErrors);
+                    if ('message' in rawError) {
+                        setGenericError((rawError as any).message);
+                    }
+
+                } else {
+                    if (rawError && typeof rawError === 'object' && 'message' in rawError) {
+                        setGenericError((rawError as any).message);
+                    } else {
+                        setGenericError("Ocorreu um erro inesperado.");
+                    }
+                }
             }
         }
         else if (view === 'login') {
@@ -98,7 +132,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
         }
         else if (view === 'register') {
             if (formData.password !== formData.confirmPassword) {
-                setError("As senhas não conferem.");
+                setGenericError("As senhas não conferem.");
                 return;
             }
 
@@ -115,8 +149,22 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                 toast.success(`Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.`);
                 onRequestClose();
 
-            } catch (error) {
-                setError(ensureError(error).message);
+            } catch (rawError) {
+                if (
+                    rawError &&
+                    typeof rawError === 'object' &&
+                    'validationErrors' in rawError &&
+                    (rawError as any).validationErrors
+                ) {
+                    setFieldErrors((rawError as any).validationErrors);
+                    if ('message' in rawError) {
+                        setGenericError((rawError as any).message);
+                    }
+
+                } else {
+                    toast.error(ensureError(rawError).message);
+
+                }
             }
         }
     };
@@ -124,7 +172,8 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
     const toggleView = () => {
         setView(prev => (prev === 'login' ? 'register' : 'login'));
         setFormData(emptyForm);
-        setError(null);
+        setGenericError(null);
+        setFieldErrors({});
     };
 
     const getTitle = () => {
@@ -160,6 +209,10 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                     />
                 )}
 
+                {fieldErrors.name && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.name}</p>
+                )}
+
                 <input
                     type="email"
                     name="email"
@@ -169,6 +222,9 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                     onChange={handleInputChange}
                     required
                 />
+                {fieldErrors.email && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.email}</p>
+                )}
 
                 {showFullForm && (
                     <input
@@ -181,8 +237,10 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                         required
                     />
                 )}
+                {fieldErrors.cpf && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.cpf}</p>
+                )}
 
-                {/* 7. CORRIGIDO: Usa 'showFullForm' */}
                 {showFullForm && (
                     <input
                         type="tel"
@@ -193,6 +251,10 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                         onChange={handleInputChange}
                     />
                 )}
+
+                {fieldErrors.phone && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.phone}</p>
+                )}
                 <input
                     type="password"
                     name="password"
@@ -202,6 +264,10 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                     onChange={handleInputChange}
                     required
                 />
+
+                {fieldErrors.password && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.password}</p>
+                )}
                 {(view === 'register' || view === 'update') && (
                     <input
                         type="password"
@@ -213,8 +279,9 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                         required={view === 'register' || !!formData.password}
                     />
                 )}
-
-                {error && <p className={styles.errorText}>{error}</p>}
+                {fieldErrors.confirmPassword && (
+                    <p className={styles.fieldErrorText}>{fieldErrors.confirmPassword}</p>
+                )}
 
                 <Button type="submit" style={{ width: '90%', margin: '10px 0' }}>
                     {getButtonText()}
@@ -230,3 +297,8 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
         </BaseModal>
     );
 }
+
+function maskCelular(value: string): any {
+    throw new Error('Function not implemented.');
+}
+

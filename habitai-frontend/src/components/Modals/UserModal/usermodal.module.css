@@ -37,7 +37,7 @@
     text-align: center;
     font-size: var(--font-size-sm);
     color: var(--color-secondary);
-    margin:10px;
+    margin: 10px;
 }
 
 .toggleLink {
@@ -54,9 +54,12 @@
 .toggleLink:hover {
     text-decoration: underline;
 }
-.errorText {
-    margin-top: var(--space-sm);
+
+.fieldErrorText {
     color: var(--color-error);
     font-size: var(--font-size-sm);
-    text-align: center;
+    width: 85%;
+}
+.fieldErrorText p{
+
 }

@@ -11,7 +11,8 @@
 
 .headingContainer {
     display: flex;
-    align-items: center;justify-content: space-between;
+    align-items: center;
+    justify-content: space-between;
     font-weight: bold;
     margin-bottom: 1rem;
     color: var(--color-primary);
@@ -24,6 +25,7 @@
 .heading {
     display: flex;
     align-items: center;
+    width: 70%;
 }
 
 .infoGroup {
@@ -32,12 +34,33 @@
     margin-bottom: 0.5rem;
 }
 
+.iconContainer {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+}
+
 .profileIcon {
-    font-size: 2rem;
+    width: 3rem;
+
 }
-.editIcon{
-    font-size: 1.5rem;
+
+.deleteIcon,
+.editIcon {
+    padding: 2px;
+    margin: 1px;
+    width: 1.8rem;
+    cursor: pointer;
+    transition: color 0.2s ease-in-out;
 }
+
+.deleteIcon:hover,
+.editIcon:hover {
+    transform: scale(1.15);
+}
+
 .infoLabel {
     font-weight: bold;
     color: var(--color-secondary);
