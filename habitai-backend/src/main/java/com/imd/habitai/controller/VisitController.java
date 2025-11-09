@@ -24,9 +24,9 @@ public class VisitController {
 
     @PostMapping
     public ResponseEntity<VisitResponseDTO> createVisit(
-            @Valid @RequestBody VisitRequestDTO dto, User loggedUser
+            @Valid @RequestBody VisitRequestDTO dto
     ) {
-        VisitResponseDTO response = visitService.createVisit(dto, loggedUser);
+        VisitResponseDTO response = visitService.createVisit(dto);
         return new ResponseEntity<>(response, HttpStatus.CREATED);
     }
 

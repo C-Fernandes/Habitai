@@ -3,7 +3,6 @@ package com.imd.habitai.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import org.hibernate.validator.constraints.br.CPF;
 

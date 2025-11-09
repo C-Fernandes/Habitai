@@ -2,7 +2,6 @@ package com.imd.habitai.dto.response;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.UUID;
 
 public record PropertyResponse(
     Long id,
@@ -23,7 +22,7 @@ public record PropertyResponse(
     List<AmenityDTO> amenities 
 ) {
     public record OwnerDTO(
-        UUID id,
+            Long id,
         String name,
         String phone,
         String email

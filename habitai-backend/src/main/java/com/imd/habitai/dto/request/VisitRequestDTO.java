@@ -1,9 +1,9 @@
 package com.imd.habitai.dto.request;
 
+import com.imd.habitai.model.User;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 public class VisitRequestDTO {
 
     @NotNull
@@ -14,7 +14,8 @@ public class VisitRequestDTO {
 
     private String message;
 
-    private UUID agentId; // opcional, caso queira atribuir um agente
+    @NotNull
+    private Long userId;
 
     // getters e setters
     public Long getPropertyId() { return propertyId; }
@@ -26,6 +27,6 @@ public class VisitRequestDTO {
     public String getMessage() { return message; }
     public void setMessage(String message) { this.message = message; }
 
-    public UUID getAgentId() { return agentId; }
-    public void setAgentId(UUID agentId) {  this.agentId = agentId; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
 }
