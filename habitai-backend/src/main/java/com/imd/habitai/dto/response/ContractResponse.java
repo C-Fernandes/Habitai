@@ -10,9 +10,24 @@ public record ContractResponse(
     LocalDate endDate,
     BigDecimal monthlyPrice,
     Integer paymentDueDay,
-    Long propertyId, 
-    String tenantCpf, 
-    String ownerCpf,
+    PropertyDTO property, 
+    UserDTO tenant, 
+    UserDTO owner,
     List<PaymentResponse> payments
-)
-{}
+){
+    public record UserDTO(
+        String name,
+        String phone,
+        String email,
+        String cpf
+    ) {}
+
+    public record PropertyDTO(
+        Long id,
+        String title,
+        BigDecimal rentalPrice,
+        String state,
+        String city,
+        String neighborhood
+    ){}
+}
