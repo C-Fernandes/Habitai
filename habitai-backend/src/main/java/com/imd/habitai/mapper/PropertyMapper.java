@@ -10,7 +10,6 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Mapper(componentModel = "spring", uses = ImageMapper.class)
@@ -31,7 +30,7 @@ public interface PropertyMapper {
     PropertyResponse.AddressDTO toAddressDTO(Address address);
 
     @Named("mapOwnerIdToUser")
-    default User mapOwnerIdToUser(UUID ownerId) {
+    default User mapOwnerIdToUser(Long ownerId) {
         if (ownerId == null) {
             return null;
         }

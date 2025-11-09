@@ -9,16 +9,23 @@ interface VisitModalProps {
 }
 
 export function VisitModal({ propertyId, onClose }: VisitModalProps) {
-    const [date, setDate] = useState("");
+    const [dateTime, setDateTime] = useState("");
     const [message, setMessage] = useState("");
     const [isLoading, setIsLoading] = useState(false);
 
-    const today = new Date().toISOString().split("T")[0]; // data mínima = hoje
+    const today = new Date().toISOString().split("T")[0];
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        if (!date) {
+        const loggedUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+
+        if (!loggedUser.id) {
+            toast.error("Usuário não autenticado.");
+            return;
+        }
+
+        if (!dateTime) {
             toast.error("Selecione uma data válida.");
             return;
         }
@@ -32,8 +39,9 @@ export function VisitModal({ propertyId, onClose }: VisitModalProps) {
             setIsLoading(true);
             await visitService.createVisit({
                 propertyId,
-                date,
+                dateTime,
                 message,
+                userId: loggedUser.id,
             });
             toast.success("Reserva realizada com sucesso!");
             onClose();
@@ -53,11 +61,11 @@ export function VisitModal({ propertyId, onClose }: VisitModalProps) {
                     <div className={styles.formGroup}>
                         <label htmlFor="date">Data:</label>
                         <input
-                            id="date"
-                            type="date"
-                            value={date}
-                            min={today}
-                            onChange={(e) => setDate(e.target.value)}
+                            id="dateTime"
+                            type="datetime-local"
+                            value={dateTime}
+                            min={today + "T00:00"}
+                            onChange={(e) => setDateTime(e.target.value)}
                             required
                         />
                     </div>

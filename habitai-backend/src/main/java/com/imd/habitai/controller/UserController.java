@@ -1,7 +1,7 @@
 package com.imd.habitai.controller;
 
+import java.lang.Long;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
@@ -38,7 +38,7 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserResponse> getUserById(@PathVariable UUID id) {
+    public ResponseEntity<UserResponse> getUserById(@PathVariable Long id) {
         User user = userService.getById(id);
         UserResponse responseDTO = userMapper.toResponse(user);
         return ResponseEntity.ok(responseDTO);
@@ -55,7 +55,7 @@ public class UserController {
 
     @PutMapping("/{id}")
     public ResponseEntity<UserResponse> update(
-            @PathVariable UUID id,
+            @PathVariable Long id,
             @Valid @RequestBody UserRegisterRequest updateRequest) {
         User userData = userMapper.toEntity(updateRequest);
         User updatedUser = userService.update(id, userData);
@@ -78,7 +78,7 @@ public class UserController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getMe(@RequestParam UUID id) {
+    public ResponseEntity<UserResponse> getMe(@RequestParam Long id) {
 
         User user = userService.getMe(id);
 
@@ -86,7 +86,7 @@ public class UserController {
     }
 
     @DeleteMapping("/me")
-    public ResponseEntity<Void> deactivateAccount(@RequestParam UUID id) {
+    public ResponseEntity<Void> deactivateAccount(@RequestParam Long id) {
         userService.deactivateUser(id);
         return ResponseEntity.noContent().build();
     }

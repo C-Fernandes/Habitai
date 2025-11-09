@@ -12,10 +12,8 @@ import com.imd.habitai.model.User;
 public interface UserMapper {
     
     @Mapping(target = "id", ignore = true)
-    @Mapping(target = "ownedProperties", ignore = true)
     @Mapping(target = "contractsAsOwner", ignore = true)
     @Mapping(target = "contractsAsTenant", ignore = true)
-    @Mapping(target = "scheduledVisits", ignore = true)
     public User toEntity(UserRegisterRequest dto);
 
     public UserResponse toResponse(User user);

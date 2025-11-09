@@ -1,7 +1,6 @@
 package com.imd.habitai.controller;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -43,13 +42,13 @@ public class ContractController {
     }
 
     @GetMapping("/byOwner/{id}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable UUID id){
+    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable Long id){
         List<ContractResponse> contractsResponse = contractService.findAllByOwner(id);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }
 
     @GetMapping("/byTenant/{id}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable UUID id){
+    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable Long id){
         List<ContractResponse> contractsResponse = contractService.findAllByTenant(id);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }

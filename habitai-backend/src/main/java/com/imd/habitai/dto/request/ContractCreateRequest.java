@@ -3,7 +3,6 @@ package com.imd.habitai.dto.request;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
-import java.util.UUID;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
@@ -33,10 +32,10 @@ public record ContractCreateRequest(
     Long propertyId, 
 
     @NotNull(message = "O ID do inquilino é obrigatório.")
-    UUID tenantId, 
+    Long tenantId,
 
     @NotNull(message = "O ID do dono do contrato é obrigatório.")
-    UUID ownerId,
+    Long ownerId,
 
     List<PaymentCreateRequest> payments
 ) 

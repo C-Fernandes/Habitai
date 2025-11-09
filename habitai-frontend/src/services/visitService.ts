@@ -2,12 +2,12 @@ import { apiClient } from "./apiClient";
 
 export interface VisitRequestDTO {
     propertyId: number;
-    date: string;
+    dateTime: string;
     message: string;
 }
 
 export const visitService = {
-    async createVisit(data: VisitRequestDTO) {
+    createVisit: async (data: { propertyId: number; dateTime: string; message?: string; userId: number }) => {
         const response = await apiClient.post("/visits", data);
         return response;
     },

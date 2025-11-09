@@ -1,7 +1,6 @@
 package com.imd.habitai.service;
 
 import java.util.List;
-import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -26,12 +25,12 @@ public class UserService {
         return userRepository.findAllByIsActiveTrue();
     }
 
-    public User getById(UUID id) {
+    public User getById(Long id) {
         return userRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new EntityNotFoundError("Usuário não encontrado"));
     }
 
-    public User update(UUID id, User userData) {
+    public User update(Long id, User userData) {
         User existingUser = getById(id);
 
         if (!StringUtils.hasText(userData.getName())) {
@@ -73,11 +72,11 @@ public class UserService {
         }
     }
 
-    public User getMe(UUID id) {
+    public User getMe(Long id) {
         return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundError("Usuário não encontrado"));
     }
 
-    public void deactivateUser(UUID userId) {
+    public void deactivateUser(Long userId) {
         User user = getById(userId);
 
         user.setActive(false);
