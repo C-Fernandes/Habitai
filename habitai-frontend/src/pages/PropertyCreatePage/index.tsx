@@ -82,23 +82,39 @@ export function PropertyCreatePage() {
     };
 
     const nextStep = () => {
-        switch (step) {
-        case 1:
-            if (!formData.title.trim()) {
-            toast.error("Por favor, preencha o título.");
-            return;
+        if (step === 3) {
+            const bedrooms = parseInt(formData.bedrooms, 10);
+            const bathrooms = parseInt(formData.bathrooms, 10);
+            const garageSpaces = parseInt(formData.garageSpaces, 10);
+            const totalArea = parseFloat(formData.totalArea);
+
+            if (isNaN(bedrooms) || isNaN(bathrooms) || isNaN(garageSpaces) || isNaN(totalArea)) {
+                toast.error("Por favor, preencha todos os detalhes do imóvel.");
+                return;
             }
-            break;
-        case 2:
-            if (imageFiles.length === 0) {
-            toast.error("Você deve adicionar pelo menos uma imagem.");
-            return;
+
+            if (totalArea <= 0) {
+                toast.error("A área total deve ser maior que 0.");
+                return;
+            }
+        }
+        
+        if (step === 1) {
+            if (!formData.title.trim()) {
+                toast.error("Por favor, preencha o título.");
+                return;
+            }
+        }
+        
+        if (step === 2) {
+            if (imageFiles.length === 0) { 
+                toast.error("Você deve adicionar pelo menos uma imagem.");
+                return;
             }
             if (imageFiles.length > 10) {
-            toast.error("Você só pode adicionar no máximo 10 fotos.");
-            return;
+                toast.error("Você pode adicionar no máximo 10 fotos.");
+                return; 
             }
-            break;
         }
         setStep(prev => Math.min(prev + 1, TOTAL_STEPS));
     };
