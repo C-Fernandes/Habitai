@@ -1,4 +1,4 @@
-import { ImagePlus } from 'lucide-react'; // Importe o ícone
+import { ImagePlus } from 'lucide-react';
 import styles from './Step.module.css';
 
 export function Step2Photos({ imageFiles, onChange }) {
