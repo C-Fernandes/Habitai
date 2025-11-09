@@ -76,6 +76,7 @@
   cursor: pointer;
   font-family: inherit;
   white-space: nowrap;
+  margin: 5px;
 }
 
 .filterButtonPlaceholder {
@@ -138,7 +139,7 @@
 .filterSearchButton {
   flex-grow: 0;
   flex-shrink: 0;
-  
+  margin: 5px !important;
   color: var(--color-primary, #1F2937);
   font-weight: 600;
   

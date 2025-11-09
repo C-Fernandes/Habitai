@@ -22,7 +22,7 @@ public record PropertyResponse(
     List<AmenityDTO> amenities 
 ) {
     public record OwnerDTO(
-        Long id,
+            Long id,
         String name,
         String phone,
         String email

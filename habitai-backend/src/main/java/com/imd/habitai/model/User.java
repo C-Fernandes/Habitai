@@ -24,17 +24,14 @@ public class User {
     private String cpf;
 
     private String phone;
+
+    @Column(nullable = false)
+    private boolean isActive = true;
     @Column(nullable = false)
     private String password;
-    @OneToMany(mappedBy = "owner")
-    private List<Property> ownedProperties;
-
     @OneToMany(mappedBy = "owner")
     private List<Contract> contractsAsOwner;
 
     @OneToMany(mappedBy = "tenant")
     private List<Contract> contractsAsTenant;
-
-    @OneToMany(mappedBy = "prospect")
-    private List<Visit> scheduledVisits;
 }

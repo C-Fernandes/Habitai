@@ -1,10 +1,12 @@
 package com.imd.habitai.controller;
 
+import java.lang.Long;
 import java.util.List;
 import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.imd.habitai.dto.request.UserLoginRequest;
 import com.imd.habitai.dto.request.UserRegisterRequest;
+import com.imd.habitai.dto.response.UserAuthResponse;
 import com.imd.habitai.dto.response.UserResponse;
 import com.imd.habitai.mapper.UserMapper;
 import com.imd.habitai.model.User;
@@ -67,19 +70,25 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserResponse> login(@RequestBody UserLoginRequest loginRequest) {
+    public ResponseEntity<UserAuthResponse> login(@RequestBody UserLoginRequest loginRequest) {
         User user = userService.login(loginRequest.email(), loginRequest.password());
 
-        UserResponse responseDTO = userMapper.toResponse(user);
+        UserAuthResponse responseDTO = userMapper.toAuthResponse(user);
         return ResponseEntity.ok(responseDTO);
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getMe(@RequestParam String email) {
+    public ResponseEntity<UserResponse> getMe(@RequestParam Long id) {
 
-        User user = userService.getMe(email);
+        User user = userService.getMe(id);
 
         return ResponseEntity.ok(userMapper.toResponse(user));
+    }
+
+    @DeleteMapping("/me")
+    public ResponseEntity<Void> deactivateAccount(@RequestParam Long id) {
+        userService.deactivateUser(id);
+        return ResponseEntity.noContent().build();
     }
 
 }

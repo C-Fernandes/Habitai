@@ -14,9 +14,11 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import lombok.Data;
 
 @Entity
 @Table(name = "contracts")
+@Data
 public class Contract {
 
     @Id
