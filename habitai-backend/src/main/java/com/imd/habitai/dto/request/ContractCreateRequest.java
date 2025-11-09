@@ -5,11 +5,15 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public record ContractCreateRequest(
     @NotNull(message = "A data de início é obrigatória.")
@@ -32,11 +36,15 @@ public record ContractCreateRequest(
     @NotNull(message = "O ID da propriedade é obrigatório.")
     Long propertyId, 
 
-    @NotNull(message = "O ID do inquilino é obrigatório.")
-    UUID tenantId, 
+    @NotBlank(message = "O CPF não pode estar em branco.")
+    @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos.")
+    @CPF(message = "O CPF informado do inquilino é inválido.") 
+    String tenantCpf,
 
-    @NotNull(message = "O ID do dono do contrato é obrigatório.")
-    UUID ownerId,
+    @NotBlank(message = "O CPF não pode estar em branco.")
+    @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos.")
+    @CPF(message = "O CPF informado do dono é inválido.") 
+    String ownerCpf,
 
     List<PaymentCreateRequest> payments
 ) 

@@ -22,8 +22,8 @@ public interface ContractMapper {
     public Contract toEntity(ContractCreateRequest dto); 
 
     @Mapping(target = "propertyId", source = "property.id")
-    @Mapping(target = "tenantId", source = "tenant.id")
-    @Mapping(target = "ownerId", source = "owner.id")
+    @Mapping(target = "tenantCpf", source = "tenant.cpf")
+    @Mapping(target = "ownerCpf", source = "owner.cpf")
     @Mapping(target = "payments", source = "payments")
     public ContractResponse toResponse(Contract contract);
     
