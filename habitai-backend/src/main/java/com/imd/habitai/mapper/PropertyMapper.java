@@ -21,6 +21,7 @@ public interface PropertyMapper {
     @Mapping(target = "contracts", ignore = true)
     @Mapping(target = "inspections", ignore = true)
     @Mapping(target = "visits", ignore = true)
+    @Mapping(target = "images", ignore = true)
     Property toEntity(PropertyCreateRequest dto);
 
     PropertyResponse toDTO(Property property);

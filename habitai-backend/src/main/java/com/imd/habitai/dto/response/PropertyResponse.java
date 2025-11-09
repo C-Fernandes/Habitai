@@ -19,10 +19,10 @@ public record PropertyResponse(
 
     List<ImageResponse> images,
     
-    List<AmenityDTO> amenities 
+    List<AmenityResponse> amenities 
 ) {
     public record OwnerDTO(
-            Long id,
+        Long id,
         String name,
         String phone,
         String email
@@ -37,10 +37,5 @@ public record PropertyResponse(
         String number,
         String complement,
         String neighborhood
-    ) {}
-
-    public record AmenityDTO(
-        Long id,
-        String name
     ) {}
 }
