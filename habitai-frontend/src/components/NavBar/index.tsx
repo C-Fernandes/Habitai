@@ -4,7 +4,7 @@ import styles from './navbar.module.css';
 import { FaHome } from 'react-icons/fa';
 import { FiLogIn } from 'react-icons/fi';
 import { Button } from '../Button';
-import { AuthModal } from '../Modals/AuthModal';
+import { UserModal } from '../Modals/UserModal';
 import { useAuth } from '../../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 
@@ -46,7 +46,7 @@ function NavBar() {
                 </div>
             </header>
 
-            <AuthModal
+            <UserModal
                 isOpen={isModalOpen}
                 onRequestClose={() => setIsModalOpen(false)}
             />

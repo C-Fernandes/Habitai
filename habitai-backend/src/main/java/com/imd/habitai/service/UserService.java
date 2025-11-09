@@ -1,6 +1,7 @@
 package com.imd.habitai.service;
 
 import java.util.List;
+import java.util.UUID;
 
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -22,15 +23,15 @@ public class UserService {
     }
 
     public List<User> getAll() {
-        return userRepository.findAll();
+        return userRepository.findAllByIsActiveTrue();
     }
 
-    public User getById(Long id) {
-        return userRepository.findById(id)
+    public User getById(UUID id) {
+        return userRepository.findByIdAndIsActiveTrue(id)
                 .orElseThrow(() -> new EntityNotFoundError("Usuário não encontrado"));
     }
 
-    public User update(Long id, User userData) {
+    public User update(UUID id, User userData) {
         User existingUser = getById(id);
 
         if (!StringUtils.hasText(userData.getName())) {
@@ -39,6 +40,11 @@ public class UserService {
 
         existingUser.setName(userData.getName());
         existingUser.setPhone(userData.getPhone());
+        existingUser.setCpf(userData.getCpf());
+
+        if (userData.getPassword() != null) {
+            existingUser.setPassword(userData.getPassword());
+        }
         return userRepository.save(existingUser);
     }
 
@@ -52,23 +58,30 @@ public class UserService {
         if (userRepository.existsByCpf(user.getCpf())) {
             throw new BusinessExceptionError("O CPF informado já está em uso.");
         }
-
         return userRepository.save(user);
     }
 
     public User login(String email, String password) {
         System.out.println(email);
         System.out.println(password);
-        User user = userRepository.findByEmail(email)
-                .orElseThrow(() -> new InvalidCredentialsError("Email ou senha inválidos."));
+        User user = userRepository.findByEmailAndIsActiveTrue(email)
+                .orElseThrow(() -> new InvalidCredentialsError("Email e/ou senha inválidos."));
         if (user.getPassword().equals(password)) {
             return user;
         } else {
-            throw new InvalidCredentialsError("Email ou senha inválidos.");
+            throw new InvalidCredentialsError("Email e/ou senha inválidos.");
         }
     }
 
-    public User getMe(String email){
-return userRepository.findByEmail(email).orElseThrow(()-> new EntityNotFoundError("Usuário não encontrado"));
+    public User getMe(UUID id) {
+        return userRepository.findById(id).orElseThrow(() -> new EntityNotFoundError("Usuário não encontrado"));
+    }
+
+    public void deactivateUser(UUID userId) {
+        User user = getById(userId);
+
+        user.setActive(false);
+
+        userRepository.save(user);
     }
 }
