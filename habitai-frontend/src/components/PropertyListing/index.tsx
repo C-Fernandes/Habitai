@@ -9,7 +9,7 @@ import type { PaginatedProperties, Property } from "../../types";
 const PAGE_SIZE = 9;
 interface FilterState {
     city: string;
-    state: string;
+    neighborhood: string;
     minPrice: string;
     maxPrice: string;
 }
@@ -32,7 +32,7 @@ export function PropertyListing() {
     const [error, setError] = useState<string | null>(null);
     const [filterInputs, setFilterInputs] = useState<FilterState>({
         city: '',
-        state: '',
+        neighborhood: '',
         minPrice: '',
         maxPrice: ''
     });
@@ -56,7 +56,7 @@ export function PropertyListing() {
         params.append('page', String(pageToLoad));
         params.append('size', String(PAGE_SIZE));
         if (filters.city) params.append('city', filters.city);
-        if (filters.state) params.append('state', filters.state);
+        if (filters.neighborhood) params.append('neighborhood', filters.neighborhood);
         if (filters.minPrice) params.append('minPrice', unFormatPriceInput(filters.minPrice));
         if (filters.maxPrice) params.append('maxPrice', unFormatPriceInput(filters.maxPrice));
 
@@ -100,7 +100,7 @@ export function PropertyListing() {
             setIsLoading(true);
             setError(null);
             
-            const initialFilters: FilterState = { city: '', state: '', minPrice: '', maxPrice: '' };
+            const initialFilters: FilterState = { city: '', neighborhood: '', minPrice: '', maxPrice: '' };
 
             const params = new URLSearchParams();
             params.append('page', '0');
@@ -146,7 +146,7 @@ export function PropertyListing() {
         }
     };
 
-const handleApplyPriceFilter = () => {
+    const handleApplyPriceFilter = () => {
         const minStr = unFormatPriceInput(tempPriceInputs.minPrice);
         const maxStr = unFormatPriceInput(tempPriceInputs.maxPrice);
 
@@ -213,9 +213,9 @@ const handleApplyPriceFilter = () => {
                 />
                 <input
                     type="text"
-                    name="state"
-                    placeholder="Estado"
-                    value={filterInputs.state}
+                    name="neighborhood"
+                    placeholder="Bairro"
+                    value={filterInputs.neighborhood}
                     onChange={handleFilterChange}
                     className={styles.filterInput}
                 />

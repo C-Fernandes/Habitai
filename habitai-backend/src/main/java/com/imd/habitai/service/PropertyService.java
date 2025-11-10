@@ -76,12 +76,12 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public Page<PropertyResponse> getAll(
         String city, 
-        String state, 
+        String neighborhood, 
         BigDecimal maxPrice,
         BigDecimal minPrice,
         Pageable pageable
     ) {
-        Specification<Property> spec = PropertySpecification.filterBy(city, state, maxPrice, minPrice);
+        Specification<Property> spec = PropertySpecification.filterBy(city, neighborhood, maxPrice, minPrice);
         Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
         return propertyPage.map(propertyMapper::toDTO);
     }

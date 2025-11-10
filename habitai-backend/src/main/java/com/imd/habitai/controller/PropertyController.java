@@ -41,12 +41,12 @@ public class PropertyController {
     @GetMapping
     public ResponseEntity<Page<PropertyResponse>> getAllProperties(
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String neighborhood,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) BigDecimal minPrice,
             @PageableDefault(size = 9, page = 0) Pageable pageable
     ) {
-        Page<PropertyResponse> propertyPage = propertyService.getAll(city, state, maxPrice, minPrice, pageable);
+        Page<PropertyResponse> propertyPage = propertyService.getAll(city, neighborhood, maxPrice, minPrice, pageable);
         return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 

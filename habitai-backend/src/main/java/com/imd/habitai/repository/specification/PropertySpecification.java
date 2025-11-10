@@ -12,14 +12,14 @@ public class PropertySpecification {
 
     public static Specification<Property> filterBy(
         String city, 
-        String state, 
+        String neighborhood, 
         BigDecimal maxPrice,
         BigDecimal minPrice
     ){
         Specification<Property> spec = (root, query, cb) -> cb.conjunction();
 
         if (StringUtils.hasText(city)) spec = spec.and(hasCity(city));
-        if (StringUtils.hasText(state)) spec = spec.and(hasState(state));
+        if (StringUtils.hasText(neighborhood)) spec = spec.and(hasNeighborhood(neighborhood));
         if (maxPrice != null) spec = spec.and(hasMaxPrice(maxPrice));
         if (minPrice != null) spec = spec.and(hasMinPrice(minPrice));
 
@@ -35,12 +35,12 @@ public class PropertySpecification {
         };
     }
 
-    private static Specification<Property> hasState(String state) {
+    private static Specification<Property> hasNeighborhood(String neighborhood) {
         return (root, query, cb) -> {
             Join<Property, Address> addressJoin = root.join("address");
-            return cb.equal(cb.lower(
-                addressJoin.get("state")), 
-                state.toLowerCase());
+            return cb.like(
+                cb.lower(addressJoin.get("neighborhood")),
+                "%" + neighborhood.toLowerCase() + "%");
         };
     }
 
