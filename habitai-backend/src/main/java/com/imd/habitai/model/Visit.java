@@ -31,7 +31,6 @@ public class Visit {
     @Column(nullable = false)
     private VisitStatus status;
 
-    @Lob
     private String message;
 
     @ManyToOne(fetch = FetchType.LAZY)

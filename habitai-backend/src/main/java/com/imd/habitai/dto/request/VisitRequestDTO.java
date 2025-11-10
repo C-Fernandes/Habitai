@@ -1,12 +1,11 @@
 package com.imd.habitai.dto.request;
 
-import com.imd.habitai.model.User;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
 public class VisitRequestDTO {
 
-    @NotNull
+    @NotNull(groups = Create.class)
     private Long propertyId;
 
     @NotNull
@@ -14,7 +13,7 @@ public class VisitRequestDTO {
 
     private String message;
 
-    @NotNull
+    @NotNull(groups = Create.class)
     private Long userId;
 
     // getters e setters
@@ -29,4 +28,6 @@ public class VisitRequestDTO {
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
+
+    public interface Create {}
 }

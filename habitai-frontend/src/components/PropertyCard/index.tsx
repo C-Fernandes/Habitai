@@ -11,12 +11,19 @@ const API_BASE_URL = "http://localhost:8080";
 
 type PropertyCardProps = {
     property: Property;
+    showStatus?: boolean;
 };
 
-export function PropertyCard({ property }: PropertyCardProps) {
+export function PropertyCard({ property, showStatus = false }: PropertyCardProps) {
     const navigate = useNavigate();
     const firstImage = property.images?.[0]?.imagePath;
     const imageUrl = `${API_BASE_URL}/${firstImage}`;
+
+    const statusText = property.status === 'AVAILABLE' ? 'Em anúncio' : 'Alugado';
+    const statusClass = property.status === 'AVAILABLE' 
+        ? styles.statusAvailable 
+        : styles.statusRented;
+    
 
     return (
         <div
@@ -25,6 +32,11 @@ export function PropertyCard({ property }: PropertyCardProps) {
             role="button"
             tabIndex={0}
         >
+            {showStatus && (
+                <div className={`${styles.statusBadge} ${statusClass}`}>
+                    {statusText}
+                </div>
+            )}
             <img src={imageUrl} alt={property.title} className={styles.image} />
             <div className={styles.content}>
                 <h3 className={styles.title}>{property.title}</h3>

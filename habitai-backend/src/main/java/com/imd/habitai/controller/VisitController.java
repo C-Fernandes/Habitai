@@ -3,6 +3,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.imd.habitai.dto.request.VisitRequestDTO;
@@ -24,24 +25,54 @@ public class VisitController {
 
     @PostMapping
     public ResponseEntity<VisitResponseDTO> createVisit(
-            @Valid @RequestBody VisitRequestDTO dto
+            @Validated(VisitRequestDTO.Create.class) @RequestBody VisitRequestDTO dto
     ) {
-        VisitResponseDTO response = visitService.createVisit(dto);
-        return new ResponseEntity<>(response, HttpStatus.CREATED);
+        VisitResponseDTO created = visitService.createVisit(dto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
-    @GetMapping("/owner")
-    public ResponseEntity<List<VisitResponseDTO>> getVisitsByOwner(User loggedUser
+    @GetMapping("/property/{propertyId}")
+    public ResponseEntity<List<VisitResponseDTO>> getVisitsByPropertyUserId(
+            @PathVariable Long propertyId
     ) {
-        List<VisitResponseDTO> visits = visitService.getVisitsByOwner(loggedUser);
+        List<VisitResponseDTO> visits = visitService.getActiveVisitsByUserPropertyId(propertyId);
         return ResponseEntity.ok(visits);
     }
 
-    @PostMapping("/{id}/confirm")
-    public ResponseEntity<VisitResponseDTO> confirmVisit(
-            @PathVariable Long id, User loggedUser
+    @GetMapping("/user/{id}")
+    public ResponseEntity<List<VisitResponseDTO>> getVisitsByUserId(@PathVariable Long id) {
+        List<VisitResponseDTO> visits = visitService.getActiveVisitsByUserId(id);
+        return ResponseEntity.ok(visits);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<VisitResponseDTO> updateVisit(
+            @PathVariable Long id,
+            @RequestBody @Valid VisitRequestDTO dto
     ) {
-        VisitResponseDTO response = visitService.confirmVisit(id, loggedUser);
-        return ResponseEntity.ok(response);
+        VisitResponseDTO updatedVisit = visitService.updateVisit(id, dto);
+        return ResponseEntity.ok(updatedVisit);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteVisit(@PathVariable Long id) {
+        visitService.deleteVisit(id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @PutMapping("/{id}/confirm")
+    public ResponseEntity<VisitResponseDTO> confirmVisit(
+            @PathVariable Long id
+    ) {
+        VisitResponseDTO updatedVisit = visitService.confirmVisit(id);
+        return ResponseEntity.ok(updatedVisit);
+    }
+
+    @PutMapping("/{id}/reject")
+    public ResponseEntity<VisitResponseDTO> rejectVisit(
+            @PathVariable Long id
+    ) {
+        VisitResponseDTO updatedVisit = visitService.rejectVisit(id);
+        return ResponseEntity.ok(updatedVisit);
     }
 }

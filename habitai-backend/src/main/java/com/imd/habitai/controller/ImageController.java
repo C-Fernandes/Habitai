@@ -29,7 +29,6 @@ public class ImageController {
             @PathVariable Long id,
             @RequestPart("images") List<MultipartFile> images)
     {
-
         List<Image> savedImages = imageService.addImagesToProperty(id, images);
         List<ImageResponse> dtos = imageMapper.toDTOList(savedImages);
         return new ResponseEntity<>(dtos, HttpStatus.CREATED);

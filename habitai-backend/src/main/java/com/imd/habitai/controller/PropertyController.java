@@ -8,7 +8,6 @@ import com.imd.habitai.service.PropertyService;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
@@ -42,12 +41,12 @@ public class PropertyController {
     @GetMapping
     public ResponseEntity<Page<PropertyResponse>> getAllProperties(
             @RequestParam(required = false) String city,
-            @RequestParam(required = false) String state,
+            @RequestParam(required = false) String neighborhood,
             @RequestParam(required = false) BigDecimal maxPrice,
             @RequestParam(required = false) BigDecimal minPrice,
             @PageableDefault(size = 9, page = 0) Pageable pageable
     ) {
-        Page<PropertyResponse> propertyPage = propertyService.getAll(city, state, maxPrice, minPrice, pageable);
+        Page<PropertyResponse> propertyPage = propertyService.getAll(city, neighborhood, maxPrice, minPrice, pageable);
         return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 
@@ -56,6 +55,15 @@ public class PropertyController {
         return propertyService.getById(id)
             .map(property -> new ResponseEntity<>(property, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
+    }
+
+    @GetMapping("/my-properties/{id}")
+    public ResponseEntity<Page<PropertyResponse>> getMyProperties(
+        @PageableDefault(size = 12, sort = "id") Pageable pageable,
+        @PathVariable Long id
+    ) {
+        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(id, pageable);
+        return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

@@ -1,6 +1,9 @@
 package com.imd.habitai.repository;
 
 import com.imd.habitai.model.Property;
+
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Page;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import org.springframework.data.jpa.repository.Query;
@@ -13,4 +16,6 @@ import java.util.Optional;
 public interface PropertyRepository extends JpaRepository<Property, Long>, JpaSpecificationExecutor<Property> {
     @Query("SELECT p FROM Property p JOIN FETCH p.owner WHERE p.id = :id")
     Optional<Property> findByIdWithOwner(@Param("id") Long id);
+
+    Page<Property> findByOwnerId(Long ownerId, Pageable pageable);
 }

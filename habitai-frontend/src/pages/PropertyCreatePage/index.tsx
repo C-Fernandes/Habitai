@@ -7,13 +7,14 @@ import { viaCepClient } from '../../services/viaCepClient';
 import { Button } from '../../components/Button';
 import { FaArrowLeft } from "react-icons/fa";
 import styles from './propertyCreatePage.module.css';
-
+import { formatCep, formatAsCurrency } from '../../utils/propertyUtils';
 import { Step1Title } from './Steps/Step1Title';
 import { Step2Photos } from './Steps/Step2Photos';
 import { Step3Details } from './Steps/Step3Details';
 import { Step4Address } from './Steps/Step4Address';
 import { Step5Price } from './Steps/Step5Price';
 import NavBar from '../../components/NavBar';
+import type { Amenity } from '../../types';
 
 const initialState = {
   title: '',
@@ -23,7 +24,7 @@ const initialState = {
   bathrooms: '',
   garageSpaces: '',
   totalArea: '',
-  amenityIds: [],
+  amenityIds: [] as number[],
   address: {
     cep: '', street: '', number: '', complement: '',
     neighborhood: '', city: '', state: '',
@@ -31,18 +32,6 @@ const initialState = {
 };
 
 const TOTAL_STEPS = 5;
-
-const formatCep = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, '');
-    const limitedValue = cleanValue.slice(0, 8);
-    return limitedValue.replace(/^(\d{5})(\d)/, '$1-$2');
-};
-
-const formatAsCurrency = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, '');
-    if (!cleanValue) return '';
-    return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-};
 
 export function PropertyCreatePage() {
     const { user } = useAuth();
@@ -54,6 +43,7 @@ export function PropertyCreatePage() {
     const [isCepLoading, setIsCepLoading] = useState(false);
     const [cepError, setCepError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [availableAmenities, setAvailableAmenities] = useState<Amenity[]>([]);
 
     useEffect(() => {
         const cep = formData.address.cep.replace(/\D/g, '');
@@ -88,6 +78,18 @@ export function PropertyCreatePage() {
         };
         fetchAddress();
     }, [formData.address.cep]);
+
+    useEffect(() => {
+        const fetchAmenities = async () => {
+            try {
+                const data = await apiClient.get<Amenity[]>('/amenities');
+                setAvailableAmenities(data);
+            } catch (err) {
+                console.error("Falha ao buscar comodidades:", err);
+            }
+        };
+        fetchAmenities();
+    }, []);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -128,6 +130,22 @@ export function PropertyCreatePage() {
         if (e.target.files) {
         setImageFiles(Array.from(e.target.files));
         }
+    };
+
+    const handleAmenityChange = (amenityId: number) => {
+        setFormData(prev => {
+            const currentIds = prev.amenityIds;
+            if (currentIds.includes(amenityId)) {
+                return {
+                    ...prev,
+                    amenityIds: currentIds.filter(id => id !== amenityId)
+                };
+            }
+            return {
+                ...prev,
+                amenityIds: [...currentIds, amenityId]
+            };
+        });
     };
 
     const nextStep = () => {
@@ -220,7 +238,7 @@ export function PropertyCreatePage() {
 
             await apiClient.post('/properties', data);
             toast.success("Imóvel cadastrado com sucesso!");
-            navigate('/');
+            navigate('/my-properties');
         } catch (err: any) {
             toast.error(err.message || "Falha ao cadastrar.");
         } finally {
@@ -237,11 +255,15 @@ export function PropertyCreatePage() {
         
         switch (step) {
         case 1:
-            return <Step1Title {...stepProps} />;
+            return <Step1Title {...stepProps}/>;
         case 2:
             return <Step2Photos imageFiles={imageFiles} onChange={handleImageChange} />;
         case 3:
-            return <Step3Details {...stepProps} />;
+            return <Step3Details 
+                {...stepProps} 
+                availableAmenities={availableAmenities}
+                selectedAmenityIds={formData.amenityIds}
+                onAmenityChange={handleAmenityChange}/>;
         case 4:
             return <Step4Address {...stepProps} isCepLoading={isCepLoading} cepError={cepError} />;
         case 5:

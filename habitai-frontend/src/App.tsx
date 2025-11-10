@@ -1,3 +1,4 @@
+
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
 import { WelcomePage } from './pages/WelcomePage/index.tsx'
 import { Toaster } from 'sonner'
@@ -8,6 +9,9 @@ import { MyContractsPage } from './pages/MyContractsPage/index.tsx'
 import { PropertyDetailsPage } from "./pages/PropertyDetailsPage/PropertyDetailsPage.tsx";
 import { PropertyCreatePage } from './pages/PropertyCreatePage/index.tsx'
 import { ContractDetailsPage } from './pages/ContractDetailsPage/ContractDetailsPage.tsx'
+import VisitsPage from "./pages/VisitPage";
+import { MyPropertiesPage } from './pages/MyProperties/index.tsx'
+import { PropertyEditPage } from './pages/PropertyEdit/index.tsx'
 
 function App() {
 
@@ -23,7 +27,10 @@ function App() {
             <Route path='/me' element={<UserPage />} />
             <Route path='/contracts' element={<MyContractsPage />} />
             <Route path='/contracts/:id' element={<ContractDetailsPage />} />
-            <Route path='/register' element={<PropertyCreatePage />}/>
+            <Route path='/my-properties/register' element={<PropertyCreatePage />}/>
+            <Route path='/my-properties' element={<MyPropertiesPage />}/>
+            <Route path='/my-properties/edit/:id' element={<PropertyEditPage/>}/>
+            <Route path='/visits' element={<VisitsPage />} />
           </Route>
         </Routes>
       </AuthProvider>

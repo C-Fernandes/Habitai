@@ -21,7 +21,7 @@ public class Amenity {
     private Long id;
 
     @Column(nullable = false, unique = true)
-    private String name; // e.g., "Swimming Pool", "Gourmet Balcony"
+    private String name;
     
     @ManyToMany(mappedBy = "amenities")
     private List<Property> properties;

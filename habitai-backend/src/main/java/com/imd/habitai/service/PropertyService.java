@@ -3,7 +3,9 @@ package com.imd.habitai.service;
 import com.imd.habitai.dto.request.PropertyCreateRequest;
 import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
+import com.imd.habitai.enums.PropertyStatus;
 import com.imd.habitai.mapper.PropertyMapper;
+import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
 import com.imd.habitai.model.User;
@@ -24,7 +26,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PropertyService {
@@ -60,6 +61,7 @@ public class PropertyService {
             throw new EntityNotFoundException("Uma ou mais comodidades não foram encontradas.");
         }
         property.setAmenities(amenities);
+        property.setStatus(PropertyStatus.AVAILABLE);
 
         Property finalProperty = propertyRepository.save(property);
         if(!images.isEmpty()) {
@@ -70,15 +72,16 @@ public class PropertyService {
 
         return propertyMapper.toDTO(result);
     }
+
     @Transactional(readOnly = true)
     public Page<PropertyResponse> getAll(
         String city, 
-        String state, 
+        String neighborhood, 
         BigDecimal maxPrice,
         BigDecimal minPrice,
         Pageable pageable
     ) {
-        Specification<Property> spec = PropertySpecification.filterBy(city, state, maxPrice, minPrice);
+        Specification<Property> spec = PropertySpecification.filterBy(city, neighborhood, maxPrice, minPrice);
         Page<Property> propertyPage = propertyRepository.findAll(spec, pageable);
         return propertyPage.map(propertyMapper::toDTO);
     }
@@ -87,6 +90,12 @@ public class PropertyService {
     public Optional<PropertyResponse> getById(Long id) {
         Optional<Property> property = propertyRepository.findById(id);
         return property.map(propertyMapper::toDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PropertyResponse> getPropertiesByOwner(Long userId, Pageable pageable) {
+        Page<Property> propertyPage = propertyRepository.findByOwnerId(userId, pageable);
+        return propertyPage.map(propertyMapper::toDTO);
     }
 
     @Transactional
@@ -113,8 +122,18 @@ public class PropertyService {
             if (propertyDTO.totalArea() != null) {
                 existingProperty.setTotalArea(propertyDTO.totalArea());
             }
+
             if (propertyDTO.address() != null) {
-                existingProperty.setAddress(propertyDTO.address());
+                Address managedAddress = existingProperty.getAddress();
+                Address detachedAddress = propertyDTO.address();
+
+                managedAddress.setCep(detachedAddress.getCep());
+                managedAddress.setStreet(detachedAddress.getStreet());
+                managedAddress.setNumber(detachedAddress.getNumber());
+                managedAddress.setComplement(detachedAddress.getComplement());
+                managedAddress.setNeighborhood(detachedAddress.getNeighborhood());
+                managedAddress.setCity(detachedAddress.getCity());
+                managedAddress.setState(detachedAddress.getState());
             }
 
             if (propertyDTO.amenityIds() != null) {
