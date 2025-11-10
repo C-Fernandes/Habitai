@@ -13,6 +13,11 @@
     margin-bottom: 1rem;
 }
 
+.topInfo{
+    display: flex;
+    justify-content: space-between;
+}
+
 .title {
     margin-bottom: 0.5rem;
     font-size: 1.6rem;
@@ -61,7 +66,8 @@
 }
 
 .backButton,
-.reserveButton {
+.reserveButton, 
+.contractButton {
     border: none;
     font-size: 1rem;
     cursor: pointer;
@@ -85,6 +91,13 @@
 }
 
 .reserveButton:hover {
+    background-color: #3c8c40;
+}
+
+.contractButton{
+    background-color: #4caf50;
+}
+.contractButton:hover {
     background-color: #3c8c40;
 }
 

@@ -1,18 +1,22 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { apiClient } from "../../services/apiClient";
-import type { Property } from "../../types";
+import type { Contract, Property } from "../../types";
 import styles from "./propertydetails.module.css";
 import NavBar from "../../components/NavBar";
 import { toast } from "sonner";
 import {VisitModal} from "../../components/Modals/VisitModal/VisitModal.tsx";
+import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
+import { useAuth } from "../../context/AuthContext.tsx";
 
 export function PropertyDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const [property, setProperty] = useState<Property | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
-    const [showModal, setShowModal] = useState(false);
+    const [showVisitModal, setshowVisitModal] = useState(false);
+    const [showContractModal, setShowContractModal] = useState(false);
+    const { user, isAuthenticated } = useAuth();
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -43,7 +47,22 @@ export function PropertyDetailsPage() {
             toast.error("Você precisa estar logado para realizar uma reserva.");
             return;
         }
-        setShowModal(true);
+        setshowVisitModal(true);
+    }
+
+    function handleCreateContractClick() {
+        if (user && property && user.id == property.owner.id.toString()) {
+            setShowContractModal(true);
+        } else {
+            toast.error("Você não tem permissão para criar um contrato para este imóvel.");
+        }
+    }
+
+    function handleContractModalClose(savedContract?: Contract) {
+        setShowContractModal(false);
+        if (savedContract) {
+            toast.success("Contrato processado com sucesso!");
+        }
     }
 
     return (
@@ -51,7 +70,19 @@ export function PropertyDetailsPage() {
             <NavBar />
             <div className={styles.container}>
                 <img src={imageUrl} alt={property.title} className={styles.image} />
-                <h1>{property.title}</h1>
+                <div className={styles.topInfo}>
+                    <h1>{property.title}</h1>
+
+                    {user && property.owner && user.id == property.owner.id.toString() &&
+                        <button 
+                            className={styles.contractButton}
+                            onClick={handleCreateContractClick}
+                            type="button"
+                        >
+                            Criar contrato
+                        </button>
+                    }
+                </div>
                 <p>
                     {property.address.street}, {property.address.city}
                 </p>
@@ -77,10 +108,18 @@ export function PropertyDetailsPage() {
                 </div>
             </div>
 
-            {showModal && (
+            {showVisitModal && (
                 <VisitModal
                     propertyId={property.id}
-                    onClose={() => setShowModal(false)}
+                    onClose={() => setshowVisitModal(false)}
+                />
+            )}
+
+            {showContractModal && (
+                <ContractModal
+                    isOpen={showContractModal}
+                    onRequestClose={handleContractModalClose}
+                    propertyIdToPreFill={property.id}
                 />
             )}
         </>
