@@ -1,6 +1,21 @@
 import styles from './Step.module.css';
+import type { Amenity } from '../../../types';
 
-export function Step3Details({ formData, handleChange }) {
+type Step3Props = {
+    formData: any;
+    handleChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    availableAmenities: Amenity[];
+    selectedAmenityIds: number[];
+    onAmenityChange: (id: number) => void;
+};
+
+export function Step3Details({ 
+    formData, 
+    handleChange,
+    availableAmenities,
+    selectedAmenityIds,
+    onAmenityChange
+}: Step3Props) {
     return (
         <div className={styles.stepContainer}>
             <h2 className={styles.headline}>Detalhes que os inquilinos procuram.</h2>
@@ -53,6 +68,21 @@ export function Step3Details({ formData, handleChange }) {
                         value={formData.totalArea} 
                         required
                         onChange={handleChange}/>
+                </div>
+            </div>
+            <div className={styles.amenitySection}>
+                <h3 className={styles.subheadline2}>Comodidades</h3>
+                <div className={styles.amenityGrid}>
+                    {availableAmenities.map((amenity) => (
+                        <label key={amenity.id} className={styles.checkboxLabel}>
+                            <input
+                                type="checkbox"
+                                checked={selectedAmenityIds.includes(amenity.id)}
+                                onChange={() => onAmenityChange(amenity.id)}
+                            />
+                            {amenity.name}
+                        </label>
+                    ))}
                 </div>
             </div>
         </div>

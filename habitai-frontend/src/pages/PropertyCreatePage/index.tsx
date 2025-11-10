@@ -14,6 +14,7 @@ import { Step3Details } from './Steps/Step3Details';
 import { Step4Address } from './Steps/Step4Address';
 import { Step5Price } from './Steps/Step5Price';
 import NavBar from '../../components/NavBar';
+import type { Amenity } from '../../types';
 
 const initialState = {
   title: '',
@@ -23,7 +24,7 @@ const initialState = {
   bathrooms: '',
   garageSpaces: '',
   totalArea: '',
-  amenityIds: [],
+  amenityIds: [] as number[],
   address: {
     cep: '', street: '', number: '', complement: '',
     neighborhood: '', city: '', state: '',
@@ -54,6 +55,7 @@ export function PropertyCreatePage() {
     const [isCepLoading, setIsCepLoading] = useState(false);
     const [cepError, setCepError] = useState<string | null>(null);
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [availableAmenities, setAvailableAmenities] = useState<Amenity[]>([]);
 
     useEffect(() => {
         const cep = formData.address.cep.replace(/\D/g, '');
@@ -88,6 +90,18 @@ export function PropertyCreatePage() {
         };
         fetchAddress();
     }, [formData.address.cep]);
+
+    useEffect(() => {
+        const fetchAmenities = async () => {
+            try {
+                const data = await apiClient.get<Amenity[]>('/amenities');
+                setAvailableAmenities(data);
+            } catch (err) {
+                console.error("Falha ao buscar comodidades:", err);
+            }
+        };
+        fetchAmenities();
+    }, []);
 
     const handleChange = (e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
         const { name, value } = e.target;
@@ -128,6 +142,22 @@ export function PropertyCreatePage() {
         if (e.target.files) {
         setImageFiles(Array.from(e.target.files));
         }
+    };
+
+    const handleAmenityChange = (amenityId: number) => {
+        setFormData(prev => {
+            const currentIds = prev.amenityIds;
+            if (currentIds.includes(amenityId)) {
+                return {
+                    ...prev,
+                    amenityIds: currentIds.filter(id => id !== amenityId)
+                };
+            }
+            return {
+                ...prev,
+                amenityIds: [...currentIds, amenityId]
+            };
+        });
     };
 
     const nextStep = () => {
@@ -237,11 +267,15 @@ export function PropertyCreatePage() {
         
         switch (step) {
         case 1:
-            return <Step1Title {...stepProps} />;
+            return <Step1Title {...stepProps}/>;
         case 2:
             return <Step2Photos imageFiles={imageFiles} onChange={handleImageChange} />;
         case 3:
-            return <Step3Details {...stepProps} />;
+            return <Step3Details 
+                {...stepProps} 
+                availableAmenities={availableAmenities}
+                selectedAmenityIds={formData.amenityIds}
+                onAmenityChange={handleAmenityChange}/>;
         case 4:
             return <Step4Address {...stepProps} isCepLoading={isCepLoading} cepError={cepError} />;
         case 5:
