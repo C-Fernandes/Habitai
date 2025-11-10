@@ -9,6 +9,7 @@ import { MyContractsCollection } from './pages/MyContracts/index.tsx'
 import { PropertyDetailsPage } from "./pages/PropertyDetailsPage/PropertyDetailsPage.tsx";
 import { PropertyCreatePage } from './pages/PropertyCreatePage/index.tsx'
 import VisitsPage from "./pages/VisitPage";
+import { MyPropertiesPage } from './pages/MyProperties/index.tsx'
 
 function App() {
 
@@ -23,7 +24,8 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path='/me' element={<UserPage />} />
             <Route path='/contracts' element={<MyContractsCollection />} />
-            <Route path='properties/register' element={<PropertyCreatePage />}/>
+            <Route path='/my-properties/register' element={<PropertyCreatePage />}/>
+            <Route path='/my-properties' element={<MyPropertiesPage />}/>
             <Route path='/visits' element={<VisitsPage />} />
           </Route>
         </Routes>

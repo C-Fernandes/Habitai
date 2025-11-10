@@ -40,6 +40,7 @@ export type Address = {
 };
 
 export type Property = {
+  status: string;
   id: number;
   title: string;
   description: string;

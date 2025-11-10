@@ -1,4 +1,5 @@
 .card {
+  position: relative;
   background-color: #fff;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -55,4 +56,25 @@
   color: #555;
   border-top: 1px solid #eee;
   padding-top: 12px;
+}
+
+.statusBadge {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  border-radius: 6px;
+  color: #fff;
+  z-index: 2;
+  box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+}
+
+.statusAvailable {
+  background-color: #03a16d;
+}
+
+.statusRented {
+  background-color:#2a3bf3;
 }
