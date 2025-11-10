@@ -1,0 +1,21 @@
+
+.cardWrapper {
+    padding: 0 8px;
+    box-sizing: border-box;
+    margin-top: 10px;
+}
+
+:global(.slick-prev::before),
+:global(.slick-next::before) {
+    color: #333 !important; 
+    font-size: 28px;
+}
+
+.loading,
+.noResults {
+    text-align: center;
+    color: #1f2937;
+    margin: 40px 0;
+    font-size: 1.1rem;
+}
+

@@ -12,3 +12,11 @@
   margin-bottom: 24px;
   color: black;
 }
+
+section:not(:first-child){
+  margin-top: 50px;
+}
+
+h2{
+  color: #555;
+}

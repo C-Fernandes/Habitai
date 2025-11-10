@@ -1,17 +1,43 @@
 import React, { useEffect, useState } from 'react';
-import { getAllContracts} from '../../services/contractService'; 
-import { Contract } from '../../types';
+import { getByOwner, getByTenant } from '../../services/contractService'; 
+import type { Contract } from '../../types';
 import { ContractCard } from '../ContractCard';
 import { useAuth } from '../../context/AuthContext';
+import styles from './index.module.css';
+import Slider from 'react-slick'; 
 
+const settings = {
+    dots: true,
+    infinite: false,
+    speed: 500,
+    slidesToShow: 3,
+    slidesToScroll: 3,
+    arrows: true,
+    responsive: [
+        {
+            breakpoint: 1024,
+            settings: {
+                slidesToShow: 2,
+                slidesToScroll: 2,
+            }
+        },
+        {
+            breakpoint: 600,
+            settings: {
+                slidesToShow: 1,
+                slidesToScroll: 1,
+            }
+        }
+    ]
+};
 
-export const ContractList: React.FC = () => {
+export const ContractListByOwner: React.FC = () => {
     const { user } = useAuth();
     const [contracts, setContracts] = useState<Contract[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
-        getAllContracts()
+        getByOwner(user!.id)
             .then(setContracts)
             .catch((err: any) => {
                 console.error("Erro ao carregar contratos:", err);
@@ -21,22 +47,60 @@ export const ContractList: React.FC = () => {
     }, []);
 
     if (loading) {
-        return <p className="loading">Carregando contratos...</p>;
+        return <p className={styles.loading}>Carregando contratos...</p>;
     }
 
     if (!contracts.length) {
-        return <p className="noResults">Nenhum contrato encontrado.</p>;
+        return <p className={styles.noResults}>Nenhum contrato encontrado.</p>;
     }
 
     return (
-        <div className="grid">
+        <Slider {...settings}>
             {contracts.map((c) => (
-                <ContractCard 
-                    key={c.id}
-                    contract={c} 
-                    isOwner={user?.email == c.owner.email} 
-                />
+                <div key={c.id} className={styles.cardWrapper}> 
+                    <ContractCard 
+                        contract={c} 
+                        isOwner={true} 
+                    />
+                </div>
             ))}
-        </div>
+        </Slider>
+    );
+};
+
+export const ContractListByTenant: React.FC = () => {
+    const { user } = useAuth();
+    const [contracts, setContracts] = useState<Contract[]>([]);
+    const [loading, setLoading] = useState(true);
+
+    useEffect(() => {
+        getByTenant(user!.id)
+            .then(setContracts)
+            .catch((err: any) => {
+                console.error("Erro ao carregar contratos:", err);
+                setContracts([])
+            })
+            .finally(() => setLoading(false));
+    }, []);
+
+    if (loading) {
+        return <p className={styles.loading}>Carregando contratos...</p>;
+    }
+
+    if (!contracts.length) {
+        return <p className={styles.noResults}>Nenhum contrato encontrado.</p>;
+    }
+
+    return (
+        <Slider {...settings}>
+            {contracts.map((c) => (
+                <div key={c.id} className={styles.cardWrapper}> 
+                    <ContractCard 
+                        contract={c} 
+                        isOwner={false} 
+                    />
+                </div>
+            ))}
+        </Slider>
     );
 };

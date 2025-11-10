@@ -1,5 +1,5 @@
 .card {
-  background-color: #fff;
+  background-color: #f9fafb;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
@@ -32,10 +32,13 @@
 
 .contrDetails {
   display: flex;
+  justify-content: space-between  ;
   gap: 16px;
   font-size: 0.9rem;
-  font-weight: bold;
   color: #555;
   border-top: 1px solid #eee;
   padding-top: 12px;
+}
+.contrDetails span{
+  font-weight: bold;
 }

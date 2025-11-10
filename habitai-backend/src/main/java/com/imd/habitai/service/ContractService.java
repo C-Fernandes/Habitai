@@ -59,17 +59,24 @@ public class ContractService {
         return contractMapper.toResponse(savedContract);
     }
 
+    public ContractResponse findById(Long id){
+        Contract contract = contractRepository.findById(id)
+            .orElseThrow(()-> new EntityNotFoundException("Contrato de ID ("+id+") não encontrado."));
+
+        return contractMapper.toResponse(contract);
+    }
+
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByOwner(String ownerCpf){
-        User owner = userRepository.findByCpfAndIsActiveTrue(ownerCpf).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+ownerCpf+") não encontrado."));
+    public List<ContractResponse> findAllByOwner(Long ownerId){
+        User owner = userRepository.findById(ownerId).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+ownerId+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByOwner(owner);
 
         return contractMapper.toListResponses(contracts);
     }
 
     @Transactional(readOnly = true)
-    public List<ContractResponse> findAllByTenant(String tenantCpf){
-        User tenant = userRepository.findByCpfAndIsActiveTrue(tenantCpf).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+tenantCpf+") não encontrado."));
+    public List<ContractResponse> findAllByTenant(Long tenantId){
+        User tenant = userRepository.findById(tenantId).orElseThrow(()-> new EntityNotFoundException("Usuário de CPF ("+tenantId+") não encontrado."));
         List<Contract> contracts = contractRepository.findAllByTenant(tenant);
 
         return contractMapper.toListResponses(contracts);
