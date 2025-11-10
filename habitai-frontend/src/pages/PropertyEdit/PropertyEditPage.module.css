@@ -256,8 +256,7 @@
 .checkboxLabel input[type="checkbox"]:checked::after {
   content: '';
   position: absolute;
-  top: 4px;
-  left: 7px;
+  left: 5px;
   width: 6px;
   height: 12px;
   border: solid white;
