@@ -7,6 +7,8 @@ import org.mapstruct.Mapping;
 import com.imd.habitai.dto.request.ContractCreateRequest;
 import com.imd.habitai.dto.response.ContractResponse;
 import com.imd.habitai.model.Contract;
+import com.imd.habitai.model.Property;
+import com.imd.habitai.model.User;
 
 @Mapper(componentModel = "spring", uses = PaymentMapper.class)
 public interface ContractMapper { 
@@ -19,13 +21,17 @@ public interface ContractMapper {
     @Mapping(target = "tenant", ignore = true) 
     @Mapping(target = "owner", ignore = true)
     @Mapping(target = "payments", ignore = true)
-    public Contract toEntity(ContractCreateRequest dto); 
+    Contract toEntity(ContractCreateRequest dto); 
 
-    @Mapping(target = "propertyId", source = "property.id")
-    @Mapping(target = "tenantId", source = "tenant.id")
-    @Mapping(target = "ownerId", source = "owner.id")
     @Mapping(target = "payments", source = "payments")
-    public ContractResponse toResponse(Contract contract);
+    ContractResponse toResponse(Contract contract);
+
+    ContractResponse.UserDTO toUserDTO(User user);
     
-    public List<ContractResponse> toListResponses(List<Contract> contracts);
+    @Mapping(target = "city", source = "address.city")
+    @Mapping(target = "neighborhood", source = "address.neighborhood")
+    @Mapping(target = "state", source = "address.state")
+    ContractResponse.PropertyDTO tPropertyDTO(Property property);
+    
+    List<ContractResponse> toListResponses(List<Contract> contracts);
 }

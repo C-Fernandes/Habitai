@@ -24,6 +24,21 @@ function NavBar() {
                     </div>
                 </a>
 
+                {isLoggedIn && (
+                    <div className={styles.tabs_container}>
+                        <div className={styles.tab}>
+                            <a href='/properties'>Meus imóveis</a>
+                        </div>
+
+                        <div className={styles.tab}>
+                            <a href='/contracts'>Meus contratos</a>
+                        </div>
+                        <div className={styles.tab}>
+                            <a href='/visits'>Minhas visitas</a>
+                        </div>
+                    </div>
+                )}
+
                 <div className={styles.actionsContainer}>
 
                     {isLoggedIn ? (

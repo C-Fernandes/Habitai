@@ -1,0 +1,105 @@
+/* Wrapper do calendário */
+.calendarWrapper {
+    width: 100%;
+    max-width: 100%;
+    font-family: 'Inter', Arial, sans-serif;
+    margin: 0 auto;
+}
+
+/* Container principal do calendário */
+.react-calendar {
+    width: 100%;
+    background-color: #fff;
+    border-radius: 12px;
+    padding: 12px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+    border: none;
+}
+
+/* Navegação */
+.react-calendar__navigation {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+}
+
+.react-calendar__navigation button {
+    background: none;
+    border: none;
+    font-weight: 600;
+    font-size: 0.9rem;
+    cursor: pointer;
+    color: #333;
+    padding: 6px 12px;
+    border-radius: 6px;
+    transition: background 0.2s;
+}
+
+.react-calendar__navigation button:hover:not(:disabled) {
+    background-color: #f0f0f0;
+}
+
+.react-calendar__navigation button:disabled {
+    color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Dias da semana */
+.react-calendar__month-view__weekdays {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-weight: 600;
+    color: #555;
+}
+
+.react-calendar__month-view__weekdays__weekday {
+    width: 14.28%;
+    text-align: center;
+}
+
+/* Dias */
+.react-calendar__month-view__days__day {
+    width: 14.28%;
+    height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+    margin-bottom: 4px;
+}
+
+.react-calendar__month-view__days__day:enabled:hover {
+    background-color: #e6f0ff;
+    transform: translateY(-2px);
+}
+
+/* Dia selecionado */
+.react-calendar__tile--active {
+    background-color: #007bff;
+    color: white;
+    border-radius: 50%;
+    font-weight: 600;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+}
+
+/* Dias com visita */
+.hasVisit {
+    background-color: #28a745;
+    color: white;
+    font-weight: 600;
+    border-radius: 50%;
+    box-shadow: 0 1px 4px rgba(0,0,0,0.15);
+    transition: transform 0.2s;
+}
+
+.hasVisit:hover {
+    transform: scale(1.1);
+}
+
+/* Dias de outros meses */
+.react-calendar__tile--neighboringMonth {
+    color: #bbb;
+}

@@ -9,4 +9,6 @@ import com.imd.habitai.model.Visit;
 public interface VisitRepository extends JpaRepository<Visit, Long> {
 
     List<Visit> findAllByPropertyOwner(User owner);
+    List<Visit> findAllByPropertyUserId(Long propertyUserId);
+    List<Visit> findAllByUserId(Long userId);
 }

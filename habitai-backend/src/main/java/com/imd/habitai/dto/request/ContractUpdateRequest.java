@@ -4,12 +4,16 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.validator.constraints.br.CPF;
+
 import com.imd.habitai.model.Payment;
 
 import jakarta.validation.constraints.Future;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
 
 public record ContractUpdateRequest(
     LocalDate startDate,
@@ -25,8 +29,15 @@ public record ContractUpdateRequest(
     Integer paymentDueDay,
 
     Long propertyId, 
-    Long tenantId,
-    Long ownerId,
+
+    @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos.")
+    @CPF(message = "O CPF informado do inquilino é inválido.") 
+    String tenantCpf,
+
+    @Size(min = 11, max = 14, message = "O CPF deve ter 11 dígitos.")
+    @CPF(message = "O CPF informado do dono é inválido.") 
+    String ownerCpf,
+
     List<Payment> payments
 ) 
 {}
