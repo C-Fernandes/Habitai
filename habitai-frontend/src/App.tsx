@@ -23,7 +23,7 @@ function App() {
           <Route element={<ProtectedRoute />}>
             <Route path='/me' element={<UserPage />} />
             <Route path='/contracts' element={<MyContractsCollection />} />
-            <Route path='/register' element={<PropertyCreatePage />}/>
+            <Route path='properties/register' element={<PropertyCreatePage />}/>
             <Route path='/visits' element={<VisitsPage />} />
           </Route>
         </Routes>

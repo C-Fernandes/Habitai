@@ -57,6 +57,15 @@ public class PropertyController {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
+    @GetMapping("/my-properties/{id}")
+    public ResponseEntity<Page<PropertyResponse>> getMyProperties(
+        @PageableDefault(size = 12, sort = "id") Pageable pageable,
+        @PathVariable Long id
+    ) {
+        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(id, pageable);
+        return new ResponseEntity<>(propertyPage, HttpStatus.OK);
+    }
+
     @PutMapping("/{id}")
     public ResponseEntity<PropertyResponse> updateProperty(
         @PathVariable Long id, 

@@ -3,6 +3,8 @@ package com.imd.habitai.model;
 import java.math.BigDecimal;
 import java.util.List;
 
+import com.imd.habitai.enums.PropertyStatus;
+
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -56,4 +58,8 @@ public class Property {
     
     @OneToMany(mappedBy = "property")
     private List<Visit> visits;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private PropertyStatus status;
 }

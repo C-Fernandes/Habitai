@@ -3,6 +3,7 @@ package com.imd.habitai.service;
 import com.imd.habitai.dto.request.PropertyCreateRequest;
 import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
+import com.imd.habitai.enums.PropertyStatus;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
@@ -24,7 +25,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 public class PropertyService {
@@ -60,6 +60,7 @@ public class PropertyService {
             throw new EntityNotFoundException("Uma ou mais comodidades não foram encontradas.");
         }
         property.setAmenities(amenities);
+        property.setStatus(PropertyStatus.AVAILABLE);
 
         Property finalProperty = propertyRepository.save(property);
         if(!images.isEmpty()) {
@@ -70,6 +71,7 @@ public class PropertyService {
 
         return propertyMapper.toDTO(result);
     }
+
     @Transactional(readOnly = true)
     public Page<PropertyResponse> getAll(
         String city, 
@@ -87,6 +89,12 @@ public class PropertyService {
     public Optional<PropertyResponse> getById(Long id) {
         Optional<Property> property = propertyRepository.findById(id);
         return property.map(propertyMapper::toDTO);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<PropertyResponse> getPropertiesByOwner(Long userId, Pageable pageable) {
+        Page<Property> propertyPage = propertyRepository.findByOwnerId(userId, pageable);
+        return propertyPage.map(propertyMapper::toDTO);
     }
 
     @Transactional

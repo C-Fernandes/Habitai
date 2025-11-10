@@ -14,12 +14,10 @@ public record PropertyResponse(
     double totalArea,
     
     AddressDTO address,
-    
     OwnerDTO owner,
-
     List<ImageResponse> images,
-    
-    List<AmenityResponse> amenities 
+    List<AmenityResponse> amenities,
+    String status
 ) {
     public record OwnerDTO(
         Long id,
