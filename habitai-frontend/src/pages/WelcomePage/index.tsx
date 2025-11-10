@@ -7,8 +7,11 @@ export function WelcomePage() {
     return (
         <>
             <NavBar/>
+            <div className={styles.heroContainer}>
+                <h1 className={styles.heroTitle}>Encontre o seu próximo lar.</h1>
+                <p className={styles.heroSubtitle}>Aluguel fácil, rápido e 100% digital.</p>
+            </div>
             <div className={styles.container}>
-                <h1 className={styles.pageTitle}>Imóveis Disponíveis</h1>
                 <PropertyListing />
             </div>
         </>

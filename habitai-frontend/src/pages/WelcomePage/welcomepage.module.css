@@ -6,9 +6,33 @@
   box-sizing: border-box;
 }
 
-.pageTitle {
-  font-size: 2rem;
+.heroContainer {
+  width: 100%;
+  background: linear-gradient(90deg, var(--color-primary, #1F2937) 0%, #374151 100%);
+  color: #FFFFFF;
+  padding: 3rem 2rem;
+  box-sizing: border-box;
+  text-align: center;
+}
+
+.heroTitle {
+  font-size: 2.25rem;
   font-weight: 700;
-  margin-bottom: 24px;
-  color: black;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.2;
+}
+
+.heroSubtitle {
+  font-size: 1.125rem;
+  font-weight: 300;
+  color: rgba(255, 255, 255, 0.85);
+  margin: 0;
+}
+
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 24px;
+  box-sizing: border-box;
 }
