@@ -4,11 +4,16 @@ import com.imd.habitai.dto.request.AmenityRequest;
 import com.imd.habitai.dto.response.AmenityResponse;
 import com.imd.habitai.service.AmenityService;
 import jakarta.validation.Valid;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+
 
 @RestController
 @RequestMapping("/amenities")
@@ -18,6 +23,14 @@ public class AmenityController {
 
     AmenityController(AmenityService amenityService) {
         this.amenityService = amenityService;
+    }
+
+    @GetMapping("pages")
+    public ResponseEntity<Page<AmenityResponse>> getAllWithPages(
+        @PageableDefault(size = 12, page = 0) Pageable pageable
+    ) {
+        Page<AmenityResponse> amenityPage = amenityService.getAllWithPages(pageable);
+        return new ResponseEntity<>(amenityPage, HttpStatus.OK);
     }
 
     @GetMapping

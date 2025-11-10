@@ -5,6 +5,9 @@ import com.imd.habitai.dto.response.AmenityResponse;
 import com.imd.habitai.mapper.AmenityMapper;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.repository.AmenityRepository;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -35,6 +38,12 @@ public class AmenityService {
     public List<AmenityResponse> getAll() {
         List<Amenity> amenities = amenityRepository.findAll();
         return amenityMapper.toDTOList(amenities);
+    }
+
+    @Transactional(readOnly = true)
+    public Page<AmenityResponse> getAllWithPages(Pageable pageable) {
+        Page<Amenity> amenityPage = amenityRepository.findAll(pageable);
+        return amenityPage.map(amenityMapper::toDTO);
     }
 
     @Transactional(readOnly = true)
