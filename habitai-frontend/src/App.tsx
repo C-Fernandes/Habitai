@@ -10,6 +10,7 @@ import { PropertyDetailsPage } from "./pages/PropertyDetailsPage/PropertyDetails
 import { PropertyCreatePage } from './pages/PropertyCreatePage/index.tsx'
 import VisitsPage from "./pages/VisitPage";
 import { MyPropertiesPage } from './pages/MyProperties/index.tsx'
+import { PropertyEditPage } from './pages/PropertyEdit/index.tsx'
 
 function App() {
 
@@ -26,6 +27,7 @@ function App() {
             <Route path='/contracts' element={<MyContractsCollection />} />
             <Route path='/my-properties/register' element={<PropertyCreatePage />}/>
             <Route path='/my-properties' element={<MyPropertiesPage />}/>
+            <Route path='/my-properties/edit/:id' element={<PropertyEditPage/>}/>
             <Route path='/visits' element={<VisitsPage />} />
           </Route>
         </Routes>

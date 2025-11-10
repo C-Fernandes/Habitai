@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import type { PaginatedProperties, Property } from '../../types';
 import { apiClient } from '../../services/apiClient';
 import { PropertyCard } from '../../components/PropertyCard';
@@ -48,7 +48,7 @@ export function MyPropertiesPage() {
             <div className={styles.grid}>
                 {properties.map((property) => (
                     <Link 
-                        to={`/imovel/editar/${property.id}`} 
+                        to={`/my-properties/edit/${property.id}`} 
                         key={property.id} 
                         className={styles.cardLink}
                     >

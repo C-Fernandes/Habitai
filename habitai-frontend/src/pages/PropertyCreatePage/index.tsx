@@ -7,7 +7,7 @@ import { viaCepClient } from '../../services/viaCepClient';
 import { Button } from '../../components/Button';
 import { FaArrowLeft } from "react-icons/fa";
 import styles from './propertyCreatePage.module.css';
-
+import { formatCep, formatAsCurrency } from '../../utils/propertyUtils';
 import { Step1Title } from './Steps/Step1Title';
 import { Step2Photos } from './Steps/Step2Photos';
 import { Step3Details } from './Steps/Step3Details';
@@ -32,18 +32,6 @@ const initialState = {
 };
 
 const TOTAL_STEPS = 5;
-
-const formatCep = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, '');
-    const limitedValue = cleanValue.slice(0, 8);
-    return limitedValue.replace(/^(\d{5})(\d)/, '$1-$2');
-};
-
-const formatAsCurrency = (value: string): string => {
-    const cleanValue = value.replace(/\D/g, '');
-    if (!cleanValue) return '';
-    return cleanValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-};
 
 export function PropertyCreatePage() {
     const { user } = useAuth();
@@ -250,7 +238,7 @@ export function PropertyCreatePage() {
 
             await apiClient.post('/properties', data);
             toast.success("Imóvel cadastrado com sucesso!");
-            navigate('/');
+            navigate('/my-properties');
         } catch (err: any) {
             toast.error(err.message || "Falha ao cadastrar.");
         } finally {

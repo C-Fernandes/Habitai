@@ -5,6 +5,7 @@ import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.enums.PropertyStatus;
 import com.imd.habitai.mapper.PropertyMapper;
+import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
 import com.imd.habitai.model.Property;
 import com.imd.habitai.model.User;
@@ -121,8 +122,18 @@ public class PropertyService {
             if (propertyDTO.totalArea() != null) {
                 existingProperty.setTotalArea(propertyDTO.totalArea());
             }
+
             if (propertyDTO.address() != null) {
-                existingProperty.setAddress(propertyDTO.address());
+                Address managedAddress = existingProperty.getAddress();
+                Address detachedAddress = propertyDTO.address();
+
+                managedAddress.setCep(detachedAddress.getCep());
+                managedAddress.setStreet(detachedAddress.getStreet());
+                managedAddress.setNumber(detachedAddress.getNumber());
+                managedAddress.setComplement(detachedAddress.getComplement());
+                managedAddress.setNeighborhood(detachedAddress.getNeighborhood());
+                managedAddress.setCity(detachedAddress.getCity());
+                managedAddress.setState(detachedAddress.getState());
             }
 
             if (propertyDTO.amenityIds() != null) {

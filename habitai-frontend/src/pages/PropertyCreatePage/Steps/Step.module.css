@@ -24,7 +24,8 @@
   margin-top: -16px;
 }
 
-.formGroup { display: flex;
+.formGroup { 
+  display: flex;
   flex-direction: column; 
   gap: 8px; 
 }
