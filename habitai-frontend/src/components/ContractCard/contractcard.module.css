@@ -8,6 +8,16 @@
   max-width: 350px;
 }
 
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
 .card:hover {
   transform: translateY(-5px);
 }

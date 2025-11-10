@@ -32,3 +32,7 @@ export async function create(payload: ContractPayload): Promise<Contract> {
 export async function update(id: string|number, payload: ContractPayload): Promise<Contract> {
     return apiClient.put(`${url}/${id}`, payload);
 }
+
+export async function deleteContract(id: string|number): Promise<void> {
+    return apiClient.delete(`${url}/${id}`);
+}

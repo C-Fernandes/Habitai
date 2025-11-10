@@ -71,17 +71,7 @@ export function PropertyDetailsPage() {
             <div className={styles.container}>
                 <img src={imageUrl} alt={property.title} className={styles.image} />
                 <div className={styles.topInfo}>
-                    <h1>{property.title}</h1>
-
-                    {user && property.owner && user.id == property.owner.id.toString() &&
-                        <button 
-                            className={styles.contractButton}
-                            onClick={handleCreateContractClick}
-                            type="button"
-                        >
-                            Criar contrato
-                        </button>
-                    }
+                    <h1 className={styles.title}>{property.title}</h1>
                 </div>
                 <p>
                     {property.address.street}, {property.address.city}
@@ -94,7 +84,16 @@ export function PropertyDetailsPage() {
                     R$ {property.rentalPrice?.toLocaleString("pt-BR")}/mês
                 </p>
                 <p>{property.description}</p>
-
+                <div className={styles.amenities}>
+                    <h3>Comodidades:</h3>
+                    <ul className={styles.amenitiesList}>
+                        {property.amenities.map((amenity)=> (
+                            <li key={amenity.id} className={styles.amenityItem}>
+                                {amenity.name}
+                            </li>
+                        ))}
+                    </ul>
+                </div>
                 <div className={styles.buttonsRow}>
                     <button
                         onClick={() => window.history.back()}
@@ -102,9 +101,20 @@ export function PropertyDetailsPage() {
                     >
                         ← Voltar
                     </button>
-                    <button onClick={handleReservaClick} className={styles.reserveButton}>
-                        Realizar Reserva
-                    </button>
+
+                    {user && property.owner && user.id == property.owner.id.toString() ?
+                        <button 
+                            className={styles.contractButton}
+                            onClick={handleCreateContractClick}
+                            type="button"
+                        >
+                            Criar contrato
+                        </button>
+                    :
+                        <button onClick={handleReservaClick} className={styles.reserveButton}>
+                            Agendar visita
+                        </button>
+                    }
                 </div>
             </div>
 
@@ -119,7 +129,7 @@ export function PropertyDetailsPage() {
                 <ContractModal
                     isOpen={showContractModal}
                     onRequestClose={handleContractModalClose}
-                    propertyIdToPreFill={property.id}
+                    propertyToPreFill={property}
                 />
             )}
         </>

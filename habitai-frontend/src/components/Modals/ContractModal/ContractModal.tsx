@@ -4,8 +4,10 @@ import styles from './contractmodal.module.css';
 import { toast } from 'sonner';
 import { ensureError } from '../../../utils/errorUtils';
 import { maskCPF } from '../../../utils/userUtils';
-import type { Contract } from '../../../types'; 
+import type { Contract, Property } from '../../../types'; 
 import { create, update } from '../../../services/contractService'; 
+import { useNavigate } from 'react-router-dom';
+import { userService } from '../../../services/userService';
 
 
 interface ContractPayload {
@@ -29,7 +31,8 @@ type ContractModalProps = {
     isOpen: boolean;
     onRequestClose: () => void;
     contract?: Contract; 
-    propertyIdToPreFill?: number;
+    propertyToPreFill?: Property;
+    onContractUpdated?: () => void;
 };
 
 const emptyForm: FormState = {
@@ -42,10 +45,18 @@ const emptyForm: FormState = {
     ownerCpf: '',
 };
 
-export function ContractModal({ isOpen, onRequestClose, contract, propertyIdToPreFill }: ContractModalProps) {
+export function ContractModal(
+    { 
+        isOpen, 
+        onRequestClose, 
+        contract, 
+        propertyToPreFill,
+        onContractUpdated
+    }: ContractModalProps) {
     const [view, setView] = useState<ViewState>('create');
     const [formData, setFormData] = useState<FormState>(emptyForm);
     const [fieldErrors, setFieldErrors] = useState<Record<string, string>>({});
+    const navigate = useNavigate();
 
     useEffect(() => {
         if (isOpen) {
@@ -64,12 +75,32 @@ export function ContractModal({ isOpen, onRequestClose, contract, propertyIdToPr
                 setView('create');
                 setFormData({
                     ...emptyForm,
-                    propertyId: propertyIdToPreFill ? String(propertyIdToPreFill) : '',
+                    propertyId: propertyToPreFill?.id ? String(propertyToPreFill.id) : '',
+                    monthlyPrice: propertyToPreFill?.rentalPrice ? String(propertyToPreFill.rentalPrice) : ''
                 });
+                if (propertyToPreFill?.owner.id) {
+                    fetchOwnerCpf(String(propertyToPreFill?.owner.id));
+                }
             }
             setFieldErrors({});
         }
-    }, [isOpen, contract]);
+    }, [isOpen, contract, propertyToPreFill]);
+
+    const fetchOwnerCpf = async (ownerId: string) => {
+        try {
+            const owner = await userService.getById(ownerId);
+            if (owner.cpf) {
+                const maskedCpf = maskCPF(owner.cpf);
+                setFormData(prev => ({
+                    ...prev,
+                    ownerCpf: maskedCpf,
+                }));
+            }
+        } catch (error) {
+            console.error("Erro ao buscar CPF do proprietário:", ensureError(error));
+            toast.warning("Não foi possível pré-preencher o CPF do Proprietário. Por favor, insira manualmente.");
+        }
+    };
 
     const handleClose = () => {
         onRequestClose();
@@ -105,15 +136,34 @@ export function ContractModal({ isOpen, onRequestClose, contract, propertyIdToPr
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault();
         setFieldErrors({});
+
+        if (formData.startDate && formData.endDate) {
+            const start = new Date(formData.startDate);
+            const end = new Date(formData.endDate);
+
+            if (start >= end) {
+                setFieldErrors({
+                    ...fieldErrors,
+                    endDate: "A data de fim deve ser posterior à data de início.",
+                });
+                toast.error("A data de fim deve ser posterior à data de início.");
+                return;
+            }
+        }
+
         const payload = getPayload();
 
         try {
             if (view === 'update' && contract) {
                 await update(contract.id, payload);
                 toast.success("Contrato atualizado com sucesso!");
+                if (onContractUpdated) { 
+                    onContractUpdated(); 
+                }
             } else {
-                await create(payload);
+                const createdContract = await create(payload);
                 toast.success("Contrato criado com sucesso!");
+                navigate("/contracts/"+createdContract.id);
             }
                         
             handleClose();
@@ -231,6 +281,7 @@ export function ContractModal({ isOpen, onRequestClose, contract, propertyIdToPr
                                 onChange={handleInputChange}
                                 required
                                 maxLength={14}
+                                disabled={view === 'create' && !!propertyToPreFill?.owner.id}
                             />         
                         </div>        
                     </div>
