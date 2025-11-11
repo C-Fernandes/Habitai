@@ -1,5 +1,6 @@
 package com.imd.habitai.repository.specification;
 
+import com.imd.habitai.enums.PropertyStatus;
 import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Property;
 import jakarta.persistence.criteria.Join;
@@ -23,6 +24,8 @@ public class PropertySpecification {
         if (maxPrice != null) spec = spec.and(hasMaxPrice(maxPrice));
         if (minPrice != null) spec = spec.and(hasMinPrice(minPrice));
 
+        spec = spec.and(isAvailable());
+
         return spec;
     }
 
@@ -32,6 +35,12 @@ public class PropertySpecification {
             return cb.like(
                 cb.lower(addressJoin.get("city")),
                 "%" + city.toLowerCase() + "%");
+        };
+    }
+
+    private static Specification<Property> isAvailable() {
+        return (root, query, cb) -> {
+            return cb.equal(root.get("status"), PropertyStatus.AVAILABLE);
         };
     }
 

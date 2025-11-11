@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.imd.habitai.dto.request.ContractCreateRequest;
 import com.imd.habitai.dto.request.ContractUpdateRequest;
 import com.imd.habitai.dto.response.ContractResponse;
+import com.imd.habitai.enums.PropertyStatus;
 import com.imd.habitai.mapper.ContractMapper;
 import com.imd.habitai.mapper.PaymentMapper;
 import com.imd.habitai.model.Contract;
@@ -49,6 +50,8 @@ public class ContractService {
         User tenant = userRepository.findByCpfAndIsActiveTrue(contractRequest.tenantCpf()).orElseThrow(() -> new EntityNotFoundException("Usuário (inquilino) com CPF " + contractRequest.tenantCpf() + " não encontrado."));
         User owner = userRepository.findByCpfAndIsActiveTrue(contractRequest.ownerCpf()).orElseThrow(() -> new EntityNotFoundException("Usuário (dono do contrato) com CPF " + contractRequest.ownerCpf() + " não encontrado."));
         Property property = propertyRepository.findById(contractRequest.propertyId()).orElseThrow(() -> new EntityNotFoundException("Propriedade com ID " + contractRequest.propertyId() + " não encontrada."));
+
+        property.setStatus(PropertyStatus.RENTED);
         
         contract.setPayments(payments);
         contract.setTenant(tenant);
