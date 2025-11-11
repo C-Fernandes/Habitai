@@ -1,3 +1,4 @@
+import { useNavigate } from "react-router-dom";
 import type { Contract } from "../../types";
 import styles from "./contractcard.module.css"
 
@@ -7,9 +8,16 @@ type ContractCardProps = {
 };
 
 export function ContractCard({contract, isOwner}: ContractCardProps){
+    const navigate = useNavigate();
+    
     return (
         <>
-            <div className={styles.card} data-contract-id={contract.id}>
+            <div 
+                className={styles.card} 
+                data-contract-id={contract.id}
+                onClick={() => navigate(`/contracts/${contract.id}`)}
+                role="button"
+            >
                 <div className={styles.content}>
                     <h3 className={styles.title}>{contract.property.title}</h3>
                     <p className={styles.address}>
@@ -17,17 +25,18 @@ export function ContractCard({contract, isOwner}: ContractCardProps){
                         {contract.property.state}
                     </p>
                     <div className={styles.contrDetails}>
-                        <div className={styles.contrDetails}>
-                            {isOwner ?
-                                <>
-                                    <span>Inquilino: </span> {contract.tenant.name}
-                                </>
-                                :
-                                <>
-                                    <span>Dono: </span> {contract.owner.name}
-                                </>
-                            }
-                            <span>Valor: </span> {contract.monthlyPrice}
+                        {isOwner ?
+                            <div>
+                                <span>Inquilino: </span> {contract.tenant.name}
+                            </div>
+                            
+                            :
+                            <div>
+                                <span>Dono: </span> {contract.owner.name}
+                            </div>
+                        }
+                        <div>
+                            <span>Valor:</span> R$ {contract.monthlyPrice}
                         </div>
                     </div>
                 </div>

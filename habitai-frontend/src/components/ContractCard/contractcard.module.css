@@ -1,11 +1,21 @@
 .card {
-  background-color: #fff;
+  background-color: #f9fafb;
   border-radius: 8px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   overflow: hidden;
   transition: transform 0.2s ease-in-out;
   cursor: pointer;
   max-width: 350px;
+}
+
+.title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .card:hover {
@@ -32,10 +42,13 @@
 
 .contrDetails {
   display: flex;
+  justify-content: space-between  ;
   gap: 16px;
   font-size: 0.9rem;
-  font-weight: bold;
   color: #555;
   border-top: 1px solid #eee;
   padding-top: 12px;
+}
+.contrDetails span{
+  font-weight: bold;
 }

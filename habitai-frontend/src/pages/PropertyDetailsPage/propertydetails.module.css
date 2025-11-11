@@ -4,6 +4,7 @@
     padding: 1rem;
     font-family: sans-serif;
     line-height: 1.5;
+    color: #555;
 }
 
 .image {
@@ -13,9 +14,14 @@
     margin-bottom: 1rem;
 }
 
+.topInfo{
+    display: flex;
+    justify-content: space-between;
+}
+
 .title {
     margin-bottom: 0.5rem;
-    font-size: 1.6rem;
+    color: #333;
 }
 
 .price {
@@ -40,6 +46,40 @@
     margin: 1rem 0;
 }
 
+.amenities {
+    margin: 20px 0px;
+    padding: 20px 0px;
+    border-top: 1px solid #ddd;
+}
+
+.amenities h3 {
+    font-size: 1.25rem;
+    color: #333;
+    margin-bottom: 10px;
+}
+
+.amenitiesList {
+    list-style: none; 
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+}
+
+.amenityItem {
+    background-color: #f0f0f0;
+    color: #555;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    border: 1px solid #ccc;
+    transition: background-color 0.3s;
+}
+
+.amenityItem:hover {
+    background-color: #e0e0e0;
+}
+
 .ownerBox {
     background-color: #f7f7f7;
     border-radius: 8px;
@@ -61,7 +101,8 @@
 }
 
 .backButton,
-.reserveButton {
+.reserveButton, 
+.contractButton {
     border: none;
     font-size: 1rem;
     cursor: pointer;
@@ -79,13 +120,20 @@
     background-color: #1b2735;
 }
 
-.reserveButton {
+.contractButton {
     background-color: #4caf50;
     color: white;
 }
 
-.reserveButton:hover {
+.contractButton:hover {
     background-color: #3c8c40;
+}
+
+.reserveButton{
+    background-color: #4cafac;
+}
+.reserveButton:hover {
+    background-color: #3c808c;
 }
 
 /* 🔹 Modal */

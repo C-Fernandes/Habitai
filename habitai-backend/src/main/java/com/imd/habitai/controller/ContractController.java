@@ -39,16 +39,23 @@ public class ContractController {
         ContractResponse newContract = contractService.create(contractRequest);
         return new ResponseEntity<>(newContract, HttpStatus.CREATED);
     }
+    
 
-    @GetMapping("/byOwner/{cpf}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable String cpf){
-        List<ContractResponse> contractsResponse = contractService.findAllByOwner(cpf);
+    @GetMapping("/{id}")
+    public ResponseEntity<ContractResponse> getContractsById(@PathVariable Long id){
+        ContractResponse contractsResponse = contractService.findById(id);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/byTenant/{cpf}")
-    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable String cpf){
-        List<ContractResponse> contractsResponse = contractService.findAllByTenant(cpf);
+    @GetMapping("/byOwner/{id}")
+    public ResponseEntity<List<ContractResponse>> getAllContractsByOwner(@PathVariable Long id){
+        List<ContractResponse> contractsResponse = contractService.findAllByOwner(id);
+        return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
+    }
+
+    @GetMapping("/byTenant/{id}")
+    public ResponseEntity<List<ContractResponse>> getAllContractsByTenant(@PathVariable Long id){
+        List<ContractResponse> contractsResponse = contractService.findAllByTenant(id);
         return new ResponseEntity<>(contractsResponse, HttpStatus.OK);
     }
 
