@@ -30,7 +30,7 @@ export function Step4Address({ formData, handleAddressChange, handleChange, isCe
                 maxLength={9} 
                 placeholder="00000-000" 
             />
-            {isCepLoading && <small>Buscando...</small>}
+            {isCepLoading && <small className={styles.searching}>Buscando endereço...</small>}
             {cepError && <small className={styles.errorText}>{cepError}</small>}
         </div>
         <div className={styles.formGroup}>

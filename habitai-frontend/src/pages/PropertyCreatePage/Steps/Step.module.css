@@ -137,6 +137,14 @@
   font-weight: 500;
 }
 
+.searching {
+  color: var(--color-primary, #1F2937); 
+  font-size: var(--font-size-sm, 0.875rem); 
+  display: block; 
+  margin-top: 8px; 
+  font-weight: 500;
+}
+
 .imageDropzone {
   width: 100%;
   border: 2px dashed var(--color-border, #E5E7EB);

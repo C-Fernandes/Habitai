@@ -1,6 +1,6 @@
 import { useState } from "react";
 import Calendar, { type CalendarProps } from "react-calendar";
-import styles from './VisitsCalendar.module.css';
+import styles from './visitsCalendar.module.css';
 
 interface VisitsCalendarProps {
     visitsDates: string[];
