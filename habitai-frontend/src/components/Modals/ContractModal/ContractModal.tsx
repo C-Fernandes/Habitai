@@ -8,17 +8,7 @@ import type { Contract, Property } from '../../../types';
 import { create, update } from '../../../services/contractService'; 
 import { useNavigate } from 'react-router-dom';
 import { userService } from '../../../services/userService';
-
-
-interface ContractPayload {
-    startDate: string; 
-    endDate: string; 
-    monthlyPrice: number;
-    paymentDueDay: number; 
-    propertyId: number; 
-    tenantCpf: string; 
-    ownerCpf: string; 
-}
+import type { ContractPayload } from '../../../services/contractService';
 
 type FormState = Omit<ContractPayload, 'monthlyPrice' | 'paymentDueDay' | 'propertyId'> & {
     monthlyPrice: string;
@@ -183,127 +173,128 @@ export function ContractModal(
     return (
         <BaseModal isOpen={isOpen} onRequestClose={handleClose}>
             <div className={styles.overlay}>
-            <div className={styles.modal}>
-            <h2 className={styles.header}>
-                {getTitle()}
-            </h2>
+                <div className={styles.modal}>
+                    <h2 className={styles.header}>
+                        {getTitle()}
+                    </h2>
 
-            <form onSubmit={handleSubmit} className={styles.form}>
-                <fieldset>
-                    <legend>Detalhes e Valores</legend>
-                    <div className={styles.dateGroup}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="startDate">Data de Início (*):</label>
-                            <input
-                                type="date"
-                                name="startDate"
-                                className={styles.input}
-                                value={formData.startDate}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="endDate">Data de Fim (*):</label>
-                            <input
-                                type="date"
-                                name="endDate"
-                                className={styles.input}
-                                value={formData.endDate}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                    </div>
+                    <form onSubmit={handleSubmit} className={styles.form}>
+                        <fieldset>
+                            <legend>Detalhes e Valores</legend>
+                            <div className={styles.dateGroup}>
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="startDate">Data de Início (*):</label>
+                                    <input
+                                        type="date"
+                                        name="startDate"
+                                        className={styles.input}
+                                        value={formData.startDate}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="endDate">Data de Fim (*):</label>
+                                    <input
+                                        type="date"
+                                        name="endDate"
+                                        className={styles.input}
+                                        value={formData.endDate}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                            </div>
 
-                    <div className={styles.numericGroup}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="monthlyPrice">Preço Mensal (R$ *):</label>
-                            <input
-                                type="number"
-                                name="monthlyPrice"
-                                step="0.01"
-                                min="0.01"
-                                placeholder="R$00,00"
-                                className={styles.input}
-                                value={formData.monthlyPrice}
-                                onChange={handleInputChange}
-                                required
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                        <label htmlFor="paymentDueDay">Dia de Vencimento (*):</label>
-                        <select 
-                            id="paymentDueDay"
-                            name="paymentDueDay"
-                            className={styles.input}
-                            value={formData.paymentDueDay}
-                            onChange={handleInputChange} 
-                            required
-                        >
-                            <option value="" disabled>Selecione o Dia</option>
-                            {[...Array(31)].map((_, i) => (
-                                <option key={i + 1} value={String(i + 1)}>
-                                    Dia {i + 1}
-                                </option>
-                            ))}
-                        </select>
-                        {fieldErrors.paymentDueDay && (<p className={styles.fieldErrorText}>{fieldErrors.paymentDueDay}</p>)}
-                        </div>
-                    </div>
-                </fieldset>
+                            <div className={styles.numericGroup}>
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="monthlyPrice">Preço Mensal (R$ *):</label>
+                                    <input
+                                        type="number"
+                                        name="monthlyPrice"
+                                        step="0.01"
+                                        min="0.01"
+                                        placeholder="R$00,00"
+                                        className={styles.input}
+                                        value={formData.monthlyPrice}
+                                        onChange={handleInputChange}
+                                        required
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                <label htmlFor="paymentDueDay">Dia de Vencimento (*):</label>
+                                <select 
+                                    id="paymentDueDay"
+                                    name="paymentDueDay"
+                                    className={styles.input}
+                                    value={formData.paymentDueDay}
+                                    onChange={handleInputChange} 
+                                    required
+                                >
+                                    <option value="" disabled>Selecione o Dia</option>
+                                    {[...Array(31)].map((_, i) => (
+                                        <option key={i + 1} value={String(i + 1)}>
+                                            Dia {i + 1}
+                                        </option>
+                                    ))}
+                                </select>
+                                {fieldErrors.paymentDueDay && (<p className={styles.fieldErrorText}>{fieldErrors.paymentDueDay}</p>)}
+                                </div>
+                            </div>
+                        </fieldset>
 
-                {/* INFORMAÇÕES DE IDENTIFICAÇÃO (CPFs) */}
-                <fieldset>
-                    <legend>Identificação das Partes</legend>
-                    <div className={styles.dateGroup}>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="tenantCpf">CPF do Locatário (*):</label>
-                            <input
-                                type="text"
-                                name="tenantCpf"
-                                placeholder="000.000.000-00"
-                                className={styles.input}
-                                value={formData.tenantCpf}
-                                onChange={handleInputChange}
-                                required
-                                maxLength={14}
-                            />
-                        </div>
-                        <div className={styles.formGroup}>
-                            <label htmlFor="ownerCpf">CPF do Proprietário (*):</label>
-                            <input
-                                type="text"
-                                name="ownerCpf"
-                                placeholder="000.000.000-00"
-                                className={styles.input}
-                                value={formData.ownerCpf}
-                                onChange={handleInputChange}
-                                required
-                                maxLength={14}
-                                disabled={view === 'create' && !!propertyToPreFill?.owner.id}
-                            />         
-                        </div>        
-                    </div>
-                    <p className={styles.note}>
-                        O CPF será validado pelo sistema e deve estar cadastrado.
-                    </p>
-                </fieldset>
+                        {/* INFORMAÇÕES DE IDENTIFICAÇÃO (CPFs) */}
+                        <fieldset>
+                            <legend>Identificação das Partes</legend>
+                            <div className={styles.dateGroup}>
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="tenantCpf">CPF do Locatário (*):</label>
+                                    <input
+                                        type="text"
+                                        name="tenantCpf"
+                                        placeholder="000.000.000-00"
+                                        className={styles.input}
+                                        value={formData.tenantCpf}
+                                        onChange={handleInputChange}
+                                        required
+                                        maxLength={14}
+                                    />
+                                </div>
+                                <div className={styles.formGroup}>
+                                    <label htmlFor="ownerCpf">CPF do Proprietário (*):</label>
+                                    <input
+                                        type="text"
+                                        name="ownerCpf"
+                                        placeholder="000.000.000-00"
+                                        className={styles.input}
+                                        value={formData.ownerCpf}
+                                        onChange={handleInputChange}
+                                        required
+                                        maxLength={14}
+                                        disabled={view === 'create' && !!propertyToPreFill?.owner.id}
+                                    />         
+                                </div>        
+                            </div>
+                            <p className={styles.note}>
+                                O CPF será validado pelo sistema e deve estar cadastrado.
+                            </p>
+                        </fieldset>
 
-                <div className={styles.modalButtons}>
-                    <button
-                        type="button"
-                        onClick={handleClose}
-                        className={styles.cancel}
-                    >
-                        Cancelar
-                    </button>
-                    <button type="submit">
-                        {getButtonText()}
-                    </button>
+                        <div className={styles.modalButtons}>
+                            <button
+                                type="button"
+                                onClick={handleClose}
+                                className={styles.cancel}
+                            >
+                                Cancelar
+                            </button>
+                            <button type="submit">
+                                {getButtonText()}
+                            </button>
+                        </div>
+                    </form>
                 </div>
-            </form>
-</div></div>
+            </div>
         </BaseModal>
     );
 }
