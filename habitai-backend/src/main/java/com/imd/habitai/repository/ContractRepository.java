@@ -12,4 +12,5 @@ public interface ContractRepository extends JpaRepository<Contract, Long>{
     public List<Contract> findAllByOwner(User owner);
     public List<Contract> findAllByTenant(User tenant);
     public List<Contract> findAllByProperty(Property property);
+    public boolean existsByTenantIdAndPropertyId(Long userId, Long propertyId);
 }

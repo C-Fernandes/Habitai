@@ -62,4 +62,8 @@ public class Property {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private PropertyStatus status;
+
+    private Double averageRating = 0.0;
+    
+    private Integer reviewCount = 0;
 }

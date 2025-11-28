@@ -12,6 +12,8 @@ public record PropertyResponse(
     int bathrooms,
     int garageSpaces,
     double totalArea,
+    Double averageRating,
+    Integer reviewCount,
     
     AddressDTO address,
     OwnerDTO owner,
