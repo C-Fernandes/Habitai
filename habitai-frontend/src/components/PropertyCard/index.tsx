@@ -16,9 +16,15 @@ type PropertyCardProps = {
 
 export function PropertyCard({ property, showStatus = false }: PropertyCardProps) {
     const navigate = useNavigate();
-    const firstImage = property.images?.[0]?.imagePath;
-    const imageUrl = `${API_BASE_URL}/${firstImage}`;
 
+    const firstImageObj = property.images && property.images.length > 0 ? property.images[0] : null;
+
+    let imageUrl = "";
+    if (firstImageObj?.imagePath) {
+        const cleanPath = firstImageObj.imagePath.replace(/\\/g, '/');
+        imageUrl = `${API_BASE_URL}/${cleanPath}`;
+    }
+    
     const statusText = property.status === 'AVAILABLE' ? 'Em anúncio' : 'Alugado';
     const statusClass = property.status === 'AVAILABLE' 
         ? styles.statusAvailable 
@@ -37,7 +43,15 @@ export function PropertyCard({ property, showStatus = false }: PropertyCardProps
                     {statusText}
                 </div>
             )}
-            <img src={imageUrl} alt={property.title} className={styles.image} />
+            <img 
+                src={imageUrl} 
+                alt={property.title} 
+                className={styles.image}
+                onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://via.placeholder.com/400x300.png?text=Erro+na+Imagem';
+                }}
+            />
             <div className={styles.content}>
                 <h3 className={styles.title}>{property.title}</h3>
                 <p className={styles.address}>
