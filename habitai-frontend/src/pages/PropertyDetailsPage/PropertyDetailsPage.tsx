@@ -9,7 +9,7 @@ import {VisitModal} from "../../components/Modals/VisitModal/VisitModal.tsx";
 import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
 import { ReviewModal } from "../../components/Modals/ReviewModal";
 import { useAuth } from "../../context/AuthContext.tsx";
-import { Star, User as UserIcon } from "lucide-react";
+import { Star, User as UserIcon, PenLine } from "lucide-react";
 
 
 export function PropertyDetailsPage() {
@@ -102,15 +102,29 @@ export function PropertyDetailsPage() {
                 <img src={imageUrl} alt={property.title} className={styles.image} />
                 <div className={styles.topInfo}>
                     <h1 className={styles.title}>{property.title}</h1>
-                    <div className={styles.ratingBadge}>
-                        <Star fill="#FFD700" color="#FFD700" size={20} />
-                        <span className={styles.ratingValue}>
-                            {property.averageRating ? property.averageRating.toFixed(1) : "Novo"}
-                        </span>
-                        {property.reviewCount > 0 && (
-                            <span className={styles.reviewCount}>({property.reviewCount})</span>
-                        )}
-                    </div>
+                    <div className={styles.titleRow}>                        
+                        <div className={styles.ratingWrapper}>
+                            {property.reviewCount > 0 ? (
+                                <>
+                                    <div className={styles.ratingScore}>
+                                        <Star fill="#1F2937" color="#1F2937" size={18} />
+                                        <span>{property.averageRating?.toFixed(1)}</span>
+                                    </div>
+                                    <span className={styles.separator}>•</span>
+                                    <a href="#reviews" className={styles.reviewLink} onClick={(e) => {
+                                        e.preventDefault();
+                                        document.getElementById('reviews-section')?.scrollIntoView({ behavior: 'smooth' });
+                                    }}>
+                                        {property.reviewCount} {property.reviewCount === 1 ? 'avaliação' : 'avaliações'}
+                                    </a>
+                                </>
+                            ) : (
+                                <span className={styles.newBadge}>
+                                    Seja o primeiro a avaliar este imóvel!                    
+                                </span>
+                            )}
+                        </div>
+                    </div>     
                 </div>
                 <p>
                     {property.address.street}, {property.address.city}
@@ -133,41 +147,22 @@ export function PropertyDetailsPage() {
                         ))}
                     </ul>
                 </div>
-                <div className={styles.buttonsRow}>
-                    <button
-                        onClick={() => window.history.back()}
-                        className={styles.backButton}
-                    >
-                        ← Voltar
-                    </button>
-
-                    {user && property.owner && user.id == property.owner.id.toString() ?
-                        <button 
-                            className={styles.contractButton}
-                            onClick={handleCreateContractClick}
-                            type="button"
-                        >
-                            Criar contrato
-                        </button>
-                    :
-                        <button onClick={handleReservaClick} className={styles.reserveButton}>
-                            Agendar visita
-                        </button>
-                    }
-                </div>
-                <div className={styles.reviewsSection}>
+                <div className={styles.reviewsSection} id="reviews-section">
                     <div className={styles.reviewsHeader}>
                         <h3>Avaliações</h3>
                         {user && user.id !== property.owner.id.toString() && (
                             <button className={styles.writeReviewButton} onClick={handleReviewClick}>
-                                Escrever Avaliação
+                                <PenLine size={18} strokeWidth={2} />
+                                <span>Escrever Avaliação</span>
                             </button>
                         )}
                     </div>
 
                     <div className={styles.reviewsList}>
                         {reviews.length === 0 ? (
-                            <p className={styles.noReviews}>Este imóvel ainda não tem avaliações.</p>
+                            <p className={styles.noReviews}>
+                                Este imóvel ainda não tem avaliações.
+                            </p>
                         ) : (
                             reviews.map((review) => (
                                 <div key={review.id} className={styles.reviewCard}>
@@ -196,6 +191,28 @@ export function PropertyDetailsPage() {
                                 </div>
                             ))
                         )}
+                    </div>
+                    <div className={styles.buttonsRow}>
+                        <button
+                            onClick={() => window.history.back()}
+                            className={styles.backButton}
+                        >
+                            ← Voltar
+                        </button>
+
+                        {user && property.owner && user.id == property.owner.id.toString() ?
+                            <button 
+                                className={styles.contractButton}
+                                onClick={handleCreateContractClick}
+                                type="button"
+                            >
+                                Criar contrato
+                            </button>
+                        :
+                            <button onClick={handleReservaClick} className={styles.reserveButton}>
+                                Agendar visita
+                            </button>
+                        }
                     </div>
                 </div>
             </div>
