@@ -178,3 +178,117 @@
     align-items: center;
     margin-top: 1rem;
 }
+
+.titleRow {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 8px;
+}
+
+.ratingBadge {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  background-color: #FFFbeb;
+  padding: 4px 8px;
+  border-radius: 16px;
+  border: 1px solid #FCD34D;
+}
+
+.ratingValue {
+  font-weight: 700;
+  color: #B45309;
+}
+
+.reviewCount {
+  font-size: 0.85rem;
+  color: #78716C;
+}
+
+.reviewsSection {
+  margin-top: 48px;
+  border-top: 1px solid #E5E7EB;
+  padding-top: 32px;
+}
+
+.reviewsHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.writeReviewButton {
+  background-color: transparent;
+  border: 1px solid var(--color-primary);
+  color: var(--color-primary);
+  padding: 8px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: all 0.2s;
+}
+
+.writeReviewButton:hover {
+  background-color: var(--color-primary);
+  color: white;
+}
+
+.reviewsList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.reviewCard {
+  background-color: #F9FAFB;
+  padding: 16px;
+  border-radius: 8px;
+  border: 1px solid #F3F4F6;
+}
+
+.reviewAuthor {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.avatarPlaceholder {
+  width: 40px;
+  height: 40px;
+  background-color: #E5E7EB;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #6B7280;
+}
+
+.authorName {
+  font-weight: 600;
+  color: #1F2937;
+  display: block;
+}
+
+.reviewDate {
+  font-size: 0.8rem;
+  color: #9CA3AF;
+}
+
+.reviewStars {
+  display: flex;
+  gap: 2px;
+  margin-bottom: 8px;
+}
+
+.reviewComment {
+  color: #4B5563;
+  line-height: 1.5;
+}
+
+.noReviews {
+  color: #6B7280;
+  font-style: italic;
+}

@@ -54,6 +54,8 @@ export type Property = {
   owner: Owner;
   amenities: Amenity[];
   contracts: Contract[];
+  averageRating: number;
+  reviewCount: number;
 };
 
 export type PaginatedProperties = {
@@ -114,3 +116,23 @@ export type Payment = {
   amountPaid?: number;
   status: PaymentStatus;
 }
+
+export type ReviewAuthor = {
+  id: number;
+  name: string;
+};
+
+export type Review = {
+  id: number;
+  rating: number;
+  comment: string;
+  createdAt: string;
+  author: ReviewAuthor;
+};
+
+export type PaginatedReviews = {
+  content: Review[];
+  last: boolean;
+  totalPages: number;
+  totalElements: number;
+};

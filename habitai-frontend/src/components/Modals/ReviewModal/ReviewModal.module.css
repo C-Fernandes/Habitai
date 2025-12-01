@@ -1,0 +1,66 @@
+.container {
+  padding: 10px;
+}
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+.header h2 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--color-primary);
+  margin: 0;
+}
+.closeButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--color-secondary);
+}
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.starsContainer p {
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--color-primary);
+}
+.stars {
+  display: flex;
+  gap: 8px;
+}
+.starButton {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  transition: transform 0.1s;
+}
+.starButton:hover {
+  transform: scale(1.2);
+}
+.inputGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.inputGroup label {
+  font-weight: 500;
+  color: var(--color-primary);
+}
+.textarea {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: 8px;
+  font-family: inherit;
+  resize: vertical;
+  min-height: 100px;
+}
+.submitButton {
+  width: 100%;
+}

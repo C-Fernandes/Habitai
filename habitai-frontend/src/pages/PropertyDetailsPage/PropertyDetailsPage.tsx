@@ -1,22 +1,38 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useCallback } from "react";
 import { useParams } from "react-router-dom";
 import { apiClient } from "../../services/apiClient";
-import type { Contract, Property } from "../../types";
+import type { Contract, Property, Review, PaginatedReviews} from "../../types";
 import styles from "./propertydetails.module.css";
 import NavBar from "../../components/NavBar";
 import { toast } from "sonner";
 import {VisitModal} from "../../components/Modals/VisitModal/VisitModal.tsx";
 import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
+import { ReviewModal } from "../../components/Modals/ReviewModal";
 import { useAuth } from "../../context/AuthContext.tsx";
+import { Star, User as UserIcon } from "lucide-react";
+
 
 export function PropertyDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const [property, setProperty] = useState<Property | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const { user, isAuthenticated } = useAuth();
     const [error, setError] = useState<string | null>(null);
+    const [reviews, setReviews] = useState<Review[]>([]);
+
     const [showVisitModal, setshowVisitModal] = useState(false);
     const [showContractModal, setShowContractModal] = useState(false);
-    const { user, isAuthenticated } = useAuth();
+    const [showReviewModal, setShowReviewModal] = useState(false);
+
+    const fetchReviews = useCallback(async () => {
+        if (!id) return;
+        try {
+            const data = await apiClient.get<PaginatedReviews>(`/reviews/property/${id}?size=5`);
+            setReviews(data.content);
+        } catch (error) {
+            console.error("Erro ao buscar avaliações", error);
+        }
+    }, [id]);
 
     useEffect(() => {
         const fetchProperty = async () => {
@@ -24,6 +40,7 @@ export function PropertyDetailsPage() {
                 setIsLoading(true);
                 const data = await apiClient.get<Property>(`/properties/${id}`);
                 setProperty(data);
+                await fetchReviews();
             } catch {
                 setError("Não foi possível carregar o imóvel.");
             } finally {
@@ -31,7 +48,7 @@ export function PropertyDetailsPage() {
             }
         };
         if (id) fetchProperty();
-    }, [id]);
+    }, [id, fetchReviews]);
 
     if (isLoading) return <div className={styles.container}>Carregando...</div>;
     if (error) return <div className={styles.container}>{error}</div>;
@@ -65,6 +82,19 @@ export function PropertyDetailsPage() {
         }
     }
 
+    function handleReviewClick() {
+        if (!loggedInUser) {
+            toast.error("Faça login para avaliar.");
+            return;
+        }
+        setShowReviewModal(true);
+    }
+
+    const handleReviewSuccess = () => {
+        fetchReviews();
+        apiClient.get<Property>(`/properties/${id}`).then(setProperty);
+    };
+
     return (
         <>
             <NavBar />
@@ -72,6 +102,15 @@ export function PropertyDetailsPage() {
                 <img src={imageUrl} alt={property.title} className={styles.image} />
                 <div className={styles.topInfo}>
                     <h1 className={styles.title}>{property.title}</h1>
+                    <div className={styles.ratingBadge}>
+                        <Star fill="#FFD700" color="#FFD700" size={20} />
+                        <span className={styles.ratingValue}>
+                            {property.averageRating ? property.averageRating.toFixed(1) : "Novo"}
+                        </span>
+                        {property.reviewCount > 0 && (
+                            <span className={styles.reviewCount}>({property.reviewCount})</span>
+                        )}
+                    </div>
                 </div>
                 <p>
                     {property.address.street}, {property.address.city}
@@ -116,6 +155,49 @@ export function PropertyDetailsPage() {
                         </button>
                     }
                 </div>
+                <div className={styles.reviewsSection}>
+                    <div className={styles.reviewsHeader}>
+                        <h3>Avaliações</h3>
+                        {user && user.id !== property.owner.id.toString() && (
+                            <button className={styles.writeReviewButton} onClick={handleReviewClick}>
+                                Escrever Avaliação
+                            </button>
+                        )}
+                    </div>
+
+                    <div className={styles.reviewsList}>
+                        {reviews.length === 0 ? (
+                            <p className={styles.noReviews}>Este imóvel ainda não tem avaliações.</p>
+                        ) : (
+                            reviews.map((review) => (
+                                <div key={review.id} className={styles.reviewCard}>
+                                    <div className={styles.reviewAuthor}>
+                                        <div className={styles.avatarPlaceholder}>
+                                            <UserIcon size={20} />
+                                        </div>
+                                        <div>
+                                            <span className={styles.authorName}>{review.author.name}</span>
+                                            <div className={styles.reviewDate}>
+                                                {new Date(review.createdAt).toLocaleDateString()}
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div className={styles.reviewStars}>
+                                        {[...Array(5)].map((_, i) => (
+                                            <Star 
+                                                key={i} 
+                                                size={14} 
+                                                fill={i < review.rating ? "#FFD700" : "none"} 
+                                                color={i < review.rating ? "#FFD700" : "#E5E7EB"}
+                                            />
+                                        ))}
+                                    </div>
+                                    <p className={styles.reviewComment}>{review.comment}</p>
+                                </div>
+                            ))
+                        )}
+                    </div>
+                </div>
             </div>
 
             {showVisitModal && (
@@ -130,6 +212,16 @@ export function PropertyDetailsPage() {
                     isOpen={showContractModal}
                     onRequestClose={handleContractModalClose}
                     propertyToPreFill={property}
+                />
+            )}
+
+            {showReviewModal && property && (
+                <ReviewModal
+                    userId={user ? parseInt(user.id) : 0}
+                    isOpen={showReviewModal}
+                    onRequestClose={() => setShowReviewModal(false)}
+                    propertyId={property.id}
+                    onSuccess={handleReviewSuccess}
                 />
             )}
         </>
