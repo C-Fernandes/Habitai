@@ -4,6 +4,9 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -19,6 +22,9 @@ import lombok.Data;
 @Entity
 @Table(name = "contracts")
 @Data
+
+@SQLDelete(sql = "UPDATE contracts SET deleted = true WHERE id = ?")
+@SQLRestriction("deleted = false")
 public class Contract {
 
     @Id
@@ -53,4 +59,7 @@ public class Contract {
 
     @OneToMany(mappedBy = "contract", cascade = CascadeType.ALL)
     private List<Payment> payments;
+
+    @Column(nullable = false)
+    private boolean deleted = false;
 }
