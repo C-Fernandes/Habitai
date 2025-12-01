@@ -146,7 +146,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                     confirmPassword: formData.confirmPassword,
                 });
 
-                toast.success(`Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.`);
+                toast.success(`Bem-vindo, ${newUser.name}! O seu registro foi concluído com sucesso.`);
                 onRequestClose();
 
             } catch (rawError) {
@@ -183,7 +183,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
     };
     const getButtonText = () => {
         if (view === 'login') return 'Entrar';
-        if (view === 'register') return 'Registar';
+        if (view === 'register') return 'Registrar';
         return 'Atualizar';
     };
     const showFullForm = view === 'register' || view === 'update';
@@ -291,7 +291,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
             <p className={styles.toggleText}>
                 {view === "login" ? 'Não tem uma conta?' : 'Já tem uma conta?'}
                 <button onClick={toggleView} className={styles.toggleLink}>
-                    {view === "login" ? ' Registe-se' : ' Faça login'}
+                    {view === "login" ? ' Registre-se' : ' Faça login'}
                 </button>
             </p>
         </BaseModal>

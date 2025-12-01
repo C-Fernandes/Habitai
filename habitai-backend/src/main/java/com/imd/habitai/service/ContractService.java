@@ -141,6 +141,9 @@ public class ContractService {
 
     public boolean delete(Long id){
         if (contractRepository.existsById(id)) {
+            Contract contract = contractRepository.findById(id).get();
+            Property property = contract.getProperty();
+            property.setStatus(PropertyStatus.AVAILABLE);
             contractRepository.deleteById(id);
             return true;
         }
