@@ -11,6 +11,7 @@ import { ReviewModal } from "../../components/Modals/ReviewModal";
 import { useAuth } from "../../context/AuthContext.tsx";
 import { Star, User as UserIcon, PenLine } from "lucide-react";
 
+const REVIEWS_PAGE_SIZE = 3;
 
 export function PropertyDetailsPage() {
     const { id } = useParams<{ id: string }>();
@@ -24,13 +25,30 @@ export function PropertyDetailsPage() {
     const [showContractModal, setShowContractModal] = useState(false);
     const [showReviewModal, setShowReviewModal] = useState(false);
 
-    const fetchReviews = useCallback(async () => {
+    const [reviewsPage, setReviewsPage] = useState(0);
+    const [hasMoreReviews, setHasMoreReviews] = useState(false);
+    const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+
+    const fetchReviews = useCallback(async (page: number, shouldAppend: boolean) => {
         if (!id) return;
+        
+        setIsReviewsLoading(true);
         try {
-            const data = await apiClient.get<PaginatedReviews>(`/reviews/property/${id}?size=5`);
-            setReviews(data.content);
+            const endpoint = `/reviews/property/${id}?page=${page}&size=${REVIEWS_PAGE_SIZE}`;
+            const data = await apiClient.get<PaginatedReviews>(endpoint);
+            
+            setReviews(prev => {
+                return shouldAppend ? [...prev, ...data.content] : data.content;
+            });
+
+            setHasMoreReviews(!data.last);
+            setReviewsPage(page);
+
         } catch (error) {
             console.error("Erro ao buscar avaliações", error);
+            toast.error("Erro ao carregar comentários.");
+        } finally {
+            setIsReviewsLoading(false);
         }
     }, [id]);
 
@@ -40,7 +58,7 @@ export function PropertyDetailsPage() {
                 setIsLoading(true);
                 const data = await apiClient.get<Property>(`/properties/${id}`);
                 setProperty(data);
-                await fetchReviews();
+                await fetchReviews(0, false);
             } catch {
                 setError("Não foi possível carregar o imóvel.");
             } finally {
@@ -90,8 +108,14 @@ export function PropertyDetailsPage() {
         setShowReviewModal(true);
     }
 
+    const handleLoadMoreReviews = () => {
+        if (!isReviewsLoading && hasMoreReviews) {
+            fetchReviews(reviewsPage + 1, true);
+        }
+    };
+
     const handleReviewSuccess = () => {
-        fetchReviews();
+        fetchReviews(0, false);
         apiClient.get<Property>(`/properties/${id}`).then(setProperty);
     };
 
@@ -191,29 +215,39 @@ export function PropertyDetailsPage() {
                                 </div>
                             ))
                         )}
+                        <div className={styles.reviewsFooter}>
+                            {isReviewsLoading && <span className={styles.loadingText}>Carregando comentários...</span>}
+                            {!isReviewsLoading && hasMoreReviews && (
+                                <button 
+                                    className={styles.loadMoreReviewsButton} 
+                                    onClick={handleLoadMoreReviews}
+                                >
+                                    Carregar mais avaliações
+                                </button>
+                            )}
+                        </div>
                     </div>
-                    <div className={styles.buttonsRow}>
-                        <button
-                            onClick={() => window.history.back()}
-                            className={styles.backButton}
+                </div>
+                <div className={styles.buttonsRow}>
+                    <button
+                        onClick={() => window.history.back()}
+                        className={styles.backButton}
+                    >
+                        ← Voltar
+                    </button>
+                    {user && property.owner && user.id == property.owner.id.toString() ?
+                        <button 
+                            className={styles.contractButton}
+                            onClick={handleCreateContractClick}
+                            type="button"
                         >
-                            ← Voltar
+                            Criar contrato
                         </button>
-
-                        {user && property.owner && user.id == property.owner.id.toString() ?
-                            <button 
-                                className={styles.contractButton}
-                                onClick={handleCreateContractClick}
-                                type="button"
-                            >
-                                Criar contrato
-                            </button>
-                        :
-                            <button onClick={handleReservaClick} className={styles.reserveButton}>
-                                Agendar visita
-                            </button>
-                        }
-                    </div>
+                    :
+                        <button onClick={handleReservaClick} className={styles.reserveButton}>
+                            Agendar visita
+                        </button>
+                    }
                 </div>
             </div>
 

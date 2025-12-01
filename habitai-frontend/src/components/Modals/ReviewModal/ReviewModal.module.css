@@ -60,6 +60,7 @@
   font-family: inherit;
   resize: vertical;
   min-height: 100px;
+  background-color: rgb(233, 233, 233);
 }
 .submitButton {
   width: 100%;

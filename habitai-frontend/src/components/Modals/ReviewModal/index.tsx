@@ -54,9 +54,7 @@ export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSucc
       <div className={styles.container}>
         <div className={styles.header}>
           <h2>Avaliar Imóvel</h2>
-          <button onClick={onRequestClose} className={styles.closeButton}>
-            <X size={24} />
-          </button>
+          <button onClick={onRequestClose} className={styles.closeButton}></button>
         </div>
 
         <form onSubmit={handleSubmit} className={styles.form}>

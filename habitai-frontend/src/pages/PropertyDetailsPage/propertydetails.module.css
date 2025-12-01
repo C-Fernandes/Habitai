@@ -304,8 +304,6 @@
   font-style: italic;
 }
 
-
-/* Wrapper geral para alinhar ao lado do título ou abaixo */
 .ratingWrapper {
   display: flex;
   align-items: center;
@@ -353,4 +351,39 @@
   align-items: center;
   gap: 4px;
   border: 1px solid #E5E7EB;
+}
+
+.reviewsFooter {
+  display: flex;
+  justify-content: center;
+  margin-top: 24px;
+  padding-bottom: 12px;
+}
+
+.loadingText {
+  color: #6B7280;
+  font-size: 0.9rem;
+}
+
+.loadMoreReviewsButton {
+  background-color: transparent;
+  border: 2px solid var(--color-border, #E5E7EB);
+  border-color: var(--color-border, #000000);
+  color: var(--color-secondary, #000000);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.loadMoreReviewsButton:hover {
+  background-color: var(--color-surface, #F9FAFB);
+  color: var(--color-primary, #1F2937);
+  border-color: var(--color-secondary, #9CA3AF);
+}
+
+.loadMoreReviewsButton:active {
+  transform: translateY(1px);
 }
