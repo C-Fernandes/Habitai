@@ -3,7 +3,7 @@ import { apiClient } from "./apiClient";
 
 const url = "/contracts";
 
-interface ContractPayload {
+export interface ContractPayload {
     startDate: string; 
     endDate: string; 
     monthlyPrice: number; 

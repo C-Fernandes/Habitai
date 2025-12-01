@@ -1,6 +1,8 @@
 package com.imd.habitai.controller;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.imd.habitai.dto.request.PaymentCreateRequest;
 import com.imd.habitai.dto.request.PaymentUpdateRequest;
 import com.imd.habitai.dto.response.PaymentResponse;
+import com.imd.habitai.enums.PaymentStatus;
 import com.imd.habitai.service.PaymentService;
 
 import jakarta.validation.Valid;
@@ -46,6 +49,15 @@ public class PaymentController {
         List<PaymentResponse> paymentResponses = paymentService.findByContract(id);
         
         return new ResponseEntity<List<PaymentResponse>>(paymentResponses, HttpStatus.OK);
+    }
+
+    @GetMapping("/status")
+    public ResponseEntity<List<String>> getAllPaymentsStatus(){
+        List<String> status = Arrays.stream(PaymentStatus.values())
+                                    .map(Enum::name)
+                                    .collect(Collectors.toList());
+
+        return new ResponseEntity<List<String>>(status, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")

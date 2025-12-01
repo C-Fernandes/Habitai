@@ -243,9 +243,9 @@
     background-color: #28a745; 
     color: white;
     border: none;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
+    border-radius: 4px;
+    width: 45px;
+    height: 45px;
     display: flex;
     justify-content: center;
     align-items: center;
@@ -271,6 +271,51 @@
     gap: 15px;
 }
 
+.paymentActions {
+    display: flex;
+    align-items: center;
+    gap: 20px; 
+    min-width: 150px; 
+    justify-content: flex-end;
+}
+
+.paymentActions button {
+    border: none;
+    padding: 6px;
+    border-radius: 4px;
+    cursor: pointer;
+    line-height: 1; 
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background-color 0.2s ease;
+    width: 30px;
+    height: 30px; 
+}
+
+.paymentButtons {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    align-items: center;
+}
+
+.paymentEditButton {
+    background-color: #3498db;
+    color: white;
+}
+.paymentEditButton:hover {
+    background-color: #2980b9;
+}
+
+.paymentDeleteButton {
+    background-color: #e74c3c;
+    color: white;
+}
+.paymentDeleteButton:hover {
+    background-color: #c0392b;
+}
+
 .paymentItem {
     display: flex;
     justify-content: space-between;
@@ -288,8 +333,9 @@
     color: #555;
     display: flex;
     align-items: center;
+    flex-grow: 1; 
+    margin-right: 15px;
 }
-
 .paymentDetails b {
     font-weight: 600;
     margin-right: 5px;
@@ -301,6 +347,7 @@
     font-weight: bold;
     font-size: 0.85em;
     text-transform: uppercase;
+    white-space: nowrap; 
 }
 
 .statusPaid {
