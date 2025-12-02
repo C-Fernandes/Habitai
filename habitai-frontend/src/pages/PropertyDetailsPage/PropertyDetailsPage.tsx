@@ -9,7 +9,7 @@ import {VisitModal} from "../../components/Modals/VisitModal/VisitModal.tsx";
 import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
 import { ReviewModal } from "../../components/Modals/ReviewModal";
 import { useAuth } from "../../context/AuthContext.tsx";
-import { Star, User as UserIcon, PenLine } from "lucide-react";
+import { Star, User as UserIcon, PenLine, Pencil, Trash2 } from "lucide-react";
 
 const REVIEWS_PAGE_SIZE = 3;
 
@@ -17,9 +17,11 @@ export function PropertyDetailsPage() {
     const { id } = useParams<{ id: string }>();
     const [property, setProperty] = useState<Property | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { user, isAuthenticated } = useAuth();
+    const { user } = useAuth();
     const [error, setError] = useState<string | null>(null);
+
     const [reviews, setReviews] = useState<Review[]>([]);
+    const [reviewToEdit, setReviewToEdit] = useState<Review | null>(null);
 
     const [showVisitModal, setshowVisitModal] = useState(false);
     const [showContractModal, setShowContractModal] = useState(false);
@@ -28,6 +30,8 @@ export function PropertyDetailsPage() {
     const [reviewsPage, setReviewsPage] = useState(0);
     const [hasMoreReviews, setHasMoreReviews] = useState(false);
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+
+    const userId = user ? parseInt(user.id) : null;
 
     const fetchReviews = useCallback(async (page: number, shouldAppend: boolean) => {
         if (!id) return;
@@ -100,14 +104,6 @@ export function PropertyDetailsPage() {
         }
     }
 
-    function handleReviewClick() {
-        if (!loggedInUser) {
-            toast.error("Faça login para avaliar.");
-            return;
-        }
-        setShowReviewModal(true);
-    }
-
     const handleLoadMoreReviews = () => {
         if (!isReviewsLoading && hasMoreReviews) {
             fetchReviews(reviewsPage + 1, true);
@@ -118,6 +114,32 @@ export function PropertyDetailsPage() {
         fetchReviews(0, false);
         apiClient.get<Property>(`/properties/${id}`).then(setProperty);
     };
+
+    function handleCreateReviewClick() {
+        if (!loggedInUser) { 
+            toast.error("Faça login para avaliar.");
+            return; 
+        }
+        setReviewToEdit(null);
+        setShowReviewModal(true);
+    }
+
+    function handleEditReview(review: Review) {
+        setReviewToEdit(review);
+        setShowReviewModal(true);
+    }
+
+    async function handleDeleteReview(reviewId: number) {
+        if (!window.confirm("Tem certeza que deseja excluir sua avaliação?")) return;
+        
+        try {
+            await apiClient.delete(`/reviews/${userId}/${reviewId}`);
+            toast.success("Avaliação removida.");
+            handleReviewSuccess();
+        } catch (err: any) {
+            toast.error("Erro ao excluir avaliação." + (err.message ? `(${err.message})` : "") );
+        }
+    }
 
     return (
         <>
@@ -175,7 +197,7 @@ export function PropertyDetailsPage() {
                     <div className={styles.reviewsHeader}>
                         <h3>Avaliações</h3>
                         {user && user.id !== property.owner.id.toString() && (
-                            <button className={styles.writeReviewButton} onClick={handleReviewClick}>
+                            <button className={styles.writeReviewButton} onClick={handleCreateReviewClick}>
                                 <PenLine size={18} strokeWidth={2} />
                                 <span>Escrever Avaliação</span>
                             </button>
@@ -190,16 +212,36 @@ export function PropertyDetailsPage() {
                         ) : (
                             reviews.map((review) => (
                                 <div key={review.id} className={styles.reviewCard}>
-                                    <div className={styles.reviewAuthor}>
-                                        <div className={styles.avatarPlaceholder}>
-                                            <UserIcon size={20} />
-                                        </div>
-                                        <div>
-                                            <span className={styles.authorName}>{review.author.name}</span>
-                                            <div className={styles.reviewDate}>
-                                                {new Date(review.createdAt).toLocaleDateString()}
+                                    <div className={styles.reviewHeaderRow}>
+                                        <div className={styles.reviewAuthor}>
+                                            <div className={styles.avatarPlaceholder}>
+                                                <UserIcon size={20} />
+                                            </div>
+                                            <div>
+                                                <span className={styles.authorName}>{review.author.name}</span>
+                                                <div className={styles.reviewDate}>
+                                                    {new Date(review.createdAt).toLocaleDateString()}
+                                                </div>
                                             </div>
                                         </div>
+                                        {user && user.id === review.author.id.toString() && (
+                                            <div className={styles.reviewActions}>
+                                                <button 
+                                                    onClick={() => handleEditReview(review)} 
+                                                    className={styles.iconButton} 
+                                                    title="Editar"
+                                                >
+                                                    <Pencil size={16} />
+                                                </button>
+                                                <button 
+                                                    onClick={() => handleDeleteReview(review.id)} 
+                                                    className={`${styles.iconButton} ${styles.deleteIcon}`} 
+                                                    title="Excluir"
+                                                >
+                                                    <Trash2 size={16} />
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                     <div className={styles.reviewStars}>
                                         {[...Array(5)].map((_, i) => (
@@ -268,11 +310,12 @@ export function PropertyDetailsPage() {
 
             {showReviewModal && property && (
                 <ReviewModal
-                    userId={user ? parseInt(user.id) : 0}
+                    userId={userId!}
                     isOpen={showReviewModal}
                     onRequestClose={() => setShowReviewModal(false)}
                     propertyId={property.id}
                     onSuccess={handleReviewSuccess}
+                    reviewToEdit={reviewToEdit}
                 />
             )}
         </>

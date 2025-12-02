@@ -77,6 +77,41 @@ public class ReviewService {
         return reviewMapper.toDTO(review);
     }
 
+    @Transactional
+    public ReviewResponse updateReview(Long userId, Long reviewId, ReviewCreateRequest dto) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Avaliação não encontrada."));
+
+        if (!review.getAuthor().getId().equals(userId)) {
+            throw new IllegalArgumentException("Você não tem permissão para editar esta avaliação.");
+        }
+
+        review.setRating(dto.rating());
+        review.setComment(dto.comment());
+        
+        reviewRepository.save(review);
+
+        updatePropertyStats(review.getProperty());
+
+        return reviewMapper.toDTO(review);
+    }
+
+    @Transactional
+    public void deleteReview(Long userId, Long reviewId) {
+        Review review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("Avaliação não encontrada."));
+
+        if (!review.getAuthor().getId().equals(userId)) {
+            throw new IllegalArgumentException("Você não tem permissão para deletar esta avaliação.");
+        }
+        
+        Property property = review.getProperty();
+
+        reviewRepository.delete(review);
+
+        updatePropertyStats(property);
+    }
+
     private void updatePropertyStats(Property property) {
         List<Review> reviews = reviewRepository.findByPropertyId(property.getId(), Pageable.unpaged()).getContent();
 

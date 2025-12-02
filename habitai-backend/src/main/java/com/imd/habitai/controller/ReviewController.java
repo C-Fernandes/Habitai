@@ -4,6 +4,7 @@ import com.imd.habitai.dto.request.ReviewCreateRequest;
 import com.imd.habitai.dto.response.ReviewResponse;
 import com.imd.habitai.service.ReviewService;
 import jakarta.validation.Valid;
+
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -38,5 +39,24 @@ public class ReviewController {
     ) {
         Page<ReviewResponse> reviews = reviewService.getReviewsByProperty(propertyId, pageable);
         return ResponseEntity.ok(reviews);
+    }
+
+    @PutMapping("/{userId}/{id}")
+    public ResponseEntity<ReviewResponse> updateReview(
+            @PathVariable Long id,
+            @Valid @RequestBody ReviewCreateRequest dto,
+            @PathVariable Long userId
+    ) {
+        ReviewResponse updatedReview = reviewService.updateReview(userId, id, dto);
+        return ResponseEntity.ok(updatedReview);
+    }
+
+    @DeleteMapping("/{userId}/{id}")
+    public ResponseEntity<Void> deleteReview(
+            @PathVariable Long id,
+            @PathVariable Long userId
+    ) {
+        reviewService.deleteReview(userId, id);
+        return ResponseEntity.noContent().build();
     }
 }

@@ -93,7 +93,6 @@
     font-size: 1.1rem;
 }
 
-/* 🔹 Botões alinhados */
 .actions {
     display: flex;
     justify-content: space-between;
@@ -137,7 +136,6 @@
     background-color: #3c808c;
 }
 
-/* 🔹 Modal */
 .modalOverlay {
     position: fixed;
     top: 0;
@@ -218,6 +216,38 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 24px;
+}
+
+.reviewHeaderRow {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: 8px;
+}
+
+.reviewActions {
+  display: flex;
+  gap: 8px;
+}
+
+.iconButton {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+  border-radius: 4px;
+  color: var(--color-secondary, #6B7280);
+  transition: all 0.2s;
+}
+
+.iconButton:hover {
+  background-color: #E5E7EB;
+  color: var(--color-primary, #1F2937);
+}
+
+.deleteIcon:hover {
+  background-color: #FEE2E2;
+  color: #EF4444;
 }
 
 .writeReviewButton {

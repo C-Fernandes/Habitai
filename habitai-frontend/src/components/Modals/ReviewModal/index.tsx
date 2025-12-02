@@ -1,10 +1,11 @@
-import { useState, type FormEvent } from 'react';
-import { Star, X } from 'lucide-react';
+import { useEffect, useState, type FormEvent } from 'react';
+import { Star } from 'lucide-react';
 import { apiClient } from '../../../services/apiClient';
 import { Button } from '../../Button';
 import { BaseModal } from '../BaseModal';
 import { toast } from 'sonner';
 import styles from './ReviewModal.module.css';
+import type { Review } from '../../../types';
 
 type ReviewModalProps = {
   userId: number;
@@ -12,13 +13,24 @@ type ReviewModalProps = {
   onRequestClose: () => void;
   propertyId: number;
   onSuccess: () => void;
+  reviewToEdit?: Review | null;
 };
 
-export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSuccess }: ReviewModalProps) {
+export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSuccess, reviewToEdit }: ReviewModalProps) {
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
   const [comment, setComment] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    if (reviewToEdit) {
+      setRating(reviewToEdit.rating);
+      setComment(reviewToEdit.comment);
+    } else {
+      setRating(0);
+      setComment("");
+    }
+  }, [reviewToEdit, isOpen]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -29,15 +41,22 @@ export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSucc
 
     setIsSubmitting(true);
     try {
-      await apiClient.post(`/reviews/${userId}`, {
-        propertyId,
-        rating,
-        comment
-      });
-      
-      toast.success("Avaliação enviada com sucesso!");
-      setRating(0);
-      setComment('');
+      if (reviewToEdit) {
+        await apiClient.put(`/reviews/${userId}/${reviewToEdit.id}`, {
+          propertyId,
+          rating,
+          comment
+        });
+        toast.success("Avaliação atualizada!");
+      } else {
+        await apiClient.post(`/reviews/${userId}`, {
+          propertyId,
+          rating,
+          comment
+        });
+        toast.success("Avaliação enviada!");
+      }
+
       onSuccess();
       onRequestClose();
 
@@ -53,7 +72,7 @@ export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSucc
     <BaseModal isOpen={isOpen} onRequestClose={onRequestClose}>
       <div className={styles.container}>
         <div className={styles.header}>
-          <h2>Avaliar Imóvel</h2>
+          <h2>{reviewToEdit ? 'Editar Avaliação' : 'Avaliar Imóvel'}</h2>
           <button onClick={onRequestClose} className={styles.closeButton}></button>
         </div>
 
@@ -95,7 +114,7 @@ export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSucc
           </div>
 
           <Button type="submit" disabled={isSubmitting} className={styles.submitButton}>
-            {isSubmitting ? "Enviando..." : "Enviar Avaliação"}
+            {isSubmitting ? "Salvando..." : (reviewToEdit ? "Salvar Alterações" : "Enviar Avaliação")}
           </Button>
         </form>
       </div>
