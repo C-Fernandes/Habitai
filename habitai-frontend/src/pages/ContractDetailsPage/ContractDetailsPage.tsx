@@ -1,13 +1,15 @@
 import { useCallback, useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { apiClient } from "../../services/apiClient.ts";
-import type { Contract, PaymentStatus } from "../../types/index.tsx";
+import type { Contract, Payment, PaymentStatus } from "../../types/index.tsx";
 import styles from "./contractdetailspage.module.css";
 import NavBar from "../../components/NavBar/index.tsx";
 import { FiCalendar, FiDollarSign, FiEdit2, FiMail, FiPhone, FiPlus, FiTrash2, FiUser } from "react-icons/fi";
-import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
 import { toast } from "sonner";
+import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
+import { PaymentModal } from "../../components/Modals/PaymentModal/PaymentModal.tsx";
 import { deleteContract } from "../../services/contractService.ts";
+import { deletePayment } from "../../services/paymentService.ts";
 
 export function ContractDetailsPage() {
     const { id } = useParams<{ id: string }>();
@@ -15,7 +17,9 @@ export function ContractDetailsPage() {
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const navigate = useNavigate();
-    const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+    const [isContractModalOpen, setIsContractModalOpen] = useState(false);
+    const [isPaymentModalOpen, setIsPaymentModalOpen] = useState(false);
+    const [paymentEditting, setPaymentEditting] = useState<Payment | null>(null);
 
     const fetchContract = useCallback(async () => {
         try {
@@ -35,16 +39,34 @@ export function ContractDetailsPage() {
         if (id) fetchContract();
     }, [id, fetchContract]);
     
-    const handleModalClose = (wasContractUpdated = false) => {
-        setIsEditModalOpen(false);
+    const handleContractModalClose = (wasContractUpdated = false) => {
+        setIsContractModalOpen(false);
         if (wasContractUpdated) {
             fetchContract(); 
         }
     };
 
-    const handleDelete = async () => {
-    
-        const performDelete = async (toastId: number | string) => {
+    const handlePaymentModalOpen = (paymentToEdit: Payment | null = null) => {
+        if (paymentToEdit) {
+            setPaymentEditting(paymentToEdit);
+        }
+        setIsPaymentModalOpen(true)
+    }
+
+    const handlePaymentModalClose = (wasPaymentUpdated = false) => {
+        setIsPaymentModalOpen(false);
+        if (wasPaymentUpdated) {
+            fetchContract(); 
+        }
+        setPaymentEditting(null);
+    };
+
+    const handleDelete = async (type: string, paymentId?: number|string) => {
+        if (type === 'PAGAMENTO' && !paymentId) {
+            toast.error("ID de pagamento ausente para exclusão.");
+            return; 
+        }
+        const performContractDelete = async (toastId: number | string) => {
             try {
                 if (!id) return;
                 
@@ -57,9 +79,20 @@ export function ContractDetailsPage() {
             }
         };
 
+        const performPaymentDelete = async (toastId: number|string, paymentId: number|string|undefined) => {
+            if(!paymentId) {
+                toast.error("ID de pagamento ausente.", { id: toastId });
+                return;
+            }
+
+            await deletePayment(paymentId);
+            fetchContract();
+            toast.success("Pagamento excluído com sucesso!", { id: toastId }); 
+        }
+
         const toastId = toast.custom((t) => (
             <div className={styles.confirmToast}> 
-                <p className={styles.toastText}>Tem certeza que deseja <b>deletar</b> este contrato?</p>
+                <p className={styles.toastText}>Tem certeza que deseja <b>deletar</b> este <b>{type}</b>?</p>
                 <p className={styles.warning}>Esta ação é irreversível.</p>
                 <div className={styles.confirmActions}>
                     <button 
@@ -69,8 +102,9 @@ export function ContractDetailsPage() {
                         Cancelar
                     </button>
                     <button 
-                        onClick={() => performDelete(t)
-                            .then(()=>toast.dismiss(t))}
+                        onClick={() => type === 'CONTRATO' ? 
+                            performContractDelete(t).then(()=>toast.dismiss(t)) : 
+                            performPaymentDelete(t, paymentId).then(()=>fetchContract()).then(()=>toast.dismiss(t))}
                         className={styles.confirmButton}
                     >
                         Confirmar Exclusão
@@ -159,14 +193,14 @@ export function ContractDetailsPage() {
                         <button 
                             type="button" 
                             className={styles.deleteButton}
-                            onClick={handleDelete}
+                            onClick={() => handleDelete('CONTRATO')}
                         >
                             <FiTrash2 />
                         </button>
                         <button 
                             type="button" 
                             className={styles.editButton}
-                            onClick={() => setIsEditModalOpen(true)}
+                            onClick={() => setIsContractModalOpen(true)}
                         >
                             <FiEdit2 />
                         </button>
@@ -217,7 +251,7 @@ export function ContractDetailsPage() {
                         <button 
                             type="button" 
                             className={styles.addPaymentButton}
-                            onClick={() => window.alert("Adicionar novo pagamento!")}
+                            onClick={() => setIsPaymentModalOpen(true)}
                             title="Adicionar novo pagamento"
                         >
                             <FiPlus size={24} />
@@ -255,9 +289,30 @@ export function ContractDetailsPage() {
                                                     </p>
                                                 )}
                                             </div>
-                                            <span className={`${styles.paymentStatus} ${statusDisplay.className}`}>
-                                                {statusDisplay.text}
-                                            </span>
+                                            <div className={styles.paymentActions}>
+                                                <span className={`${styles.paymentStatus} ${statusDisplay.className}`}>
+                                                    {statusDisplay.text}
+                                                </span>
+                                                <div className={styles.paymentButtons}>
+                                                    <button 
+                                                        type="button" 
+                                                        className={styles.paymentEditButton}
+                                                        onClick={() => handlePaymentModalOpen(payment)}
+                                                        title="Editar Pagamento"
+                                                    >
+                                                        <FiEdit2 size={16} />
+                                                    </button>
+                                                    
+                                                    <button 
+                                                        type="button" 
+                                                        className={styles.paymentDeleteButton}
+                                                        onClick={() => handleDelete('PAGAMENTO', payment.id)}
+                                                        title="Deletar Pagamento"
+                                                    >
+                                                        <FiTrash2 size={16} />
+                                                    </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     );
                                 })
@@ -277,10 +332,19 @@ export function ContractDetailsPage() {
             </div>
 
             <ContractModal
-                isOpen={isEditModalOpen}
+                isOpen={isContractModalOpen}
                 contract={contract} 
-                onRequestClose={() => handleModalClose(false)} 
-                onContractUpdated={() => handleModalClose(true)}
+                onRequestClose={() => handleContractModalClose(false)} 
+                onContractUpdated={() => handleContractModalClose(true)}
+            />
+
+            <PaymentModal 
+                isOpen={isPaymentModalOpen} 
+                onRequestClose={() => handlePaymentModalClose(false)} 
+                onPaymentUpdated={() => handlePaymentModalClose(true)}
+                contractValue={contract.monthlyPrice}
+                idContract={contract.id}
+                payment={paymentEditting}
             />
 
         </>

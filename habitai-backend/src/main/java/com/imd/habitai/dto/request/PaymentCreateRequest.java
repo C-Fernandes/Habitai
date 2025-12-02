@@ -13,7 +13,6 @@ public record PaymentCreateRequest(
     @NotNull(message = "A data de vencimento é obrigatória.")
     LocalDate dueDate,
 
-    @NotNull(message = "A data de pagamento é obrigatória.")
     LocalDate paymentDate,
 
     @NotNull(message = "O valor devido é obrigatório.")
