@@ -9,6 +9,7 @@ import {VisitModal} from "../../components/Modals/VisitModal/VisitModal.tsx";
 import { ContractModal } from "../../components/Modals/ContractModal/ContractModal.tsx";
 import { ReviewModal } from "../../components/Modals/ReviewModal";
 import { useAuth } from "../../context/AuthContext.tsx";
+import { ConfirmModal } from "../../components/Modals/ConfirmModal";
 import { Star, User as UserIcon, PenLine, Pencil, Trash2 } from "lucide-react";
 
 const REVIEWS_PAGE_SIZE = 3;
@@ -30,6 +31,9 @@ export function PropertyDetailsPage() {
     const [reviewsPage, setReviewsPage] = useState(0);
     const [hasMoreReviews, setHasMoreReviews] = useState(false);
     const [isReviewsLoading, setIsReviewsLoading] = useState(false);
+
+    const [reviewIdToDelete, setReviewIdToDelete] = useState<number | null>(null);
+    const [isDeleting, setIsDeleting] = useState(false);
 
     const userId = user ? parseInt(user.id) : null;
 
@@ -129,15 +133,23 @@ export function PropertyDetailsPage() {
         setShowReviewModal(true);
     }
 
-    async function handleDeleteReview(reviewId: number) {
-        if (!window.confirm("Tem certeza que deseja excluir sua avaliação?")) return;
-        
+    function onRequestDeleteReview(reviewId: number) {
+        setReviewIdToDelete(reviewId);
+    }
+
+    async function confirmDeleteReview() {
+        if (!reviewIdToDelete) return;
+
+        setIsDeleting(true);
         try {
-            await apiClient.delete(`/reviews/${userId}/${reviewId}`);
+            await apiClient.delete(`/reviews/${userId}/${reviewIdToDelete}`);
             toast.success("Avaliação removida.");
             handleReviewSuccess();
+            setReviewIdToDelete(null);
         } catch (err: any) {
-            toast.error("Erro ao excluir avaliação." + (err.message ? `(${err.message})` : "") );
+            toast.error("Erro ao excluir avaliação.");
+        } finally {
+            setIsDeleting(false);
         }
     }
 
@@ -234,7 +246,7 @@ export function PropertyDetailsPage() {
                                                     <Pencil size={16} />
                                                 </button>
                                                 <button 
-                                                    onClick={() => handleDeleteReview(review.id)} 
+                                                    onClick={() => onRequestDeleteReview(review.id)} 
                                                     className={`${styles.iconButton} ${styles.deleteIcon}`} 
                                                     title="Excluir"
                                                 >
@@ -318,6 +330,17 @@ export function PropertyDetailsPage() {
                     reviewToEdit={reviewToEdit}
                 />
             )}
+
+            <ConfirmModal
+                isOpen={!!reviewIdToDelete}
+                onClose={() => setReviewIdToDelete(null)}
+                onConfirm={confirmDeleteReview}
+                title="Excluir Avaliação"
+                description="Tem certeza que deseja excluir sua avaliação? Esta ação não pode ser desfeita."
+                confirmLabel="Sim, excluir"
+                isDestructive={true}
+                isLoading={isDeleting}
+            />
         </>
     );
 }
