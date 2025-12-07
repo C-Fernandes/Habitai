@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,12 +17,14 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.imd.habitai.dto.request.LoginRequest;
 import com.imd.habitai.dto.request.UserLoginRequest;
 import com.imd.habitai.dto.request.UserRegisterRequest;
 import com.imd.habitai.dto.response.UserAuthResponse;
 import com.imd.habitai.dto.response.UserResponse;
 import com.imd.habitai.mapper.UserMapper;
 import com.imd.habitai.model.User;
+import com.imd.habitai.service.AuthService;
 import com.imd.habitai.service.UserService;
 
 import jakarta.validation.Valid;
@@ -31,10 +34,12 @@ import jakarta.validation.Valid;
 public class UserController {
     private final UserService userService;
     private final UserMapper userMapper;
+    private final AuthService authService;
 
-    public UserController(UserService userService, UserMapper userMapper) {
+    public UserController(UserService userService, UserMapper userMapper, AuthService authService) {
         this.userService = userService;
         this.userMapper = userMapper;
+        this.authService = authService;
     }
 
     @GetMapping("/{id}")
@@ -63,27 +68,23 @@ public class UserController {
         return ResponseEntity.ok(responseDTO);
     }
 
-    @PostMapping
-    private ResponseEntity<UserResponse> create(@Valid @RequestBody UserRegisterRequest userRequest) {
-        User user = userService.create(userMapper.toEntity(userRequest), userRequest.confirmPassword());
-        return new ResponseEntity<>(userMapper.toResponse(user), HttpStatus.CREATED);
+    @PostMapping("/register")
+    public ResponseEntity<User> register(@RequestBody UserRegisterRequest request) {
+        User registeredUser = authService.register(userMapper.toEntity(request), request.confirmPassword());
+        return ResponseEntity.ok(registeredUser);
     }
 
     @PostMapping("/login")
-    public ResponseEntity<UserAuthResponse> login(@RequestBody UserLoginRequest loginRequest) {
-        User user = userService.login(loginRequest.email(), loginRequest.password());
-
-        UserAuthResponse responseDTO = userMapper.toAuthResponse(user);
-        return ResponseEntity.ok(responseDTO);
+    public ResponseEntity<String> login(@RequestBody LoginRequest request) {
+        return ResponseEntity.ok(authService.login(request));
     }
 
     @GetMapping("/me")
-    public ResponseEntity<UserResponse> getMe(@RequestParam Long id) {
-
-        User user = userService.getMe(id);
-
-        return ResponseEntity.ok(userMapper.toResponse(user));
-    }
+    public ResponseEntity<UserResponse> me(
+            @AuthenticationPrincipal User user) {
+        UserResponse response = userMapper.toResponse(user);
+        return ResponseEntity.ok(response);
+    };
 
     @DeleteMapping("/me")
     public ResponseEntity<Void> deactivateAccount(@RequestParam Long id) {
