@@ -19,6 +19,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import com.imd.habitai.error.MethodNotAllowedError;
 import com.imd.habitai.error.RouteNotFoundError;
 
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
+
 import java.nio.file.AccessDeniedException;
 import java.util.HashMap;
 import java.util.Map;
@@ -26,6 +29,35 @@ import java.util.StringJoiner;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
+        @ExceptionHandler(ExpiredJwtException.class)
+        @ResponseStatus(HttpStatus.UNAUTHORIZED)
+        public ResponseEntity<ApiErrorResponse> handleExpiredJwtException(
+                        ExpiredJwtException ex,
+                        HttpServletRequest request) {
+
+                ApiErrorResponse errorResponse = new ApiErrorResponse(
+                                HttpStatus.UNAUTHORIZED.value(),
+                                HttpStatus.UNAUTHORIZED.getReasonPhrase(),
+                                "Token expirado. Por favor, faça login novamente.",
+                                request.getRequestURI());
+
+                return new ResponseEntity<>(errorResponse, HttpStatus.UNAUTHORIZED);
+        }
+
+        @ExceptionHandler(JwtException.class)
+        @ResponseStatus(HttpStatus.FORBIDDEN)
+        public ResponseEntity<ApiErrorResponse> handleJwtException(
+                        JwtException ex,
+                        HttpServletRequest request) {
+
+                ApiErrorResponse errorResponse = new ApiErrorResponse(
+                                HttpStatus.FORBIDDEN.value(),
+                                HttpStatus.FORBIDDEN.getReasonPhrase(),
+                                "Token inválido ou mal formatado.",
+                                request.getRequestURI());
+
+                return new ResponseEntity<>(errorResponse, HttpStatus.FORBIDDEN);
+        }
 
         @ExceptionHandler(HttpError.class)
         @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
