@@ -1,6 +1,6 @@
 import React from 'react';
 import Modal from 'react-modal';
-import styles from './BaseModal.module.css';
+import styles from './basemodal.module.css';
 import { FiX } from 'react-icons/fi';
 
 type BaseModalProps = {
