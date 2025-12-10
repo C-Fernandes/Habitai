@@ -9,11 +9,13 @@ import NavBar from '../../components/NavBar';
 import styles from './PropertyEditPage.module.css';
 import { ImagePlus, Trash2 } from 'lucide-react';
 import { formatAsCurrency, formatCep} from '../../utils/propertyUtils';
+import { useAuth } from '../../context/AuthContext';
 
 const API_BASE_URL = 'http://localhost:8080';
 
 export function PropertyEditPage() {
     const { id } = useParams<{ id: string }>();
+    const { user } = useAuth();
     const navigate = useNavigate();
 
     const [property, setProperty] = useState<Property | null>(null);
@@ -26,7 +28,7 @@ export function PropertyEditPage() {
     useEffect(() => {
         if (!id) {
             toast.error("ID do imóvel não encontrado.");
-            navigate('/meus-imoveis');
+            navigate('/my-properties');
             return;
         }
 
@@ -37,11 +39,18 @@ export function PropertyEditPage() {
                     apiClient.get<Property>(`/properties/${id}`),
                     apiClient.get<Amenity[]>('/amenities')
                 ]);
+
+                if(propertyData.owner.id.toString() != user?.id ){
+                    toast.error("Você não tem permissão para editar este imóvel.");
+                    navigate("/");
+                    return;
+                }
+
                 setProperty(propertyData);
                 setAvailableAmenities(amenitiesData);
             } catch (err: any) {
                 toast.error(err.message || "Falha ao carregar dados do imóvel.");
-                navigate('/meus-imoveis');
+                navigate('/my-properties');
             } finally {
                 setIsLoading(false);
             }
