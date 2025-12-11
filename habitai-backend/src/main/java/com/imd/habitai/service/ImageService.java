@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -24,7 +23,8 @@ import java.util.UUID;
 @Service
 public class ImageService {
 
-    private final Path rootUploadLocation = Paths.get("habitai-backend", "uploads", "properties");
+    private final Path rootUploadLocation;
+    private final String uploadDirectoryName = "uploads";   
     private static final List<String> ALLOWED_MIME_TYPES = Arrays.asList("image/jpeg", "image/png");
 
     private final ImageRepository imageRepository;
@@ -34,6 +34,9 @@ public class ImageService {
     public ImageService(ImageRepository imageRepository, PropertyRepository propertyRepository){
         this.imageRepository = imageRepository;
         this.propertyRepository = propertyRepository;
+
+        String projectRoot = System.getProperty("user.dir");
+        this.rootUploadLocation = Paths.get(projectRoot, uploadDirectoryName, "properties");
     }
 
     @PostConstruct
@@ -65,10 +68,10 @@ public class ImageService {
                 Path destinationFile = this.rootUploadLocation.resolve(uniqueFilename).toAbsolutePath();
                 Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
 
-                String relativePath = this.rootUploadLocation.toString().replace(File.separator, "/") + "/" + uniqueFilename;
+                String imagePath = uploadDirectoryName + "/properties/" + uniqueFilename;
 
                 Image image = new Image();
-                image.setImagePath(relativePath);
+                image.setImagePath(imagePath);
                 image.setContentType(file.getContentType());
                 image.setProperty(property);
 
@@ -86,8 +89,10 @@ public class ImageService {
                 .orElseThrow(() -> new EntityNotFoundException("Imagem com ID " + imageId + " não encontrada."));
 
         try {
-            Path fullPath = Paths.get(image.getImagePath()).toAbsolutePath();
-            Files.deleteIfExists(fullPath);
+            String storedPath = image.getImagePath();
+            String projectRoot = System.getProperty("user.dir");
+            Path fileToDelete = Paths.get(projectRoot).resolve(storedPath).toAbsolutePath();
+            Files.deleteIfExists(fileToDelete);
         } catch (IOException e) {
             throw new RuntimeException("Falha ao deletar arquivo do disco: " + image.getImagePath(), e);
         }
