@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.security.Principal;
 import java.util.List;
 
 @RestController
@@ -60,9 +61,11 @@ public class PropertyController {
     @GetMapping("/my-properties/{id}")
     public ResponseEntity<Page<PropertyResponse>> getMyProperties(
         @PageableDefault(size = 12, sort = "id") Pageable pageable,
-        @PathVariable Long id
+        @PathVariable Long maybeUserId,
+        Principal principal
     ) {
-        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(id, pageable);
+        Long userId = Long.parseLong(principal.getName());
+        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(maybeUserId, userId, pageable);
         return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 

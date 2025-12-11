@@ -43,15 +43,7 @@ export function PropertyCard({ property, showStatus = false }: PropertyCardProps
                     {statusText}
                 </div>
             )}
-            <img 
-                src={imageUrl} 
-                alt={property.title} 
-                className={styles.image}
-                onError={(e) => {
-                    const target = e.target as HTMLImageElement;
-                    target.src = 'https://via.placeholder.com/400x300.png?text=Erro+na+Imagem';
-                }}
-            />
+            <img src={imageUrl} alt={property.title} className={styles.image} />
             <div className={styles.content}>
                 <h3 className={styles.title}>{property.title}</h3>
                 <p className={styles.address}>

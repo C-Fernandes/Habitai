@@ -32,7 +32,7 @@ const handleResponse = async (response: Response) => {
 };
 const getAuthHeaders = (customHeaders: HeadersType = {}) => {
     const headers = { ...customHeaders };
-    const token = localStorage.getItem('authToken');
+    const token = localStorage.getItem('accessToken');
 
     if (token) {
         headers['Authorization'] = `Bearer ${token}`;
@@ -51,7 +51,7 @@ export const apiClient = {
     },
 
     post: async <T>(endpoint: string, body: any): Promise<T> => {
-        let headers = getAuthHeaders();
+       const headers = getAuthHeaders();
         let requestBody = body;
 
         if (!(body instanceof FormData)) {

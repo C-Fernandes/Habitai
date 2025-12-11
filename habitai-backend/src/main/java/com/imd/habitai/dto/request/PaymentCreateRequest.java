@@ -14,7 +14,7 @@ public record PaymentCreateRequest(
     LocalDate dueDate,
 
     LocalDate paymentDate,
-
+    
     @NotNull(message = "O valor devido é obrigatório.")
     @Positive(message = "O valor devido deve ser um valor positivo.")
     BigDecimal amountDue,

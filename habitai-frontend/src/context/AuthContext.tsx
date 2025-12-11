@@ -1,4 +1,4 @@
-import { createContext, use, useContext, useEffect, useState, type ReactNode } from "react";
+import { createContext, useContext, useEffect, useState, type ReactNode } from "react";
 import { userService } from "../services/userService";
 import { toast } from "sonner";
 import { ensureError } from "../utils/errorUtils";
@@ -13,47 +13,57 @@ export type AuthContextType = {
     user: AuthUser | null;
     isAuthenticated: boolean;
     isLoading: boolean;
-    login: (email: string, senha: string) => Promise<AuthUser>;
+    login: (email: string, senha: string) => Promise<void>;
     logout: () => void;
 };
+
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+
 export function AuthProvider({ children }: { children: ReactNode }) {
     const [user, setUser] = useState<AuthUser | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+
     const logout = () => {
-        localStorage.removeItem("loggedInUser");
+        localStorage.removeItem("accessToken");
         setUser(null);
     };
+
     useEffect(() => {
         const validateSession = async () => {
-            const storedUser = localStorage.getItem("loggedInUser");
+            const token = localStorage.getItem("accessToken");
 
-            if (storedUser) {
+            if (token) {
                 try {
-                    const userData: AuthUser = JSON.parse(storedUser);
-                    await userService.getProfile(userData.id);
+                    const userData = await userService.getProfile();
                     setUser(userData);
                 } catch (error) {
-                    toast.error(ensureError(error).message);
-                    console.error("Falha ao validar sessão, deslogando:", error);
+                    console.error("Token inválido ou expirado:", error);
                     logout();
                 }
             }
             setIsLoading(false);
         };
+
         validateSession();
     }, []);
 
-    const login = async (email: string, senha: string): Promise<AuthUser> => {
+    const login = async (email: string, senha: string): Promise<void> => {
+        try {
+            const token = await userService.login(email, senha);
 
-        const response = await userService.login(email, senha);
-        const user: AuthUser = response;
-        console.log(user); console.log("Usuario logado");
-        localStorage.setItem('loggedInUser', JSON.stringify(user));
-        setUser(user);
-        return user;
+            localStorage.setItem('accessToken', token);
+
+            const userData = await userService.getProfile();
+
+            setUser(userData);
+
+            console.log("Login realizado com sucesso:", userData);
+        } catch (error) {
+            const err = ensureError(error);
+            toast.error(err.message);
+            throw err;
+        }
     };
-
     const value: AuthContextType = {
         user,
         login,
@@ -68,6 +78,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+
 export const useAuth = () => {
     const context = useContext(AuthContext);
     if (context === undefined) {

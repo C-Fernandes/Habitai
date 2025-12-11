@@ -28,7 +28,7 @@ const emptyForm = {
 };
 export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
     const [view, setView] = useState<ViewState>('login');
-    const { login } = useAuth();
+    const { login, user: loggedUser } = useAuth();
     const [formData, setFormData] = useState({
         name: '',
         email: '',
@@ -123,11 +123,12 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
         }
         else if (view === 'login') {
             try {
-                const loggedInUser = await login(formData.email, formData.password);
-                toast.success(`Bem vindo ${loggedInUser.name}!`);
-                onRequestClose();
+                await login(formData.email, formData.password);
+                if (loggedUser) {
+                    toast.success(`Bem vindo ${loggedUser.name}!`);
+                } onRequestClose();
             } catch (error) {
-                toast.error(ensureError(error).message);
+                console.log(ensureError(error).message);
             }
         }
         else if (view === 'register') {
@@ -146,7 +147,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
                     confirmPassword: formData.confirmPassword,
                 });
 
-                toast.success(`Bem-vindo, ${newUser.name}! O seu registro foi concluído com sucesso.`);
+                toast.success(`Bem-vindo, ${newUser.name}! O seu registo foi concluído com sucesso.`);
                 onRequestClose();
 
             } catch (rawError) {
@@ -183,7 +184,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
     };
     const getButtonText = () => {
         if (view === 'login') return 'Entrar';
-        if (view === 'register') return 'Registrar';
+        if (view === 'register') return 'Registar';
         return 'Atualizar';
     };
     const showFullForm = view === 'register' || view === 'update';
@@ -291,7 +292,7 @@ export function UserModal({ isOpen, onRequestClose, user }: AuthModalProps) {
             <p className={styles.toggleText}>
                 {view === "login" ? 'Não tem uma conta?' : 'Já tem uma conta?'}
                 <button onClick={toggleView} className={styles.toggleLink}>
-                    {view === "login" ? ' Registre-se' : ' Faça login'}
+                    {view === "login" ? ' Registe-se' : ' Faça login'}
                 </button>
             </p>
         </BaseModal>

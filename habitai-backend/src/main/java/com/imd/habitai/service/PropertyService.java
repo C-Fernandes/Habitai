@@ -4,6 +4,7 @@ import com.imd.habitai.dto.request.PropertyCreateRequest;
 import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
 import com.imd.habitai.enums.PropertyStatus;
+import com.imd.habitai.error.AccessDeniedError;
 import com.imd.habitai.mapper.PropertyMapper;
 import com.imd.habitai.model.Address;
 import com.imd.habitai.model.Amenity;
@@ -93,7 +94,10 @@ public class PropertyService {
     }
 
     @Transactional(readOnly = true)
-    public Page<PropertyResponse> getPropertiesByOwner(Long userId, Pageable pageable) {
+    public Page<PropertyResponse> getPropertiesByOwner(Long maybeUserId, Long userId, Pageable pageable) {
+        if (!maybeUserId.equals(userId)){
+            throw new AccessDeniedError("Você não tem permissão para alterar este imóvel.");
+        }
         Page<Property> propertyPage = propertyRepository.findByOwnerId(userId, pageable);
         return propertyPage.map(propertyMapper::toDTO);
     }
