@@ -4,7 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.imd.habitai.dto.request.PropertyCreateRequest;
 import com.imd.habitai.dto.request.PropertyUpdateRequest;
 import com.imd.habitai.dto.response.PropertyResponse;
+import com.imd.habitai.model.User;
+import com.imd.habitai.repository.UserRepository;
 import com.imd.habitai.service.PropertyService;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 import org.springframework.data.domain.Page;
@@ -25,8 +29,10 @@ import java.util.List;
 public class PropertyController {
 
     private final PropertyService propertyService;
+    private final UserRepository userRepository;
 
-    public PropertyController(PropertyService propertyService, ObjectMapper objectMapper) {
+    public PropertyController(PropertyService propertyService, ObjectMapper objectMapper, UserRepository userRepository) {
+        this.userRepository = userRepository;
         this.propertyService = propertyService;
     }
 
@@ -58,29 +64,39 @@ public class PropertyController {
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
-    @GetMapping("/my-properties/{id}")
+    @GetMapping("/my-properties/{maybeUserId}")
     public ResponseEntity<Page<PropertyResponse>> getMyProperties(
         @PageableDefault(size = 12, sort = "id") Pageable pageable,
         @PathVariable Long maybeUserId,
         Principal principal
     ) {
-        Long userId = Long.parseLong(principal.getName());
-        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(maybeUserId, userId, pageable);
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        Page<PropertyResponse> propertyPage = propertyService.getPropertiesByOwner(maybeUserId, user.getId(), pageable);
         return new ResponseEntity<>(propertyPage, HttpStatus.OK);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<PropertyResponse> updateProperty(
         @PathVariable Long id, 
-        @Valid @RequestBody PropertyUpdateRequest property) {
-        return propertyService.update(id, property)
+        @Valid @RequestBody PropertyUpdateRequest property,
+        Principal principal
+    ) {
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        return propertyService.update(id, property, user.getId())
             .map(updatedProperty -> new ResponseEntity<>(updatedProperty, HttpStatus.OK))
             .orElse(new ResponseEntity<>(HttpStatus.NOT_FOUND));
     }
 
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteProperty(@PathVariable Long id) {
-        if (propertyService.delete(id)) return new ResponseEntity<>(HttpStatus.NO_CONTENT);
-        return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+    public ResponseEntity<Void> deleteProperty(
+        @PathVariable Long id,
+        Principal principal
+    ) {
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        propertyService.delete(id, user.getId());
+        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
     }
 }

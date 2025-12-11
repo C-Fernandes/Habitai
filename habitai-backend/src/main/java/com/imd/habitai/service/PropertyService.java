@@ -25,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -96,15 +97,20 @@ public class PropertyService {
     @Transactional(readOnly = true)
     public Page<PropertyResponse> getPropertiesByOwner(Long maybeUserId, Long userId, Pageable pageable) {
         if (!maybeUserId.equals(userId)){
-            throw new AccessDeniedError("Você não tem permissão para alterar este imóvel.");
+            throw new AccessDeniedError("Você não tem permissão para acessar este imóvel.");
         }
         Page<Property> propertyPage = propertyRepository.findByOwnerId(userId, pageable);
         return propertyPage.map(propertyMapper::toDTO);
     }
 
     @Transactional
-    public Optional<PropertyResponse> update(Long id, PropertyUpdateRequest propertyDTO) {
+    public Optional<PropertyResponse> update(Long id, PropertyUpdateRequest propertyDTO, Long userId) {
+
         return propertyRepository.findById(id).map(existingProperty -> {
+            if (!existingProperty.getOwner().getId().equals(userId)){
+                throw new AccessDeniedError("Você não tem permissão para alterar este imóvel.");
+            }
+
             if (propertyDTO.title() != null) {
                 existingProperty.setTitle(propertyDTO.title());
             }
@@ -155,11 +161,9 @@ public class PropertyService {
     }
 
     @Transactional
-    public boolean delete(Long id) {
-        if (propertyRepository.existsById(id)) {
-            propertyRepository.deleteById(id);
-            return true;
-        }
-        return false;
+    public void delete(Long id, Long userId) {
+        Property property = propertyRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("Imóvel não encontrado"));
+        if(!property.getOwner().getId().equals(userId)) throw new AccessDeniedError("Você não tem permissão para deletar esse imóvel");
+        propertyRepository.delete(property);
     }
 }
