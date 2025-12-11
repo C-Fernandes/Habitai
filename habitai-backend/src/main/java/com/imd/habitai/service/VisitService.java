@@ -31,11 +31,11 @@ public class VisitService {
     }
 
     @Transactional
-    public VisitResponseDTO createVisit(VisitRequestDTO dto) {
+    public VisitResponseDTO createVisit(VisitRequestDTO dto, Long userId) {
         Property property = propertyRepository.findByIdWithOwner(dto.getPropertyId())
                 .orElseThrow(() -> new RuntimeException("Property not found"));
 
-        User user = userRepository.findById(dto.getUserId())
+        User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         User propertyUser = userRepository.findById(property.getOwner().getId())

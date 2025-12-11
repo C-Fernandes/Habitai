@@ -4,7 +4,6 @@ export interface VisitRequestDTO {
     propertyId: number;
     dateTime: string;
     message?: string;
-    userId: number;
 }
 
 export const visitService = {
@@ -22,8 +21,8 @@ export const visitService = {
         await apiClient.delete(`/visits/${id}`);
     },
 
-    getVisitsByUser: async (userId: number) => {
-        const response = await apiClient.get(`/visits/user/${userId}`);
+    getVisitsByUser: async () => {
+        const response = await apiClient.get(`/visits/user`);
         return response;
     },
 

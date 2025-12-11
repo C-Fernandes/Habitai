@@ -1,4 +1,5 @@
 package com.imd.habitai.controller;
+import java.security.Principal;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
@@ -9,8 +10,10 @@ import org.springframework.web.bind.annotation.*;
 import com.imd.habitai.dto.request.VisitRequestDTO;
 import com.imd.habitai.dto.response.VisitResponseDTO;
 import com.imd.habitai.model.User;
+import com.imd.habitai.repository.UserRepository;
 import com.imd.habitai.service.VisitService;
 
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 
 @RestController
@@ -18,16 +21,21 @@ import jakarta.validation.Valid;
 public class VisitController {
 
     private final VisitService visitService;
+    private final UserRepository userRepository;
 
-    public VisitController(VisitService visitService) {
+    public VisitController(VisitService visitService, UserRepository userRepository) {
         this.visitService = visitService;
+        this.userRepository = userRepository;
     }
 
     @PostMapping
     public ResponseEntity<VisitResponseDTO> createVisit(
-            @Validated(VisitRequestDTO.Create.class) @RequestBody VisitRequestDTO dto
+            @Validated(VisitRequestDTO.Create.class) @RequestBody VisitRequestDTO dto,
+            Principal principal
     ) {
-        VisitResponseDTO created = visitService.createVisit(dto);
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        VisitResponseDTO created = visitService.createVisit(dto, user.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
@@ -39,9 +47,12 @@ public class VisitController {
         return ResponseEntity.ok(visits);
     }
 
-    @GetMapping("/user/{id}")
-    public ResponseEntity<List<VisitResponseDTO>> getVisitsByUserId(@PathVariable Long id) {
-        List<VisitResponseDTO> visits = visitService.getActiveVisitsByUserId(id);
+    @GetMapping("/user")
+    public ResponseEntity<List<VisitResponseDTO>> getVisitsByUserId(Principal principal)
+    {
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        List<VisitResponseDTO> visits = visitService.getActiveVisitsByUserId(user.getId());
         return ResponseEntity.ok(visits);
     }
 

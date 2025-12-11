@@ -40,7 +40,7 @@ export default function VisitsPage() {
         try {
             const data =
                 activeTab === "myVisits"
-                    ? await visitService.getVisitsByUser(Number(user.id))
+                    ? await visitService.getVisitsByUser()
                     : await visitService.getVisitsByPropertyOwner(Number(user.id));
 
             // @ts-ignore

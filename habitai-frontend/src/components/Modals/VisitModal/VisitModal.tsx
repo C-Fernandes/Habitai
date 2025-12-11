@@ -18,9 +18,9 @@ export function VisitModal({ propertyId, onClose }: VisitModalProps) {
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
 
-        const loggedUser = JSON.parse(localStorage.getItem("loggedInUser") || "{}");
+        const loggedInUser = localStorage.getItem("accessToken");
 
-        if (!loggedUser.id) {
+        if (!loggedInUser) {
             toast.error("Usuário não autenticado.");
             return;
         }
@@ -41,7 +41,6 @@ export function VisitModal({ propertyId, onClose }: VisitModalProps) {
                 propertyId,
                 dateTime,
                 message,
-                userId: loggedUser.id,
             });
             toast.success("Reserva realizada com sucesso!");
             onClose();
