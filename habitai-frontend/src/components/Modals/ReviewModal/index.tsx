@@ -42,14 +42,14 @@ export function ReviewModal({ userId, isOpen, onRequestClose, propertyId, onSucc
     setIsSubmitting(true);
     try {
       if (reviewToEdit) {
-        await apiClient.put(`/reviews/${userId}/${reviewToEdit.id}`, {
+        await apiClient.put(`/reviews/${reviewToEdit.id}`, {
           propertyId,
           rating,
           comment
         });
         toast.success("Avaliação atualizada!");
       } else {
-        await apiClient.post(`/reviews/${userId}`, {
+        await apiClient.post(`/reviews`, {
           propertyId,
           rating,
           comment

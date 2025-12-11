@@ -83,7 +83,7 @@ export function PropertyDetailsPage() {
     const firstImage = property.images?.[0]?.imagePath;
     const API_BASE_URL = "http://localhost:8080";
     const imageUrl = `${API_BASE_URL}/${firstImage}`;
-    const loggedInUser = localStorage.getItem("loggedInUser");
+    const loggedInUser = localStorage.getItem("accessToken");
 
     function handleReservaClick() {
         if (!loggedInUser) {
@@ -116,7 +116,7 @@ export function PropertyDetailsPage() {
 
     const handleReviewSuccess = () => {
         fetchReviews(0, false);
-        apiClient.get<Property>(`/properties/${id}`).then(setProperty);
+        apiClient.get<Property>(`/properties/`).then(setProperty);
     };
 
     function handleCreateReviewClick() {
@@ -142,7 +142,7 @@ export function PropertyDetailsPage() {
 
         setIsDeleting(true);
         try {
-            await apiClient.delete(`/reviews/${userId}/${reviewIdToDelete}`);
+            await apiClient.delete(`/reviews/${reviewIdToDelete}`);
             toast.success("Avaliação removida.");
             handleReviewSuccess();
             setReviewIdToDelete(null);

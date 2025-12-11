@@ -2,8 +2,14 @@ package com.imd.habitai.controller;
 
 import com.imd.habitai.dto.request.ReviewCreateRequest;
 import com.imd.habitai.dto.response.ReviewResponse;
+import com.imd.habitai.model.User;
+import com.imd.habitai.repository.UserRepository;
 import com.imd.habitai.service.ReviewService;
+
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
+
+import java.security.Principal;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -18,17 +24,21 @@ import org.springframework.web.bind.annotation.*;
 public class ReviewController {
 
     private final ReviewService reviewService;
+    private final UserRepository userRepository;
 
-    ReviewController(ReviewService reviewService) {
+    ReviewController(ReviewService reviewService, UserRepository userRepository) {
         this.reviewService = reviewService;
+        this.userRepository = userRepository;
     }
 
-    @PostMapping("/{userId}")
+    @PostMapping
     public ResponseEntity<ReviewResponse> createReview(
             @Valid @RequestBody ReviewCreateRequest dto,
-            @PathVariable Long userId
+            Principal principal
     ) {
-        ReviewResponse createdReview = reviewService.createReview(userId, dto);
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        ReviewResponse createdReview = reviewService.createReview(user.getId(), dto);
         return new ResponseEntity<>(createdReview, HttpStatus.CREATED);
     }
 
@@ -41,22 +51,26 @@ public class ReviewController {
         return ResponseEntity.ok(reviews);
     }
 
-    @PutMapping("/{userId}/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<ReviewResponse> updateReview(
             @PathVariable Long id,
             @Valid @RequestBody ReviewCreateRequest dto,
-            @PathVariable Long userId
+            Principal principal
     ) {
-        ReviewResponse updatedReview = reviewService.updateReview(userId, id, dto);
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        ReviewResponse updatedReview = reviewService.updateReview(user.getId(), id, dto);
         return ResponseEntity.ok(updatedReview);
     }
 
-    @DeleteMapping("/{userId}/{id}")
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteReview(
             @PathVariable Long id,
-            @PathVariable Long userId
+            Principal principal
     ) {
-        reviewService.deleteReview(userId, id);
+        String email = principal.getName();
+        User user =  userRepository.findByEmail(email).orElseThrow(() -> new EntityNotFoundException("Usuário não encontrado"));
+        reviewService.deleteReview(user.getId(), id);
         return ResponseEntity.noContent().build();
     }
 }
