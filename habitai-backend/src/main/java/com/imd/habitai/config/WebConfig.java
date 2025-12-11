@@ -1,5 +1,6 @@
 package com.imd.habitai.config;
 
+import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import org.springframework.context.annotation.Bean;
@@ -19,9 +20,9 @@ import com.imd.habitai.repository.UserRepository;
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
 
-    private final String uploadDirParent = "habitai-backend";
-
     private final UserRepository userRepository;
+
+    private final String uploadDirectoryName = "uploads";
 
     public WebConfig(UserRepository userRepository) {
         this.userRepository = userRepository;
@@ -38,11 +39,15 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        String absolutePath = Paths.get(uploadDirParent).toFile().getAbsolutePath();
-        registry.addResourceHandler("/" + uploadDirParent + "/**")
-            .addResourceLocations("file:/" + absolutePath + "/");
+        String projectRoot = System.getProperty("user.dir");
+        
+        Path uploadDir = Paths.get(projectRoot, uploadDirectoryName);
+        
+        registry.addResourceHandler("/" + uploadDirectoryName + "/**")
+                .addResourceLocations(uploadDir.toUri().toString());
     }
-        @Bean
+
+    @Bean
     public UserDetailsService userDetailsService() {
         return username -> {
             return userRepository.findByEmail(username)
